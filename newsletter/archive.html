@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newsletter Archive — The Tree of Life</title>
+<meta name="description" content="Every back-issue of the Tree of Life weekly newsletter — searchable by parsha or holiday.">
+<link rel="canonical" href="https://thetreeoflifebooks.com/newsletter/archive">
+<meta name="theme-color" content="#243a2c">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f7f0e2; --cream-2:#fbf6ec; --surface:#fffdf8; --surface-2:#f2ead9;
+  --ink:#26241c; --ink-soft:rgba(38,36,28,.68); --ink-faint:rgba(38,36,28,.45);
+  --green:#33493a; --green-deep:#243a2c; --green-soft:#4f6a56;
+  --gold-1:#7e5717; --gold:#9c6f2e; --gold-2:#b4843a; --gold-3:#c89a44; --gold-pale:#d8b15e;
+  --line:rgba(38,36,28,.12); --line-gold:rgba(156,111,46,.32); --line-hi:rgba(156,111,46,.5);
+  --serif:"Fraunces",Georgia,serif; --body:"EB Garamond",Georgia,serif;
+  --gold-grad:linear-gradient(100deg,#8a5d1f 0%,#b4843a 50%,#cb9e4a 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% -8%, rgba(156,111,46,.10), transparent 70%);}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:0 34px;position:relative;z-index:2}
+.eyebrow{font-family:var(--body);font-size:.72rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.gold-text{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Header */
+header{position:fixed;top:0;left:0;right:0;z-index:60;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+header.scrolled{background:rgba(247,240,226,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-gold)}
+.nav{display:flex;align-items:flex-end;justify-content:space-between;height:84px;padding-bottom:16px}
+.brand{font-family:var(--serif);font-size:1.18rem;color:var(--green-deep);font-weight:500;margin-bottom:6px}
+nav ul{display:flex;gap:34px;list-style:none;align-items:center}
+nav a{font-family:"Rajdhani",sans-serif;font-weight:500;font-size:.84rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);transition:color .25s;position:relative}
+nav a:hover,nav a.active{color:var(--green);text-shadow:0 0 14px rgba(156,111,46,.45)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--green)}
+.nav-toggle svg{width:28px;height:28px}
+@media(max-width:1160px){
+  .nav-toggle{display:block}
+  nav ul{position:absolute;top:84px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;
+    background:rgba(251,246,236,.98);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-gold);
+    max-height:0;overflow:hidden;transition:max-height .4s ease}
+  nav ul.open{max-height:520px}
+  nav li{width:100%;border-top:1px solid var(--line)}
+  nav ul a{display:block;padding:19px 34px;font-size:.86rem;color:var(--ink)}
+}
+
+/* Intro */
+.intro{padding:160px 0 50px;text-align:center}
+.intro .crumb{display:inline-flex;align-items:center;gap:8px;color:var(--ink-faint);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px}
+.intro .crumb a:hover{color:var(--green)}
+.intro h1{font-family:var(--serif);font-weight:300;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.06;letter-spacing:-.01em;margin:8px auto 18px;max-width:18ch}
+.intro h1 em{font-style:italic}
+.intro .lede{max-width:54ch;margin:0 auto;font-size:1.1rem;color:var(--ink-soft)}
+
+/* Search & filter bar */
+.toolbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:30px auto 28px;padding:14px 18px;background:var(--surface);border:1px solid var(--line-gold);border-radius:99px;box-shadow:0 12px 30px -22px rgba(38,36,28,.25)}
+.toolbar .search{flex:1;display:flex;align-items:center;gap:10px;min-width:200px}
+.toolbar .search svg{width:18px;height:18px;color:var(--ink-faint);flex:none}
+.toolbar input{flex:1;background:transparent;border:0;outline:0;font-family:var(--body);font-size:1.02rem;color:var(--ink);padding:6px 0}
+.toolbar input::placeholder{color:var(--ink-faint);font-style:italic}
+.toolbar .pills{display:flex;gap:6px;flex-wrap:wrap}
+.toolbar .pill{font-family:var(--body);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);background:rgba(38,36,28,.04);border:1px solid var(--line);padding:7px 12px;border-radius:99px;cursor:pointer;transition:all .22s}
+.toolbar .pill:hover{color:var(--green);border-color:var(--line-gold)}
+.toolbar .pill.on{color:#fff;background:var(--green);border-color:var(--green)}
+.toolbar .count{font-size:.82rem;color:var(--ink-faint);padding:0 8px;white-space:nowrap}
+
+/* Year sections */
+.year{margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.year:first-of-type{border-top:0;padding-top:0}
+.year h2{font-family:var(--serif);font-weight:300;font-size:1.6rem;letter-spacing:-.005em;color:var(--green-deep);margin-bottom:18px}
+
+/* Issue rows */
+.issues{display:grid;grid-template-columns:1fr;gap:0}
+.row{display:grid;grid-template-columns:auto 1fr auto auto;gap:24px;align-items:center;padding:18px 8px;border-bottom:1px solid var(--line);transition:background .22s,padding-left .22s;color:inherit}
+.row:hover{background:rgba(247,240,226,.5);padding-left:14px}
+.row .num{font-family:var(--serif);font-weight:400;font-size:1.3rem;color:var(--gold);min-width:54px;letter-spacing:.02em}
+.row .num span{font-family:var(--body);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;display:block;margin-bottom:2px}
+.row .meta{display:flex;flex-direction:column;gap:4px}
+.row .title{font-family:var(--serif);font-size:1.18rem;color:var(--ink);font-weight:400}
+.row .title em{font-style:italic;color:var(--green-soft);font-size:.94rem;margin-left:8px}
+.row .summary{color:var(--ink-soft);font-size:.95rem;font-style:italic;line-height:1.45;display:none}
+@media(min-width:780px){.row .summary{display:block}}
+.row .tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+.row .tag{font-family:var(--body);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);background:rgba(156,111,46,.08);border:1px solid rgba(156,111,46,.18);padding:4px 9px;border-radius:99px;white-space:nowrap}
+.row .actions{display:flex;gap:6px;align-items:center}
+.row .ico{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:50%;color:var(--ink-soft);transition:all .22s}
+.row .ico:hover{border-color:var(--gold);color:var(--gold-1);background:rgba(156,111,46,.06)}
+.row .ico svg{width:15px;height:15px}
+.row .date{font-size:.82rem;color:var(--ink-faint);text-align:right;min-width:90px;white-space:nowrap}
+@media(max-width:680px){
+  .row{grid-template-columns:auto 1fr;gap:14px;padding:14px 6px}
+  .row .tags,.row .date{grid-column:2/3;justify-content:flex-start;text-align:left;min-width:0}
+  .row .actions{grid-column:1/-1;justify-self:start;margin-top:6px}
+}
+
+/* Empty state */
+.empty{padding:60px 30px;text-align:center;color:var(--ink-faint);font-family:var(--serif);font-style:italic;font-size:1.05rem;border:1px dashed var(--line-gold);border-radius:8px;background:rgba(255,253,248,.5);margin-top:20px}
+
+/* Subscribe strip at bottom */
+.sub{margin:80px auto 60px;padding:48px 40px;text-align:center;background:linear-gradient(135deg, var(--green-deep), var(--green));color:var(--cream-2);border-radius:8px;position:relative;overflow:hidden}
+.sub::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 100% 0%, rgba(216,177,94,.18), transparent 70%);pointer-events:none}
+.sub h3{font-family:var(--serif);font-weight:300;font-size:1.9rem;margin-bottom:10px;position:relative}
+.sub p{max-width:48ch;margin:0 auto 22px;opacity:.86;position:relative}
+.sub .cta{display:inline-flex;align-items:center;gap:10px;padding:14px 30px;background:var(--gold-pale);color:var(--green-deep);font-family:var(--body);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600;border-radius:4px;position:relative;transition:transform .22s,background .22s}
+.sub .cta:hover{background:#e8c577;transform:translateY(-1px)}
+
+footer{padding:40px 0 50px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+footer .copy{font-size:.85rem;color:var(--ink-faint)}
+footer .links{display:flex;gap:24px;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+footer .links a:hover{color:var(--green)}
+</style>
+<script src="https://dreamsitedesign.com/credit.js" data-site="treeoflife" data-render="false" defer></script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <div class="brand"><a href="/">The Tree of Life Books</a></div>
+    <button class="nav-toggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <nav><ul id="nav-menu">
+      <li><a href="/#collection">Collection</a></li>
+      <li><a href="/gallery.html">Artwork</a></li>
+      <li><a href="/newsletter.html" class="active">Newsletter</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="https://rabbiboruch.com/">Rabbi Boruch</a></li>
+      <li><a href="/games/">Games</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="wrap">
+    <div class="crumb"><a href="/newsletter.html">Newsletter</a> · Archive</div>
+    <div class="eyebrow">For the Shabbos Table</div>
+    <h1>The <em class="gold-text">archive</em></h1>
+    <p class="lede">Every back-issue of the Tree of Life newsletter. Search by parsha, holiday, or theme.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="toolbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Search by parsha, holiday, or theme…" autocomplete="off">
+    </div>
+    <div class="pills" id="pills">
+      <button class="pill on" data-filter="all">All</button>
+      <button class="pill" data-filter="parsha">Parshiyos</button>
+      <button class="pill" data-filter="holiday">Holidays</button>
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <div id="years"></div>
+  <div id="empty" class="empty" hidden>No issues match — try a different search.</div>
+
+  <div class="sub">
+    <h3>Get every new issue in your inbox</h3>
+    <p>Friday morning, every week. A teaching, a glimpse from the Rebbe, and something to bring to the Shabbos table.</p>
+    <a href="/newsletter.html#subscribe" class="cta">Subscribe →</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="copy">© 2026 The Tree of Life Books</div>
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="/newsletter.html">Newsletter</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const PDF_BASE = '../assets/newsletter/';
+let issues = [];
+let currentFilter = 'all';
+
+const pdfIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+const printIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>';
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch { return iso; }
+}
+
+function getYear(iso) {
+  if (!iso) return '—';
+  return iso.slice(0, 4);
+}
+
+function renderRow(issue) {
+  const num = String(issue.number).padStart(2, '0');
+  const title = (issue.parshaDisplay || issue.holiday || 'Untitled')
+    + (issue.subtitle ? ` <em>· ${issue.subtitle}</em>` : '');
+  const tags = (issue.tags || []).slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('');
+  const pdfUrl = PDF_BASE + issue.pdf;
+
+  return `
+    <a class="row" href="${pdfUrl}" target="_blank" rel="noopener">
+      <div class="num"><span>Issue</span>${num}</div>
+      <div class="meta">
+        <div class="title">${title}</div>
+        ${issue.summary ? `<div class="summary">${issue.summary}</div>` : ''}
+      </div>
+      <div class="tags">${tags}</div>
+      <div class="actions">
+        <span class="ico" title="Read PDF">${pdfIcon}</span>
+      </div>
+    </a>
+  `;
+}
+
+function matchesFilter(issue, filter) {
+  if (filter === 'all') return true;
+  if (filter === 'parsha') return !!issue.parshaDisplay;
+  if (filter === 'holiday') return !!issue.holiday;
+  return true;
+}
+
+function matchesSearch(issue, query) {
+  if (!query) return true;
+  const haystack = [
+    issue.parshaDisplay, issue.holiday, issue.subtitle, issue.summary,
+    ...(issue.tags || [])
+  ].filter(Boolean).join(' ').toLowerCase();
+  return query.toLowerCase().split(/\s+/).every(t => haystack.includes(t));
+}
+
+function render() {
+  const query = document.getElementById('q').value.trim();
+  const filtered = issues
+    .filter(i => matchesFilter(i, currentFilter))
+    .filter(i => matchesSearch(i, query))
+    .sort((a, b) => b.number - a.number);
+
+  document.getElementById('count').textContent = filtered.length === 1
+    ? '1 issue'
+    : `${filtered.length} issues`;
+
+  // group by year
+  const byYear = {};
+  filtered.forEach(i => {
+    const y = getYear(i.date);
+    (byYear[y] = byYear[y] || []).push(i);
+  });
+
+  const years = Object.keys(byYear).sort((a, b) => b.localeCompare(a));
+  const html = years.map(year => `
+    <section class="year">
+      <h2>${year}</h2>
+      <div class="issues">${byYear[year].map(renderRow).join('')}</div>
+    </section>
+  `).join('');
+
+  document.getElementById('years').innerHTML = html;
+  document.getElementById('empty').hidden = filtered.length > 0;
+}
+
+fetch('../assets/newsletter/manifest.json', { cache: 'no-cache' })
+  .then(r => r.json())
+  .then(data => {
+    issues = data.issues || [];
+    render();
+  })
+  .catch(err => {
+    console.error('Could not load newsletter manifest', err);
+    document.getElementById('empty').hidden = false;
+    document.getElementById('empty').textContent = 'Could not load the archive — please refresh.';
+  });
+
+document.getElementById('q').addEventListener('input', render);
+document.getElementById('pills').addEventListener('click', e => {
+  const p = e.target.closest('.pill');
+  if (!p) return;
+  document.querySelectorAll('.pill').forEach(x => x.classList.remove('on'));
+  p.classList.add('on');
+  currentFilter = p.dataset.filter;
+  render();
+});
+
+// header + mobile menu
+const header = document.querySelector('header');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 30);
+}, { passive: true });
+document.addEventListener('click', e => {
+  const t = e.target.closest('.nav-toggle');
+  const m = document.getElementById('nav-menu');
+  if (!m) return;
+  if (t) m.classList.toggle('open');
+  else if (!e.target.closest('nav')) m.classList.remove('open');
+});
+</script>
+<!-- network-block -->
+<style>.toln{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 10px;padding:8px 16px;font:400 11px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;border-top:1px solid rgba(128,128,128,.1);color:rgba(128,128,128,.45)}.toln a{color:inherit;text-decoration:none}.toln a:hover{color:rgba(128,128,128,.85);text-decoration:underline}.toln .d{color:rgba(128,128,128,.2)}@media(prefers-color-scheme:dark){.toln{border-top-color:rgba(200,200,200,.07);color:rgba(200,200,200,.35)}.toln a:hover{color:rgba(200,200,200,.8)}.toln .d{color:rgba(200,200,200,.15)}}</style>
+<nav class="toln" aria-label="Related sites"><a href="https://rabbiboruch.com">Rabbi Boruch</a><span class="d">&#183;</span><a href="https://rebbesletters.com">The Rebbe's Letters</a><span class="d">&#183;</span><a href="https://beismoshiach.org">Beis Moshiach</a></nav>
+<script src="https://thetreeoflifebooks.com/network.js" data-site="treeoflife" defer></script>
+<!-- /network-block -->
+</body>
+</html>

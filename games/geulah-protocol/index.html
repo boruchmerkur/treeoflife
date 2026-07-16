@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geulah Protocol — A Chabad Escape Room · The Tree of Life</title>
+<meta name="description" content="Geulah Protocol — an 8-room Chabad-themed Torah escape game from The Tree of Life.">
+<meta name="theme-color" content="#04060e">
+<link rel="icon" href="/assets/favicon.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body, #root { width: 100%; min-height: 100vh; background: #04060e; }
+
+  /* Quiet "back to the site" tab, top-left, out of the way */
+  #home{position:fixed;top:14px;left:14px;z-index:10000;display:inline-flex;align-items:center;gap:8px;
+        padding:9px 14px 9px 12px;border-radius:999px;background:rgba(247,240,226,.92);backdrop-filter:blur(6px);
+        color:#243a2c;text-decoration:none;font-family:system-ui,sans-serif;font-size:.74rem;font-weight:600;
+        letter-spacing:.12em;text-transform:uppercase;box-shadow:0 2px 12px rgba(0,0,0,.35);
+        transition:background .2s,transform .2s}
+  #home:hover{background:#fffdf8;transform:translateY(-1px)}
+  #home svg{width:15px;height:15px}
+  @media(max-width:560px){#home span{display:none}#home{padding:10px}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<a id="home" href="/games" aria-label="Back to Games">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  <span>All Games</span>
+</a>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+
+// ═══════════════════════════════════════════
+//  GEULAH PROTOCOL — A Chabad Moshiach Escape Room
+//  Every room is a genuine challenge requiring Torah learning
+// ═══════════════════════════════════════════
+
+// ── ROOM 1: GEMATRIA — THE NACHASH/MOSHIACH CONNECTION ──
+const GEMATRIA_TABLE = {
+  "א":1,"ב":2,"ג":3,"ד":4,"ה":5,"ו":6,"ז":7,"ח":8,"ט":9,
+  "י":10,"כ":20,"ל":30,"מ":40,"נ":50,"ס":60,"ע":70,"פ":80,"צ":90,
+  "ק":100,"ר":200,"ש":300,"ת":400
+};
+const GEMATRIA_ANSWER_ALTS = ["MOSHIACH","MASHIACH","MOSHIAKH","MASHIAKH","MOSCHIACH","MESHIACH","MOSHIAH","MASHIAH","MOSIACH","MASIACH","MESIACH","MESSIACH","MOSHIYACH","MASHIYACH"];
+
+// ── ROOM 2: THE REBBE'S MIVTZOIM — mixed with real mitzvos as decoys ──
+const ALL_ITEMS = [
+  { id:"tefillin",  name:"Tefillin",              icon:"🎗️", isMivtza:true },
+  { id:"mezuzah",   name:"Mezuzah",               icon:"🚪", isMivtza:true },
+  { id:"tzedakah",  name:"Tzedakah",              icon:"🪙", isMivtza:true },
+  { id:"neshek",    name:"Neiros Shabbos Kodesh",  icon:"🕯️", isMivtza:true },
+  { id:"kashrus",   name:"Kashrus",               icon:"🍽️", isMivtza:true },
+  { id:"torah",     name:"Torah Study",            icon:"📖", isMivtza:true },
+  { id:"family",    name:"Taharas HaMishpacha",   icon:"💧", isMivtza:true },
+  { id:"chinuch",   name:"Chinuch",               icon:"🎓", isMivtza:true },
+  { id:"ahavah",    name:"Ahavas Yisroel",        icon:"❤️", isMivtza:true },
+  { id:"bayis",     name:"Bayis Malei Seforim",   icon:"📚", isMivtza:true },
+  // Decoys — real mitzvos but NOT one of the Rebbe's 10 Mivtzoim
+  { id:"lulav",     name:"Lulav & Esrog",         icon:"🌿", isMivtza:false },
+  { id:"challah",   name:"Hafrashas Challah",     icon:"🍞", isMivtza:false },
+  { id:"milah",     name:"Bris Milah",            icon:"✂️", isMivtza:false },
+  { id:"lashon",    name:"Shmiras HaLashon",      icon:"🤫", isMivtza:false },
+  { id:"kiddush",   name:"Kiddush on Shabbos",    icon:"🍷", isMivtza:false },
+];
+
+// ── ROOM 3: SEFIROS — cryptic clues, not labels ──
+const SEFIROS_CORRECT = ["Chesed","Gevurah","Tiferes","Netzach","Hod","Yesod","Malchus"];
+const SEFIROS_DATA = [
+  { name:"Chesed", heb:"חסד", color:"#e8e8ff",
+    clue:"Avraham's tent was open on all four sides. Strangers in the desert heat would find him running toward them. Three angels visited, and he served them a feast — even as he recovered from his bris at age 99." },
+  { name:"Gevurah", heb:"גבורה", color:"#ff4444",
+    clue:"Yitzchak lay bound on the altar atop Mount Moriah. He did not resist. His eyes gazed toward heaven, and from that moment he never left Eretz Yisroel. The Akeidah defined him forever." },
+  { name:"Tiferes", heb:"תפארת", color:"#ffd700",
+    clue:"Yaakov studied in the tents of Shem and Ever, wrestled an angel through the night, and emerged renamed Yisroel. He balanced the extremes of his grandfather and father into a single, complete path." },
+  { name:"Netzach", heb:"נצח", color:"#44ff88",
+    clue:"For 40 years in the desert, he carried an entire nation. He ascended Sinai, smashed the luchos, ascended again, and brought them down a second time. When the people faltered, he never abandoned them." },
+  { name:"Hod", heb:"הוד", color:"#ff8844",
+    clue:"He was the one who pursued peace — running between quarreling parties, making each one feel valued. He loved every Jew and drew them close to Torah. His passing was mourned by the entire nation — men and women alike." },
+  { name:"Yesod", heb:"יסוד", color:"#aa88ff",
+    clue:"Alone in a foreign land, a teenage slave in the house of Potiphar. His master's wife tempted him daily, but he withstood the test. In the dungeon and the palace alike, he remained a tzaddik." },
+  { name:"Malchus", heb:"מלכות", color:"#00d4ff",
+    clue:"A shepherd boy who slew a giant. He danced before the Aron with all his might. He sang Tehillim in the caves while fleeing a king. He united the 12 tribes under one throne in Yerushalayim." },
+];
+
+// ── ROOM 4: RIDDLES requiring real Torah knowledge ──
+const RIDDLES = [
+  {
+    q: "I was written in a prison cell in Petersburg. The Alter Rebbe composed me to bring Chassidus to every Jew. My 53 chapters teach that a Jew's neshama is 'literally a part of Hashem above.' Every Chossid studies me daily. What am I?",
+    a: ["TANYA","THE TANYA","SEFER HATANYA","SEFER TANYA","LIKUTEI AMARIM","LIKKUTEI AMARIM","LIKUTEY AMARIM","LIKKUTEY AMARIM","TANYAH"],
+    hint: "The 'Written Torah' of Chassidus, 53 chapters, written by the Alter Rebbe."
+  },
+  {
+    q: "The Rambam in Hilchos Melachim (11:4) describes a two-stage process. In the first stage: a king arises from Beis Dovid, studies Torah deeply, compels all of Israel to walk in its way, repairs the breaches in its observance, and fights the wars of Hashem. The Rambam says we may 'with assurance consider him' by a specific halachic status. What is this status called?",
+    a: ["BECHEZKAS MOSHIACH","BECHEZKAS MASHIACH","CHEZKAS MOSHIACH","CHEZKAS MASHIACH","PRESUMED MOSHIACH","PRESUMED MASHIACH","MOSHIACH BECHEZKAS","BCHEZKAS MOSHIACH","BECHEZKAT MASHIACH","BECHEZKAT MOSHIACH","BCHEZKAT MOSHIACH","CHEZKAT MOSHIACH","MOSHIACH","MASHIACH","MOSHIACH VADAI","MASHIACH VADAI","DEFINITE MOSHIACH","MOSHIACH BVADAI","MASHIACH BVADAI"],
+    hint: "The Rambam describes two stages: first 'bechezkas' (presumed), then 'vadai' (definite). This riddle describes the first stage."
+  },
+  {
+    q: "Yechezkel saw its blueprint. It stood twice and was destroyed twice. The Rebbe taught that every mitzvah builds it in a spiritual sense, and Moshiach will build the third one — which will stand forever. What is it?",
+    a: ["BEIS HAMIKDASH","BEIT HAMIKDASH","BEIS HAMIKDOSH","BAIS HAMIKDOSH","BAIS HAMIKDASH","BET HAMIKDASH","BEIT HAMIKDOSH","BETH HAMIKDASH","HOLY TEMPLE","TEMPLE","THE TEMPLE","THE BEIS HAMIKDASH","THE BEIT HAMIKDASH","BEIS HAMIGDASH","BEIT HAMIGDASH"],
+    hint: "The Holy ______ — the Rebbe said it will descend from heaven, built by Hashem's own hand."
+  },
+];
+
+// ── ROOM 5: THE GEULAH VAULT ──
+// Code = 7707 → 770 (must know the Rebbe's address) + 7 (derive from game)
+const VAULT_CODE = "7707";
+
+// ═══ DESIGN SYSTEM ═══
+const C = {
+  bg:"#04060e", panel:"rgba(8,14,28,0.85)",
+  blue:"#00d4ff", blueDim:"rgba(0,212,255,0.3)", blueGlow:"rgba(0,212,255,0.15)",
+  gold:"#ffd700", goldDim:"rgba(255,215,0,0.3)",
+  white:"#e8eaff", dim:"#4a5580",
+  danger:"#ff3355", success:"#00ff88", accent:"#7b5cff",
+};
+
+const KF = `
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px ${C.blueDim}}50%{box-shadow:0 0 24px ${C.blue}44}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes gridScroll{0%{background-position:0 0}100%{background-position:0 60px}}
+@keyframes borderPulse{0%,100%{border-color:${C.blue}22}50%{border-color:${C.blue}66}}
+`;
+
+const mono = "'Courier New', Courier, monospace";
+const serif = "Georgia, 'Times New Roman', serif";
+
+const btnPrimary = {
+  fontFamily:mono,fontSize:"0.78rem",padding:"0.65rem 1.5rem",
+  background:`linear-gradient(135deg, rgba(0,212,255,0.12), rgba(0,212,255,0.04))`,
+  border:`1px solid ${C.blue}55`,color:C.blue,cursor:"pointer",
+  letterSpacing:"0.18em",borderRadius:0,textTransform:"uppercase",transition:"all 0.3s",
+};
+const inputStyle = {
+  fontFamily:mono,fontSize:"1rem",padding:"0.65rem 1rem",
+  background:"rgba(0,212,255,0.04)",border:`1px solid ${C.blue}33`,
+  color:C.white,textAlign:"center",letterSpacing:"0.2em",outline:"none",borderRadius:0,
+};
+const dialBtn = {
+  fontFamily:mono,fontSize:"0.9rem",padding:"0.3rem 0.8rem",
+  background:"rgba(0,212,255,0.05)",border:`1px solid ${C.blue}33`,
+  color:C.blue,cursor:"pointer",width:52,borderRadius:0,
+};
+
+// ═══ AMBIENT COMPONENTS ═══
+function HexGrid() {
+  return <div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none",opacity:0.035}}>
+    <div style={{width:"100%",height:"100%",backgroundImage:`linear-gradient(${C.blue} 1px, transparent 1px),linear-gradient(90deg, ${C.blue} 1px, transparent 1px)`,backgroundSize:"60px 60px",animation:"gridScroll 8s linear infinite"}}/>
+  </div>;
+}
+function Scanline() {
+  return <div style={{position:"absolute",inset:0,pointerEvents:"none",overflow:"hidden",opacity:0.025}}>
+    <div style={{width:"100%",height:200,background:`linear-gradient(180deg, transparent, ${C.blue}, transparent)`,animation:"scanline 4s linear infinite"}}/>
+  </div>;
+}
+function GlowOrb({ x, y, size, color, delay }) {
+  return <div style={{position:"absolute",left:`${x}%`,top:`${y}%`,width:size,height:size,borderRadius:"50%",background:`radial-gradient(circle, ${color}22, transparent 70%)`,animation:`float ${3+Math.random()*3}s ease-in-out ${delay}s infinite`,pointerEvents:"none"}}/>;
+}
+
+function TopBar({ roomNum, timer, onHint, hintsUsed }) {
+  const fmt = `${String(Math.floor(timer/60)).padStart(2,"0")}:${String(timer%60).padStart(2,"0")}`;
+  const urgent = timer < 300;
+  return (
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"0.7rem 1.2rem",borderBottom:`1px solid ${C.blueDim}`,background:"rgba(4,6,14,0.92)",backdropFilter:"blur(12px)",flexWrap:"wrap",gap:"0.5rem",position:"relative",zIndex:10}}>
+      <div style={{fontFamily:mono,fontSize:"0.68rem",color:C.blue,letterSpacing:"0.25em"}}><span style={{opacity:0.4}}>{"//>"}</span> CHAMBER {roomNum}/5</div>
+      <div style={{fontFamily:mono,fontSize:"1.2rem",letterSpacing:"0.15em",color:urgent?C.danger:C.gold,textShadow:urgent?`0 0 12px ${C.danger}`:`0 0 12px ${C.gold}44`,animation:urgent?"pulse 0.6s infinite":"none"}}>[{fmt}]</div>
+      <button onClick={onHint} style={{fontFamily:mono,fontSize:"0.62rem",padding:"0.3rem 0.9rem",background:"transparent",border:`1px solid ${C.blueDim}`,color:C.blue,cursor:"pointer",letterSpacing:"0.15em",borderRadius:0}}>? HINT ({hintsUsed})</button>
+    </div>
+  );
+}
+function Inventory({ items }) {
+  if (!items.length) return null;
+  return <div style={{padding:"0.5rem 1rem",borderTop:`1px solid ${C.blueDim}`,background:"rgba(4,6,14,0.85)",display:"flex",gap:"0.5rem",flexWrap:"wrap",alignItems:"center"}}>
+    <span style={{fontFamily:mono,fontSize:"0.58rem",color:C.dim,letterSpacing:"0.2em"}}>ACQUIRED:</span>
+    {items.map((item,i) => <span key={i} style={{fontFamily:mono,fontSize:"0.62rem",color:C.blue,background:C.blueGlow,padding:"0.2rem 0.6rem",border:`1px solid ${C.blueDim}`}}>{item}</span>)}
+  </div>;
+}
+function NarrativeOverlay({ text }) {
+  return <div style={{position:"fixed",inset:0,background:"rgba(2,4,10,0.92)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem",backdropFilter:"blur(8px)"}}>
+    <div style={{maxWidth:500,textAlign:"center",animation:"fadeUp 0.6s ease-out"}}>
+      <div style={{width:40,height:1,background:C.blue,margin:"0 auto 1.2rem",opacity:0.5}}/>
+      <p style={{fontFamily:serif,fontSize:"1.15rem",color:C.white,lineHeight:1.8,fontStyle:"italic"}}>{text}</p>
+      <div style={{width:40,height:1,background:C.blue,margin:"1.2rem auto 0",opacity:0.5}}/>
+    </div>
+  </div>;
+}
+
+// ═══ MAIN COMPONENT ═══
+function GeulahProtocol() {
+  const [screen, setScreen] = useState("intro");
+  const [timer, setTimer] = useState(45*60);
+  const [running, setRunning] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintText, setHintText] = useState("");
+  const [shaking, setShaking] = useState(false);
+  const [flashColor, setFlashColor] = useState(null);
+  const [inventory, setInventory] = useState([]);
+  const [narrative, setNarrative] = useState("");
+
+  const [gemInput, setGemInput] = useState("");
+  const [selected, setSelected] = useState([]);
+  const [sefOrder, setSefOrder] = useState([]);
+  const [currentRiddle, setCurrentRiddle] = useState(0);
+  const [riddleInput, setRiddleInput] = useState("");
+  const [riddlesSolved, setRiddlesSolved] = useState(0);
+  const [vaultDigits, setVaultDigits] = useState([0,0,0,0]);
+  const [wrongMsg, setWrongMsg] = useState("");
+
+  // Player & results
+  const [playerName, setPlayerName] = useState("");
+  const [completionCode, setCompletionCode] = useState("");
+
+  const timerRef = useRef(null);
+
+  // Generate a verification code from result data
+  const generateCode = (name, score, elapsed, hints) => {
+    const raw = `${name}|${score}|${elapsed}|${hints}|GEULAH`;
+    let hash = 0;
+    for (let i = 0; i < raw.length; i++) {
+      hash = ((hash << 5) - hash + raw.charCodeAt(i)) | 0;
+    }
+    const hex = Math.abs(hash).toString(16).toUpperCase().padStart(6, "0");
+    return `G-${hex.slice(0,3)}-${hex.slice(3,6)}`;
+  };
+
+  // ─── EMAIL NOTIFICATION ───
+  // To set your email: replace the string inside atob("...") with your
+  // own base64-encoded email. To encode, open browser console and type:
+  //   btoa("your@email.com")
+  // Then paste the result between the quotes below.
+  // Example: btoa("test@example.com") → "dGVzdEBleGFtcGxlLmNvbQ=="
+  //
+  // IMPORTANT: After first submission, Formsubmit.co will send you a
+  // confirmation email — click the link in it to activate.
+  const OWNER_EMAIL_B64 = "dHJlZW9mbGlmZWJvb2tpbmZvQGdtYWlsLmNvbQ=="; // encoded
+
+  const sendEmailNotification = async (entry) => {
+    try {
+      const email = atob(OWNER_EMAIL_B64);
+      if (!email || !email.includes("@")) return;
+      await fetch(`https://formsubmit.co/ajax/${email}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          _subject: `Geulah Protocol Completed by ${entry.name}!`,
+          Name: entry.name,
+          Score: entry.score,
+          Time: entry.time,
+          Hints_Used: entry.hints,
+          Verification_Code: entry.code,
+          Date: new Date().toLocaleString(),
+          _template: "table",
+        }),
+      });
+    } catch (e) {
+      // Silent fail — don't disrupt the game
+    }
+  };
+
+
+  useEffect(() => {
+    if (running && timer > 0) {
+      timerRef.current = setInterval(() => setTimer(t => {
+        if (t <= 1) { clearInterval(timerRef.current); setScreen("gameover"); setRunning(false); return 0; }
+        return t - 1;
+      }), 1000);
+      return () => clearInterval(timerRef.current);
+    }
+  }, [running]);
+
+  const fmt = (s) => `${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+  const doShake = () => { setShaking(true); setTimeout(() => setShaking(false), 500); };
+  const doFlash = (c) => { setFlashColor(c); setTimeout(() => setFlashColor(null), 400); };
+  const showStory = (text, cb) => { setNarrative(text); setTimeout(() => { setNarrative(""); if(cb) cb(); }, 3800); };
+  const showWrong = (msg) => { setWrongMsg(msg); setTimeout(() => setWrongMsg(""), 4000); };
+
+  const useHint = () => {
+    const hints = {
+      room1: "The nachash introduced sin into the world. What is the ultimate tikkun for that sin? The Zohar says the cure is hidden in the disease itself — same gematria. Think: who comes to fix what the serpent broke?",
+      room2: "There are exactly 10 Mivtzoim — not 11, not 9. Some items here are important mitzvos that every Jew should do, but the Rebbe never designated them as one of his specific campaigns.",
+      room3: "Think of the Ushpizin — seven guests of the Sukkah. The Avos come first, in order. Then think: who carried Israel through the desert? Who made peace between brothers? Who resisted temptation? Who united the kingdom?",
+      room4: RIDDLES[currentRiddle]?.hint || "Think...",
+      room5: "Three digits: where the Rebbe davened, farbrenged, and led world Jewry — its address on Eastern Parkway. The 4th digit: how many lower Sefiros are there?",
+    };
+    setHintsUsed(h => h + 1);
+    setHintText(hints[screen] || "");
+    setTimeout(() => setHintText(""), 8000);
+  };
+
+  const startGame = () => {
+    if (!playerName.trim()) { doShake(); showWrong("Enter your name before starting!"); return; }
+    setRunning(true);
+    showStory("The Rebbe taught: the world stands ready for Geulah. Every mitzvah tips the cosmic scale. Your mission — unlock the five seals of the Geulah Protocol...", () => setScreen("room1"));
+  };
+
+  // Shuffled items for Room 2
+  const shuffledItems = useMemo(() => [...ALL_ITEMS].sort((a,b) => {
+    const hashA = a.id.split("").reduce((s,c) => s + c.charCodeAt(0), 0);
+    const hashB = b.id.split("").reduce((s,c) => s + c.charCodeAt(0), 0);
+    return hashA - hashB;
+  }), []);
+
+  const scrambledSefiros = useMemo(() => {
+    const order = [6, 3, 0, 5, 2, 4, 1];
+    return order.map(i => SEFIROS_DATA[i]);
+  }, []);
+
+  // ═══ ROOM SHELL ═══
+  const shell = (num, title, subtitle, hebTitle, children) => (
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",background:C.bg,color:C.white,fontFamily:serif,animation:shaking?"shake 0.4s ease-in-out":"none",position:"relative",overflow:"hidden"}}>
+      <style>{KF}</style>
+      <HexGrid/><Scanline/>
+      {flashColor && <div style={{position:"fixed",inset:0,background:flashColor,opacity:0.1,zIndex:100,pointerEvents:"none"}}/>}
+      {narrative && <NarrativeOverlay text={narrative}/>}
+      <TopBar roomNum={num} timer={timer} onHint={useHint} hintsUsed={hintsUsed}/>
+      {hintText && <div style={{background:C.blueGlow,border:`1px solid ${C.blueDim}`,margin:"0.5rem 1rem",padding:"0.8rem 1rem",fontFamily:mono,fontSize:"0.8rem",color:C.blue,animation:"fadeUp 0.3s ease-out",position:"relative",zIndex:5}}><span style={{opacity:0.5}}>{"[!] "}</span>{hintText}</div>}
+      {wrongMsg && <div style={{background:"rgba(255,51,85,0.08)",border:`1px solid ${C.danger}44`,margin:"0.5rem 1rem",padding:"0.8rem 1rem",fontFamily:mono,fontSize:"0.78rem",color:C.danger,animation:"fadeUp 0.3s ease-out",position:"relative",zIndex:5}}>{wrongMsg}</div>}
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",padding:"1.5rem 1rem",position:"relative",zIndex:2,overflow:"auto"}}>
+        {hebTitle && <div style={{fontFamily:serif,fontSize:"1.6rem",color:C.gold,marginBottom:"0.15rem",textShadow:`0 0 20px ${C.goldDim}`}}>{hebTitle}</div>}
+        <h2 style={{fontFamily:mono,fontSize:"clamp(0.85rem,3vw,1.15rem)",color:C.blue,textAlign:"center",marginBottom:"0.1rem",letterSpacing:"0.2em",textTransform:"uppercase"}}>{title}</h2>
+        <p style={{fontFamily:mono,fontSize:"0.6rem",color:C.dim,letterSpacing:"0.25em",textAlign:"center",marginBottom:"1.5rem",textTransform:"uppercase"}}>{subtitle}</p>
+        {children}
+      </div>
+      <Inventory items={inventory}/>
+    </div>
+  );
+
+  // ═══════════════════════════
+  //  INTRO
+  // ═══════════════════════════
+  if (screen === "intro") return (
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",padding:"2rem",textAlign:"center",position:"relative",overflow:"hidden",background:`radial-gradient(ellipse at 50% 30%, #0a1025, ${C.bg} 70%)`}}>
+      <style>{KF}</style>
+      <HexGrid/><Scanline/>
+      <GlowOrb x={20} y={30} size={200} color={C.blue} delay={0}/>
+      <GlowOrb x={75} y={60} size={160} color={C.gold} delay={1.5}/>
+      <GlowOrb x={50} y={80} size={120} color={C.accent} delay={0.8}/>
+      {wrongMsg && <div style={{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",background:"rgba(255,51,85,0.12)",border:`1px solid ${C.danger}44`,padding:"0.6rem 1.2rem",fontFamily:mono,fontSize:"0.75rem",color:C.danger,zIndex:50,animation:"fadeUp 0.3s ease-out"}}>{wrongMsg}</div>}
+      <div style={{position:"relative",zIndex:2,maxWidth:520}}>
+        <div style={{width:80,height:80,margin:"0 auto 1.5rem",position:"relative",animation:"rotate 20s linear infinite"}}>
+          <div style={{position:"absolute",inset:0,border:`1px solid ${C.blue}44`}}/>
+          <div style={{position:"absolute",inset:8,border:`1px solid ${C.gold}33`,transform:"rotate(45deg)"}}/>
+          <div style={{position:"absolute",inset:16,border:`1px solid ${C.blue}22`,transform:"rotate(22.5deg)"}}/>
+          <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.4rem",color:C.gold}}><span style={{position:"absolute"}}>✡</span></div>
+        </div>
+        <div style={{fontFamily:mono,fontSize:"0.7rem",letterSpacing:"0.5em",color:C.blue,marginBottom:"0.8rem",opacity:0.6}}>{"< PROTOCOL INITIATED >"}</div>
+        <div style={{fontFamily:serif,fontSize:"2rem",color:C.gold,marginBottom:"0.3rem",textShadow:`0 0 30px ${C.goldDim}`}}>גאולה</div>
+        <h1 style={{fontFamily:mono,fontSize:"clamp(1.4rem,5vw,2.3rem)",color:C.white,lineHeight:1.2,marginBottom:"0.5rem",letterSpacing:"0.15em",fontWeight:400}}>GEULAH PROTOCOL</h1>
+        <div style={{width:60,height:1,background:`linear-gradient(90deg,transparent,${C.blue},transparent)`,margin:"0.8rem auto"}}/>
+        <p style={{fontFamily:serif,fontSize:"1rem",color:C.dim,maxWidth:440,lineHeight:1.8,fontStyle:"italic",marginBottom:"1.5rem"}}>
+          Five sealed chambers. Each one demands real Torah knowledge to advance. Decode the hidden gematria, identify the Rebbe's campaigns, align the Sefiros of the soul, answer riddles of Chassidic wisdom, and crack the final vault — to bring Moshiach Now.
+        </p>
+
+        {/* Name Input */}
+        <div style={{marginBottom:"1.5rem"}}>
+          <div style={{fontFamily:mono,fontSize:"0.55rem",color:C.dim,letterSpacing:"0.2em",marginBottom:"0.4rem"}}>ENTER YOUR NAME TO BEGIN</div>
+          <input
+            value={playerName}
+            onChange={e => setPlayerName(e.target.value.slice(0, 24))}
+            onKeyDown={e => e.key === "Enter" && startGame()}
+            placeholder="Your name..."
+            maxLength={24}
+            style={{...inputStyle, width:220, fontSize:"0.9rem"}}
+          />
+        </div>
+
+        <button onClick={startGame} style={{...btnPrimary,fontSize:"0.9rem",padding:"1rem 2.5rem",background:`linear-gradient(135deg, ${C.blueGlow}, rgba(255,215,0,0.06))`,border:`1px solid ${C.blue}66`,boxShadow:`0 0 30px ${C.blueGlow}`}}>
+          {">"} INITIATE GEULAH {"<"}
+        </button>
+
+        <div style={{marginTop:"2rem",display:"flex",gap:"2.5rem",justifyContent:"center",fontFamily:mono,fontSize:"0.6rem",color:C.dim,letterSpacing:"0.2em"}}>
+          <span>5 CHAMBERS</span><span>|</span><span>REAL CHALLENGES</span><span>|</span><span>45:00</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ═══════════════════════════
+  //  ROOM 1: GEMATRIA — NACHASH/MOSHIACH DRUSH
+  // ═══════════════════════════
+  if (screen === "room1") {
+    const check = () => {
+      if (GEMATRIA_ANSWER_ALTS.includes(gemInput.toUpperCase().trim())) {
+        doFlash(C.gold);
+        setInventory(inv => [...inv, "✡ Gematria Seal"]);
+        showStory("Nachash and Moshiach — both equal 358. The very poison of the serpent becomes the ultimate cure. The tikkun is revealed...", () => setScreen("room2"));
+      } else {
+        doShake();
+        showWrong("Incorrect. Use the gematria table — calculate the value of נחש, then find a word of redemption that equals the same number.");
+      }
+    };
+    return shell(1, "The Gematria Chamber", "The serpent hides a secret of redemption", "גימטריא", (
+      <div style={{display:"flex",flexDirection:"column",gap:"1.4rem",alignItems:"center",width:"100%",maxWidth:540}}>
+        {/* Gematria Reference */}
+        <div style={{background:C.panel,border:`1px solid ${C.blueDim}`,padding:"1rem",width:"100%",backdropFilter:"blur(8px)"}}>
+          <div style={{fontFamily:mono,fontSize:"0.58rem",color:C.blue,letterSpacing:"0.25em",marginBottom:"0.6rem",textAlign:"center"}}>HEBREW GEMATRIA TABLE</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(48px,1fr))",gap:"2px"}}>
+            {Object.entries(GEMATRIA_TABLE).map(([l,v]) => (
+              <div key={l} style={{textAlign:"center",padding:"4px 2px",background:"rgba(0,212,255,0.02)",border:`1px solid ${C.blue}10`}}>
+                <div style={{fontSize:"1.15rem",color:C.gold}}>{l}</div>
+                <div style={{fontSize:"0.52rem",color:C.dim,fontFamily:mono}}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* The Drush Challenge */}
+        <div style={{background:C.panel,border:`1px solid ${C.gold}33`,padding:"1.6rem 1.2rem",textAlign:"center",width:"100%",backdropFilter:"blur(8px)",position:"relative"}}>
+          <div style={{fontFamily:mono,fontSize:"0.6rem",color:C.danger,letterSpacing:"0.3em",marginBottom:"1rem"}}>{"<"} ENCODED MYSTERY {">"}</div>
+
+          <div style={{fontFamily:serif,fontSize:"2rem",color:C.gold,marginBottom:"0.3rem",textShadow:`0 0 20px ${C.goldDim}`}}>נחש</div>
+          <div style={{fontFamily:mono,fontSize:"0.7rem",color:C.dim,letterSpacing:"0.15em",marginBottom:"1.2rem"}}>NACHASH — THE SERPENT</div>
+
+          <div style={{fontFamily:serif,fontSize:"0.95rem",color:C.white,lineHeight:1.75,fontStyle:"italic",marginBottom:"0.5rem",maxWidth:440,margin:"0 auto 1.3rem",opacity:0.85}}>
+            The Zohar teaches: the very force that brought sin into the world carries within it the seed of the ultimate redemption. Calculate the gematria of נחש. Then ask yourself — what word of <span style={{color:C.gold}}>redemption</span> shares this exact same numerical value?
+          </div>
+
+          <div style={{fontFamily:serif,fontSize:"0.88rem",color:C.dim,lineHeight:1.7,marginBottom:"1.3rem",fontStyle:"italic"}}>
+            "The serpent's venom will become the greatest medicine. The one who comes to heal what the nachash broke — his very name equals the same number."
+          </div>
+
+          <div style={{display:"flex",gap:"0.5rem",justifyContent:"center",flexWrap:"wrap"}}>
+            <input value={gemInput} onChange={e=>setGemInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&check()} placeholder="WHO IS THE TIKKUN?" style={{...inputStyle,width:240}}/>
+            <button onClick={check} style={btnPrimary}>DECODE</button>
+          </div>
+        </div>
+
+        <div style={{fontFamily:mono,fontSize:"0.58rem",color:C.dim,textAlign:"center",lineHeight:1.6,maxWidth:400}}>
+          Use the table above. Calculate: נ + ח + ש = ?<br/>Then find the word of ultimate redemption with the same value.
+          <div style={{marginTop:6,opacity:0.6,fontSize:"0.5rem",letterSpacing:"0.1em"}}>Type in English — spelling variations of Hebrew words are accepted</div>
+        </div>
+      </div>
+    ));
+  }
+
+  // ═══════════════════════════
+  //  ROOM 2: THE 10 MIVTZOIM — with real mitzvah decoys
+  // ═══════════════════════════
+  if (screen === "room2") {
+    const toggle = (id) => setSelected(s => s.includes(id) ? s.filter(x=>x!==id) : [...s,id]);
+    const checkSel = () => {
+      const correctIds = ALL_ITEMS.filter(i=>i.isMivtza).map(i=>i.id);
+      const hasAll = correctIds.every(id => selected.includes(id));
+      const noWrong = selected.every(id => correctIds.includes(id));
+      if (hasAll && noWrong) {
+        doFlash(C.gold);
+        setInventory(inv => [...inv, "🕎 Mivtzoim Badge"]);
+        showStory("All 10 Mivtzoim identified! The Rebbe launched each campaign to flood the world with light and hasten the Geulah...", () => setScreen("room3"));
+      } else {
+        doShake(); doFlash(C.danger);
+        const wrongPicks = selected.filter(id => !correctIds.includes(id));
+        const missing = correctIds.filter(id => !selected.includes(id));
+        let msg = "Not quite. ";
+        if (wrongPicks.length > 0) msg += `You selected ${wrongPicks.length} item(s) that are NOT among the Rebbe's 10 Mivtzoim — they may be important mitzvos, but the Rebbe didn't designate them as campaigns. `;
+        if (missing.length > 0) msg += `You're still missing ${missing.length} Mivtza(im).`;
+        showWrong(msg);
+      }
+    };
+    return shell(2, "The Rebbe's 10 Mivtzoim", "Select ONLY the Rebbe's campaigns — beware of decoys", "מבצעים", (
+      <div style={{display:"flex",flexDirection:"column",gap:"1.2rem",alignItems:"center",width:"100%",maxWidth:560}}>
+        <div style={{fontFamily:serif,fontStyle:"italic",color:C.dim,fontSize:"0.85rem",textAlign:"center",lineHeight:1.7,maxWidth:460}}>
+          The Rebbe launched exactly 10 Mivtzoim — campaigns to spread Yiddishkeit across the world. Below are 15 items. Some are the Rebbe's Mivtzoim. Others are important mitzvos — but they were <span style={{color:C.danger}}>never designated as one of the 10 campaigns</span>. Choose carefully.
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(155px,1fr))",gap:"6px",width:"100%"}}>
+          {shuffledItems.map(item => {
+            const sel = selected.includes(item.id);
+            return (
+              <div key={item.id} onClick={() => toggle(item.id)} style={{
+                padding:"0.65rem 0.5rem",cursor:"pointer",textAlign:"center",
+                background:sel?"rgba(0,212,255,0.07)":"rgba(0,0,0,0.3)",
+                border:`1px solid ${sel?C.blue:"rgba(255,255,255,0.05)"}`,
+                transition:"all 0.25s",boxShadow:sel?`0 0 10px ${C.blueGlow}`:"none",
+              }}>
+                <div style={{fontSize:"1.4rem",marginBottom:"0.2rem"}}>{item.icon}</div>
+                <div style={{fontFamily:mono,fontSize:"0.62rem",color:sel?C.blue:C.dim,letterSpacing:"0.03em",lineHeight:1.3}}>{item.name}</div>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{display:"flex",gap:"1rem",alignItems:"center",flexWrap:"wrap",justifyContent:"center"}}>
+          <span style={{fontFamily:mono,fontSize:"0.68rem",color:selected.length===10?C.success:C.dim}}>{selected.length}/10 selected</span>
+          <button onClick={checkSel} style={btnPrimary}>VERIFY SELECTION</button>
+        </div>
+      </div>
+    ));
+  }
+
+  // ═══════════════════════════
+  //  ROOM 3: SEFIROS — cryptic clue-based ordering
+  // ═══════════════════════════
+  if (screen === "room3") {
+    const available = scrambledSefiros.filter(s => !sefOrder.includes(s.name));
+    const nextIdx = sefOrder.length;
+    const nextClue = nextIdx < 7 ? SEFIROS_DATA[nextIdx].clue : null;
+
+    const addSef = (name) => {
+      if (name === SEFIROS_CORRECT[nextIdx]) {
+        const next = [...sefOrder, name];
+        setSefOrder(next);
+        if (next.length === 7) {
+          doFlash(C.gold);
+          setTimeout(() => {
+            setInventory(inv => [...inv, "🌳 Sefiros Map"]);
+            showStory("The Etz Chaim aligns — seven channels of divine energy flow from above to below. The riddles of Chassidic wisdom await...", () => setScreen("room4"));
+          }, 700);
+        }
+      } else {
+        doShake(); doFlash(C.danger);
+        showWrong("Wrong sefirah for this position. Read the clue carefully — which attribute and which biblical figure does it describe?");
+      }
+    };
+    const undo = () => { setSefOrder(s => s.slice(0,-1)); setWrongMsg(""); };
+
+    return shell(3, "The Sefiros Alignment", "Read each clue — identify and place the correct sefirah", "ספירות", (
+      <div style={{display:"flex",flexDirection:"column",gap:"1.2rem",alignItems:"center",width:"100%",maxWidth:520}}>
+        <div style={{fontFamily:serif,fontStyle:"italic",color:C.dim,fontSize:"0.85rem",textAlign:"center",lineHeight:1.65,maxWidth:440}}>
+          The 7 lower Sefiros must be placed in order from highest to lowest. For each position, a clue describes the correct sefirah — its nature and the biblical figure who embodies it. Match wisely.
+        </div>
+
+        {/* Placed sefiros */}
+        <div style={{width:"100%",background:C.panel,border:`1px solid ${C.blueDim}`,padding:"0.8rem",backdropFilter:"blur(8px)",minHeight:60}}>
+          <div style={{fontFamily:mono,fontSize:"0.56rem",color:C.blue,letterSpacing:"0.25em",marginBottom:"0.5rem",display:"flex",justifyContent:"space-between"}}>
+            <span>ETZ CHAIM — {sefOrder.length}/7 ALIGNED</span>
+            {sefOrder.length > 0 && <span onClick={undo} style={{color:C.danger,cursor:"pointer",letterSpacing:"0.1em"}}>UNDO LAST</span>}
+          </div>
+          {sefOrder.map((name, i) => {
+            const s = SEFIROS_DATA.find(x=>x.name===name);
+            return (
+              <div key={name} style={{display:"flex",alignItems:"center",gap:"0.7rem",padding:"0.35rem 0.5rem",marginBottom:2,background:"rgba(0,212,255,0.03)",border:`1px solid ${s.color}25`,animation:"fadeUp 0.3s ease-out"}}>
+                <span style={{fontFamily:mono,fontSize:"0.58rem",color:C.dim,width:18}}>{i+1}.</span>
+                <span style={{fontSize:"0.95rem",color:s.color}}>{s.heb}</span>
+                <span style={{fontFamily:mono,fontSize:"0.68rem",color:C.white}}>{s.name}</span>
+              </div>
+            );
+          })}
+          {sefOrder.length === 0 && <div style={{fontFamily:mono,fontSize:"0.62rem",color:C.dim,textAlign:"center",padding:"0.5rem",opacity:0.4}}>Read the clue below and select the matching sefirah...</div>}
+        </div>
+
+        {/* Current clue */}
+        {nextClue && (
+          <div style={{background:"rgba(255,215,0,0.04)",border:`1px solid ${C.gold}22`,padding:"1.2rem",width:"100%",animation:"fadeUp 0.4s ease-out"}}>
+            <div style={{fontFamily:mono,fontSize:"0.56rem",color:C.gold,letterSpacing:"0.25em",marginBottom:"0.6rem"}}>CLUE FOR POSITION {nextIdx+1}</div>
+            <p style={{fontFamily:serif,fontSize:"0.95rem",color:C.white,lineHeight:1.7,fontStyle:"italic"}}>{nextClue}</p>
+          </div>
+        )}
+
+        {/* Available sefiros */}
+        {available.length > 0 && (
+          <div style={{display:"flex",gap:"5px",flexWrap:"wrap",justifyContent:"center"}}>
+            {available.map(s => (
+              <button key={s.name} onClick={() => addSef(s.name)} style={{
+                padding:"0.55rem 0.9rem",cursor:"pointer",
+                background:"rgba(0,0,0,0.3)",border:`1px solid ${s.color}33`,
+                color:s.color,fontFamily:serif,fontSize:"1.1rem",borderRadius:0,
+                transition:"all 0.25s",letterSpacing:"0.04em",
+              }}>
+                {s.heb}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    ));
+  }
+
+  // ═══════════════════════════
+  //  ROOM 4: RIDDLES OF CHASSIDIC WISDOM
+  // ═══════════════════════════
+  if (screen === "room4") {
+    const check = () => {
+      if (RIDDLES[currentRiddle].a.includes(riddleInput.toUpperCase().trim())) {
+        doFlash(C.gold);
+        const next = riddlesSolved + 1;
+        setRiddlesSolved(next);
+        setRiddleInput("");
+        setWrongMsg("");
+        if (next >= 3) {
+          setTimeout(() => {
+            setInventory(inv => [...inv, "📜 Torah Seal"]);
+            showStory("Three seals of wisdom broken. Torah, Rambam, and the Beis HaMikdash — the pillars of Geulah. The final vault awaits...", () => setScreen("room5"));
+          }, 800);
+        } else setCurrentRiddle(r => r + 1);
+      } else {
+        doShake();
+        showWrong("Incorrect. Read the clue again carefully — every detail matters.");
+      }
+    };
+    return shell(4, "Riddles of Chassidic Wisdom", "Answer three questions rooted in Torah and Chassidus", "חכמה", (
+      <div style={{display:"flex",flexDirection:"column",gap:"1.5rem",alignItems:"center",width:"100%",maxWidth:500}}>
+        <div style={{display:"flex",gap:"1rem"}}>
+          {[0,1,2].map(i => (
+            <div key={i} style={{width:44,height:44,display:"flex",alignItems:"center",justifyContent:"center",border:`2px solid ${i<riddlesSolved?C.gold:C.blue+"22"}`,background:i<riddlesSolved?"rgba(255,215,0,0.08)":"rgba(0,0,0,0.3)",color:i<riddlesSolved?C.gold:C.dim,fontSize:"1rem",transition:"all 0.4s",boxShadow:i<riddlesSolved?`0 0 15px ${C.goldDim}`:"none"}}>
+              {i < riddlesSolved ? "✡" : "◇"}
+            </div>
+          ))}
+        </div>
+        {riddlesSolved < 3 && (
+          <div style={{background:C.panel,border:`1px solid ${C.blueDim}`,padding:"1.6rem 1.2rem",textAlign:"center",width:"100%",backdropFilter:"blur(8px)"}}>
+            <div style={{fontFamily:mono,fontSize:"0.58rem",color:C.blue,letterSpacing:"0.25em",marginBottom:"1rem"}}>RIDDLE {currentRiddle+1} OF 3</div>
+            <p style={{fontFamily:serif,fontSize:"1.02rem",color:C.white,lineHeight:1.75,fontStyle:"italic",marginBottom:"1.5rem"}}>
+              {RIDDLES[currentRiddle].q}
+            </p>
+            <div style={{display:"flex",gap:"0.5rem",justifyContent:"center",flexWrap:"wrap"}}>
+              <input value={riddleInput} onChange={e=>setRiddleInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&check()} placeholder="Your answer..." style={{...inputStyle,width:240}}/>
+              <button onClick={check} style={btnPrimary}>ANSWER</button>
+            </div>
+            <div style={{fontFamily:mono,fontSize:"0.5rem",color:C.dim,marginTop:"0.8rem",opacity:0.6,letterSpacing:"0.1em"}}>Type in English — spelling variations of Hebrew words are accepted</div>
+          </div>
+        )}
+      </div>
+    ));
+  }
+
+  // ═══════════════════════════
+  //  ROOM 5: THE GEULAH VAULT
+  // ═══════════════════════════
+  if (screen === "room5") {
+    const spin = (i,d) => setVaultDigits(v => { const n=[...v]; n[i]=(n[i]+d+10)%10; return n; });
+    const checkV = () => {
+      if (vaultDigits.join("") === VAULT_CODE) {
+        clearInterval(timerRef.current); setRunning(false);
+        doFlash(C.gold);
+        // Save result privately + generate verification code
+        const elapsed = 45*60 - timer;
+        const score = Math.max(0, 10000 - elapsed*3 - hintsUsed*500);
+        const name = playerName.trim() || "Anonymous";
+        const code = generateCode(name, score, elapsed, hintsUsed);
+        setCompletionCode(code);
+        const entry = { name, time: fmt(elapsed), timeSeconds: elapsed, hints: hintsUsed, score, code, date: new Date().toISOString() };
+        sendEmailNotification(entry);
+        showStory("The vault opens with a blinding light! The Or Ein Sof pours forth — the Geulah is here. Moshiach Now!", () => setScreen("victory"));
+      } else { doShake(); doFlash(C.danger); showWrong("The vault remains sealed. Reconsider the inscription."); }
+    };
+    return shell(5, "The Geulah Vault", "Enter the final code to bring the Geulah", "גאולה", (
+      <div style={{display:"flex",flexDirection:"column",gap:"1.5rem",alignItems:"center",width:"100%",maxWidth:500}}>
+        <div style={{background:C.panel,border:`1px solid ${C.gold}22`,padding:"1.2rem",width:"100%",textAlign:"center",backdropFilter:"blur(8px)"}}>
+          <div style={{fontFamily:mono,fontSize:"0.58rem",color:C.gold,letterSpacing:"0.25em",marginBottom:"0.6rem"}}>INSCRIPTION ON THE VAULT</div>
+          <p style={{fontFamily:serif,fontSize:"0.92rem",color:C.white,lineHeight:1.75,fontStyle:"italic"}}>
+            "Every Chossid knows the address. The place from which Torah and light radiate to the entire world — the Rebbe's shul, the Rebbe's home, on Eastern Parkway in Crown Heights. Its three-digit street number is known to every Jewish child."
+          </p>
+          <div style={{width:40,height:1,background:`${C.gold}33`,margin:"0.8rem auto"}}/>
+          <p style={{fontFamily:serif,fontSize:"0.88rem",color:C.dim,lineHeight:1.7,fontStyle:"italic"}}>
+            "For the final digit — you have already aligned them in Chamber Three. The emotional attributes of the soul. How many were there?"
+          </p>
+        </div>
+
+        {/* Vault Mechanism */}
+        <div style={{background:`radial-gradient(circle, rgba(8,14,28,1), ${C.bg})`,border:`2px solid ${C.gold}33`,padding:"2rem",boxShadow:`0 0 60px rgba(0,0,0,0.5), 0 0 25px ${C.blueGlow}`,position:"relative"}}>
+          {[[0,0],[1,0],[0,1],[1,1]].map(([x,y],i) => (
+            <div key={i} style={{position:"absolute",[y?"bottom":"top"]:4,[x?"right":"left"]:4,width:12,height:12,borderTop:y?"none":`1px solid ${C.blue}55`,borderBottom:y?`1px solid ${C.blue}55`:"none",borderLeft:x?"none":`1px solid ${C.blue}55`,borderRight:x?`1px solid ${C.blue}55`:"none"}}/>
+          ))}
+          <div style={{display:"flex",gap:"0.7rem",justifyContent:"center",marginBottom:"1.2rem"}}>
+            {vaultDigits.map((d,i) => (
+              <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"0.2rem"}}>
+                <button onClick={() => spin(i,1)} style={dialBtn}>▲</button>
+                <div style={{width:50,height:62,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:mono,fontSize:"2rem",fontWeight:700,color:C.gold,background:"rgba(0,0,0,0.5)",border:`1px solid ${C.gold}44`,textShadow:`0 0 12px ${C.goldDim}`}}>{d}</div>
+                <button onClick={() => spin(i,-1)} style={dialBtn}>▼</button>
+              </div>
+            ))}
+          </div>
+          <button onClick={checkV} style={{...btnPrimary,width:"100%",padding:"0.9rem",fontSize:"0.88rem",background:`linear-gradient(135deg, ${C.blueGlow}, rgba(255,215,0,0.06))`,border:`1px solid ${C.gold}55`,color:C.gold,boxShadow:`0 0 20px ${C.goldDim}`}}>
+            {">"} UNLOCK THE GEULAH {"<"}
+          </button>
+        </div>
+      </div>
+    ));
+  }
+
+  // ═══ VICTORY ═══
+  if (screen === "victory") {
+    const elapsed = 45*60 - timer;
+    const score = Math.max(0, 10000 - elapsed*3 - hintsUsed*500);
+    const name = playerName.trim() || "Anonymous";
+    const code = completionCode || generateCode(name, score, elapsed, hintsUsed);
+
+    return (
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",minHeight:"100vh",padding:"2rem",textAlign:"center",position:"relative",overflow:"hidden",background:`radial-gradient(ellipse at 50% 40%, #0a1025, ${C.bg} 70%)`,fontFamily:serif,color:C.white}}>
+        <style>{KF}</style>
+        <HexGrid/>
+        <GlowOrb x={30} y={25} size={250} color={C.gold} delay={0}/>
+        <GlowOrb x={70} y={65} size={200} color={C.blue} delay={1}/>
+        <div style={{position:"relative",zIndex:2,maxWidth:480,width:"100%",paddingTop:"1.5rem"}}>
+          <div style={{fontSize:"1.8rem",color:C.gold,marginBottom:"0.4rem",textShadow:`0 0 30px ${C.goldDim}`}}>!משיח נאו</div>
+          <h1 style={{fontFamily:mono,fontSize:"clamp(1.4rem,5vw,2.1rem)",color:C.blue,letterSpacing:"0.2em",fontWeight:400,marginBottom:"0.2rem"}}>MOSHIACH NOW</h1>
+          <div style={{fontFamily:mono,fontSize:"0.62rem",color:C.dim,letterSpacing:"0.3em",marginBottom:"1rem"}}>GEULAH PROTOCOL COMPLETE</div>
+
+          {/* ─── RESULT CARD — designed for screenshot ─── */}
+          <div style={{
+            background:"linear-gradient(135deg, rgba(8,14,28,0.95), rgba(4,6,14,0.98))",
+            border:`2px solid ${C.gold}44`,padding:"1.4rem 1.2rem",marginBottom:"1rem",
+            boxShadow:`0 0 30px rgba(0,0,0,0.4), inset 0 0 30px rgba(255,215,0,0.03)`,
+            position:"relative",
+          }}>
+            {/* Corner accents */}
+            {[[0,0],[1,0],[0,1],[1,1]].map(([x,y],i) => (
+              <div key={i} style={{position:"absolute",[y?"bottom":"top"]:6,[x?"right":"left"]:6,width:10,height:10,borderTop:y?"none":`1px solid ${C.gold}55`,borderBottom:y?`1px solid ${C.gold}55`:"none",borderLeft:x?"none":`1px solid ${C.gold}55`,borderRight:x?`1px solid ${C.gold}55`:"none"}}/>
+            ))}
+
+            <div style={{fontFamily:mono,fontSize:"0.5rem",color:C.dim,letterSpacing:"0.3em",marginBottom:"0.6rem"}}>GEULAH PROTOCOL — COMPLETION CERTIFICATE</div>
+            <div style={{fontFamily:mono,fontSize:"1rem",color:C.gold,marginBottom:"0.8rem"}}>{name}</div>
+
+            <div style={{display:"flex",gap:"1rem",justifyContent:"center",flexWrap:"wrap",marginBottom:"0.8rem"}}>
+              {[{l:"TIME",v:fmt(elapsed)},{l:"HINTS",v:String(hintsUsed)},{l:"SCORE",v:score.toLocaleString()}].map(s => (
+                <div key={s.l} style={{minWidth:65}}>
+                  <div style={{fontFamily:mono,fontSize:"0.45rem",color:C.dim,letterSpacing:"0.2em",marginBottom:"0.15rem"}}>{s.l}</div>
+                  <div style={{fontFamily:mono,fontSize:"1.2rem",color:C.gold}}>{s.v}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{width:"100%",height:1,background:`linear-gradient(90deg, transparent, ${C.gold}33, transparent)`,margin:"0.6rem 0"}}/>
+
+            {/* Verification Code — the key piece */}
+            <div style={{fontFamily:mono,fontSize:"0.48rem",color:C.dim,letterSpacing:"0.25em",marginBottom:"0.3rem"}}>VERIFICATION CODE</div>
+            <div style={{
+              fontFamily:mono,fontSize:"1.6rem",color:C.blue,letterSpacing:"0.3em",
+              textShadow:`0 0 15px ${C.blueDim}`,
+              padding:"0.4rem 0",
+              animation:"glow 3s ease-in-out infinite",
+            }}>{code}</div>
+            <div style={{fontFamily:mono,fontSize:"0.42rem",color:C.dim,letterSpacing:"0.15em",marginTop:"0.3rem"}}>
+              SCREENSHOT THIS CARD AND SEND TO VERIFY YOUR COMPLETION
+            </div>
+          </div>
+
+          <p style={{fontFamily:serif,fontStyle:"italic",color:C.dim,maxWidth:400,lineHeight:1.7,margin:"0 auto 1rem",fontSize:"0.88rem"}}>
+            {score >= 8000 ? "The Rebbe would be proud — you brought the Geulah with extraordinary speed and deep Torah knowledge." :
+             score >= 5000 ? "Well done! Every mitzvah counts. The Geulah shines through your effort." :
+             "Through persistence and emunah — the Geulah came. Ad Mosai — we want Moshiach now!"}
+          </p>
+
+          <div style={{display:"flex",gap:"0.4rem",flexWrap:"wrap",justifyContent:"center",margin:"0.5rem 0 1rem"}}>
+            {inventory.map((item,i) => <span key={i} style={{fontFamily:mono,fontSize:"0.55rem",color:C.blue,background:C.blueGlow,padding:"0.2rem 0.5rem",border:`1px solid ${C.blueDim}`}}>{item}</span>)}
+          </div>
+
+          <div style={{fontFamily:mono,fontSize:"0.5rem",color:C.success,marginBottom:"0.5rem",letterSpacing:"0.15em"}}>✓ RESULT SUBMITTED</div>
+          <button onClick={() => window.location.reload()} style={{...btnPrimary,padding:"0.8rem 2rem"}}>PLAY AGAIN</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══ GAME OVER ═══
+  if (screen === "gameover") return (
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",padding:"2rem",textAlign:"center",background:`radial-gradient(ellipse at 50% 40%, #150505, ${C.bg} 70%)`,fontFamily:serif,color:C.white}}>
+      <style>{KF}</style>
+      <div style={{fontSize:"2rem",color:C.gold,marginBottom:"0.5rem"}}>⏳</div>
+      <h1 style={{fontFamily:mono,fontSize:"clamp(1.3rem,4vw,2rem)",color:C.danger,letterSpacing:"0.15em",fontWeight:400}}>TIME EXPIRED</h1>
+      <p style={{fontStyle:"italic",color:C.dim,fontSize:"1rem",margin:"1rem 0",lineHeight:1.7,maxWidth:400}}>
+        The Geulah requires persistence and learning. As the Rebbe said — "We want Moshiach now!" Go back, learn more, and try again with renewed strength.
+      </p>
+      <button onClick={() => window.location.reload()} style={{...btnPrimary,marginTop:"0.5rem"}}>TRY AGAIN</button>
+    </div>
+  );
+
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(GeulahProtocol));
+</script>
+<!-- network-block -->
+<style>.toln{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 10px;padding:8px 16px;font:400 11px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;border-top:1px solid rgba(128,128,128,.1);color:rgba(128,128,128,.45)}.toln a{color:inherit;text-decoration:none}.toln a:hover{color:rgba(128,128,128,.85);text-decoration:underline}.toln .d{color:rgba(128,128,128,.2)}@media(prefers-color-scheme:dark){.toln{border-top-color:rgba(200,200,200,.07);color:rgba(200,200,200,.35)}.toln a:hover{color:rgba(200,200,200,.8)}.toln .d{color:rgba(200,200,200,.15)}}</style>
+<nav class="toln" aria-label="Related sites"><a href="https://rabbiboruch.com">Rabbi Boruch</a><span class="d">&#183;</span><a href="https://rebbesletters.com">The Rebbe's Letters</a><span class="d">&#183;</span><a href="https://beismoshiach.org">Beis Moshiach</a></nav>
+<script src="https://thetreeoflifebooks.com/network.js" data-site="treeoflife" defer></script>
+<!-- /network-block -->
+</body>
+</html>

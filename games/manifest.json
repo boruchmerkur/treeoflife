@@ -1,0 +1,43 @@
+{
+  "_comment": "Tree of Life Games — add a new entry here to make a new card appear on /games. Slugs map to folders: games/<slug>/index.html. Statuses: 'live' | 'coming-soon' | 'archived' | 'retired' | 'draft'.",
+  "games": [
+    {
+      "slug": "garden-of-tanya",
+      "title": "The Garden of Tanya",
+      "tagline": "A 53-chapter illustrated memory game",
+      "description": "Match the chapter illustrations and learn Tanya one pair at a time — every match reveals the chapter’s keyword, capsule summary, and a deeper teaching. Three levels, ages 4 to 120.",
+      "status": "live",
+      "featured": true,
+      "released": "2026-07-09",
+      "duration": "10–20 min",
+      "themes": ["Tanya", "Chassidus", "Memory"],
+      "accent": "garden"
+    },
+    {
+      "slug": "geulah-protocol",
+      "title": "Geulah Protocol",
+      "tagline": "An 8-room Chabad Moshiach escape room",
+      "description": "Eight progressively-themed Torah puzzles — Gematria, the Chain of Chassidus, the Rebbe's Mivtzoim, the Sefiros, and a final Vault. A 45-minute test of learning, memory, and synthesis.",
+      "status": "live",
+      "featured": true,
+      "released": "2026-05-30",
+      "duration": "45 min",
+      "themes": ["Chassidus", "Moshiach", "Sefiros"],
+      "accent": "lightning",
+      "shortUrl": "/protocol"
+    },
+    {
+      "slug": "geula-quest",
+      "title": "Geula Quest",
+      "tagline": "A story-driven Geulah adventure",
+      "description": "A narrative-driven adventure exploring the path toward Geulah. Walk through scenes, gather wisdom, and complete the journey at your own pace.",
+      "status": "live",
+      "featured": true,
+      "released": "2026-04-15",
+      "duration": "30 min",
+      "themes": ["Geulah", "Story"],
+      "accent": "evergreen",
+      "shortUrl": "/quest"
+    }
+  ]
+}

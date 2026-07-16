@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Garden of Tanya — Memory Game — The Tree of Life</title>
+<meta name="description" content="Learn the 53 chapters of Tanya by heart — one word, one image, one idea at a time. An illustrated memory game from The Garden of Tanya.">
+<link rel="canonical" href="https://thetreeoflifebooks.com/games/garden-of-tanya/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Tree of Life Books">
+<meta property="og:title" content="The Garden of Tanya — Memory Game">
+<meta property="og:description" content="Learn the 53 chapters of Tanya by heart — one word, one image, one idea at a time.">
+<meta property="og:image" content="https://thetreeoflifebooks.com/games/garden-of-tanya/img/cover.jpg">
+<meta name="theme-color" content="#243a2c">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f7f0e2; --cream-2:#fbf6ec; --surface:#fffdf8; --surface-2:#f2ead9;
+  --ink:#26241c; --ink-soft:rgba(38,36,28,.68); --ink-faint:rgba(38,36,28,.45);
+  --green:#33493a; --green-deep:#243a2c; --green-soft:#4f6a56;
+  --gold-1:#7e5717; --gold:#9c6f2e; --gold-2:#b4843a; --gold-3:#c89a44; --gold-pale:#d8b15e;
+  --line:rgba(38,36,28,.12); --line-gold:rgba(156,111,46,.32); --line-hi:rgba(156,111,46,.5);
+  --serif:"Fraunces",Georgia,serif; --body:"EB Garamond",Georgia,serif;
+  --gold-grad:linear-gradient(100deg,#8a5d1f 0%,#b4843a 50%,#cb9e4a 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% -8%, rgba(156,111,46,.10), transparent 70%),
+             radial-gradient(50% 45% at 100% 0%, rgba(51,73,58,.06), transparent 70%);}
+a{color:var(--green-deep);text-decoration:none}
+a:hover{color:var(--gold-1)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 34px;position:relative;z-index:2}
+.eyebrow{font-size:.72rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.gold-text{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Header — matches games hub */
+header{position:fixed;top:0;left:0;right:0;z-index:60;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+header.scrolled{background:rgba(247,240,226,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-gold)}
+.nav{display:flex;align-items:flex-end;justify-content:space-between;height:84px;padding-bottom:16px;max-width:1200px;margin:0 auto;padding-left:34px;padding-right:34px;position:relative;z-index:2}
+.brand{font-family:var(--serif);font-size:1.18rem;color:var(--green-deep);font-weight:500;margin-bottom:6px}
+.brand a{color:inherit}
+.brand a:hover{color:var(--green)}
+nav ul{display:flex;gap:34px;list-style:none;align-items:center}
+nav a{font-family:"Rajdhani",sans-serif;font-weight:500;font-size:.84rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);transition:color .25s}
+nav a:hover,nav a.active{color:var(--green)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--green)}
+.nav-toggle svg{width:28px;height:28px}
+@media(max-width:1160px){
+  .nav-toggle{display:block}
+  nav ul{position:absolute;top:84px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;
+    background:rgba(251,246,236,.98);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-gold);
+    max-height:0;overflow:hidden;transition:max-height .4s ease}
+  nav ul.open{max-height:520px}
+  nav li{width:100%;border-top:1px solid var(--line)}
+  nav ul a{display:block;padding:19px 34px;font-size:.86rem;color:var(--ink)}
+}
+
+/* Hero */
+.hero{padding:170px 0 30px}
+.hero .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(2.5rem,5vw,3.9rem);line-height:1.05;letter-spacing:-.01em;margin:14px 0 20px}
+.hero h1 em{font-style:italic}
+.hero .lede{font-size:1.16rem;color:var(--ink-soft);max-width:52ch}
+.hero .ctas{display:flex;gap:16px;align-items:center;margin-top:30px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:"Rajdhani",sans-serif;font-weight:600;font-size:.88rem;letter-spacing:.2em;text-transform:uppercase;padding:15px 30px;border:1px solid var(--green-deep);transition:all .25s}
+.btn.solid{background:var(--green-deep);color:var(--cream-2)}
+.btn.solid:hover{background:var(--green);color:var(--cream-2);border-color:var(--green)}
+.btn.ghost{color:var(--green-deep)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold-1)}
+.hero .coverframe{justify-self:center;max-width:340px;transform:rotate(1.5deg)}
+.hero .coverframe img{display:block;width:100%;border:1px solid var(--line-gold);box-shadow:0 30px 70px -30px rgba(38,36,28,.5)}
+.hero .coverframe .cap{text-align:center;font-size:.8rem;color:var(--ink-faint);font-style:italic;margin-top:14px}
+@media(max-width:860px){.hero .grid2{grid-template-columns:1fr}.hero .coverframe{order:-1;max-width:250px}}
+
+/* Sections */
+section.block{padding:60px 0 0}
+.shead{display:flex;align-items:baseline;gap:18px;margin:0 0 28px;padding-top:26px;border-top:1px solid var(--line)}
+.shead .num{font-size:.72rem;letter-spacing:.32em;color:var(--gold);font-weight:600;text-transform:uppercase}
+.shead h2{font-family:var(--serif);font-weight:300;font-size:clamp(1.6rem,2.6vw,2.2rem);letter-spacing:-.01em}
+.shead h2 em{font-style:italic}
+.shead .rule{flex:1;height:1px;background:var(--line);align-self:center}
+.prose{max-width:70ch;color:var(--ink-soft)}
+.prose p+p{margin-top:16px}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{font-style:italic}
+blockquote{margin:26px 0;padding:22px 28px;border-left:2px solid var(--gold);background:var(--surface);font-family:var(--serif);font-weight:300;font-size:1.12rem;line-height:1.55;color:var(--ink)}
+blockquote .src{display:block;margin-top:12px;font-family:var(--body);font-size:.82rem;font-style:normal;letter-spacing:.06em;color:var(--ink-faint)}
+
+/* Rebbe's letters */
+.rquotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:32px}
+.rq{background:var(--surface);border:1px solid var(--line-gold);padding:24px 24px 20px;display:flex;flex-direction:column;gap:12px}
+.rq p{font-family:var(--serif);font-weight:300;font-size:1.02rem;line-height:1.55;color:var(--ink)}
+.rq .src{font-size:.78rem;letter-spacing:.06em;color:var(--ink-faint)}
+.rq .tag{font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600}
+
+/* Method cards */
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;margin-top:36px}
+.mcard{background:var(--surface);border:1px solid var(--line-gold);padding:26px 24px;display:flex;flex-direction:column;gap:10px}
+.mcard .k{font-family:var(--serif);font-weight:300;font-size:2rem;color:var(--gold-2);line-height:1}
+.mcard h3{font-family:var(--serif);font-weight:500;font-size:1.12rem}
+.mcard p{font-size:.92rem;color:var(--ink-soft);line-height:1.55}
+
+/* Keyword garden */
+.garden-note{max-width:66ch;color:var(--ink-soft);margin-bottom:26px}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chips span{display:inline-flex;align-items:baseline;gap:7px;font-size:.86rem;padding:7px 14px;background:var(--surface);border:1px solid var(--line-gold);border-radius:99px;color:var(--ink)}
+.chips span b{font-family:var(--body);font-weight:600;font-size:.68rem;letter-spacing:.1em;color:var(--gold)}
+
+/* Game lead-in */
+.gamein{margin-top:36px;background:var(--green-deep);color:var(--cream-2);padding:56px clamp(28px,6vw,70px);position:relative;overflow:hidden}
+.gamein::before{content:"";position:absolute;inset:0;background:radial-gradient(70% 90% at 85% 10%,rgba(216,177,94,.22),transparent 55%);pointer-events:none}
+.gamein .eyebrow{color:var(--gold-pale)}
+.gamein h2{font-family:var(--serif);font-weight:300;font-size:clamp(1.8rem,3.4vw,2.6rem);margin:12px 0 16px;letter-spacing:-.01em}
+.gamein h2 em{font-style:italic;color:var(--gold-pale)}
+.gamein p{color:rgba(247,240,226,.82);max-width:60ch}
+.gamein ul{margin:22px 0 0;list-style:none;display:grid;gap:12px;max-width:60ch}
+.gamein li{display:flex;gap:14px;align-items:baseline;color:rgba(247,240,226,.82);font-size:.98rem}
+.gamein li::before{content:"·";color:var(--gold-pale);font-weight:700}
+.gamein .btn{margin-top:32px;border-color:var(--gold-pale);color:var(--green-deep);background:var(--gold-pale)}
+.gamein .btn:hover{background:var(--cream-2);border-color:var(--cream-2)}
+
+/* Footer */
+footer{margin-top:90px;padding:50px 0 40px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+footer .copy{font-size:.85rem;color:var(--ink-faint)}
+footer .links{display:flex;gap:24px;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase}
+footer .links a{color:var(--ink-soft)}
+footer .links a:hover{color:var(--green)}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="brand"><a href="/">The Tree of Life Books</a></div>
+    <button class="nav-toggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+    <nav><ul id="nav-menu">
+      <li><a href="/#collection">Collection</a></li>
+      <li><a href="/gallery.html">Artwork</a></li>
+      <li><a href="/newsletter.html">Newsletter</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="https://rabbiboruch.com/">Rabbi Boruch</a></li>
+      <li><a href="/games" class="active">Games</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<section class="hero" data-screen-label="Hero">
+  <div class="wrap grid2">
+    <div>
+      <div class="eyebrow reveal">Games · From the illustrated book</div>
+      <h1 class="reveal d1">Carry <em class="gold-text">Tanya</em> with you — all fifty-three chapters.</h1>
+      <p class="lede reveal d2">Tanya is the Written Torah of Chabad Chassidus — a book chassidim have always aspired to know by heart. <em>The Garden of Tanya</em> gives every chapter a word, a picture, and a single idea, so that memory has something to hold. This game plants them.</p>
+      <div class="ctas reveal d2">
+        <a class="btn solid" href="play.html">Play the memory game</a>
+        <a class="btn ghost" href="#method">How it works</a>
+      </div>
+    </div>
+    <div class="coverframe reveal d2">
+      <img src="img/cover.jpg" alt="The Garden of Tanya — book cover">
+      <div class="cap">The Garden of Tanya — illustrated &amp; summarized</div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+<section class="block" data-screen-label="Why memorize">
+  <div class="shead reveal"><div class="num">01</div><h2>Why memorize <em>Tanya?</em></h2><div class="rule"></div></div>
+  <div class="prose reveal">
+    <p>In 1796 the Alter Rebbe, Rabbi Schneur Zalman of Liadi, published Tanya — the <em>Book of Beinonim</em> — a roadmap for the everyday soul: two souls at war, the beinoni who never surrenders, and a love of G-d that is &ldquo;very near&rdquo; to every one of us. Its fifty-three chapters became the foundational text of Chabad Chassidus.</p>
+    <blockquote>&ldquo;Tanya is the Written Torah of Chabad Chassidus. Not only is every concept precise and deliberate, but so is every single word, to the last letter.&rdquo;<span class="src">— Igros Kodesh of the Rebbe Rayatz, Vol. 3, p. 261</span></blockquote>
+    <p>Because every word is that precise, chassidim in every generation have treated Tanya with the reverence reserved for a Chumash — and the Rebbe, in letter after letter across four decades, prescribed one practice to Jews of every walk of life: know at least one chapter of Tanya by heart, and review it — aloud or in thought — while walking, traveling, and waiting.</p>
+  </div>
+  <div class="rquotes reveal">
+    <div class="rq">
+      <span class="tag">A guarded mind</span>
+      <p>Words of Torah engraved in memory protect a person even in moments when he is not reviewing them — and a mind filled with holy letters leaves no empty room for unwanted thoughts.</p>
+      <span class="src">The Rebbe’s letters, e.g. Igros Kodesh vol. 5, 1,457 · vol. 8, 2,525 — citing Likkutei Torah, end of Kedoshim</span>
+    </div>
+    <div class="rq">
+      <span class="tag">A weapon at hand</span>
+      <p>“Learn by heart the beginning of Chapter 41… until those sacred words are engraved upon your mind and memory, so that you will always be able to recall them… whenever the need arises.”</p>
+      <span class="src">The Rebbe, letter of 13 Teves 5726 — the passage “G-d stands over him…,” his prescription for laziness, anger, sadness, fear, and distracted prayer</span>
+    </div>
+    <div class="rq">
+      <span class="tag">Everywhere you go</span>
+      <p>Know some chapters of Mishnayos and at least one chapter of Tanya by heart, and go over them on the way to work and back — a practice the Rebbe promised brings success in spiritual and material life alike.</p>
+      <span class="src">The Rebbe’s letters, e.g. Igros Kodesh vol. 21, 8,019 · letter of 18 Sivan 5719</span>
+    </div>
+  </div>
+  <div class="prose reveal" style="margin-top:26px">
+    <p>A chapter carried by heart is a chapter that can speak up exactly when the inner battle of Chapter 12 is actually happening. The Rebbe pointed to the known virtue of knowing Tanya itself by heart — recalling the Frierdiker Rebbe’s talk of Simchas Torah 5691 — and encouraged students to master its opening twelve chapters with the introduction.</p>
+  </div>
+</section>
+
+<section class="block" id="method" data-screen-label="The method">
+  <div class="shead reveal"><div class="num">02</div><h2>How the book makes it <em>stick</em></h2><div class="rule"></div></div>
+  <div class="prose reveal">
+    <p>Fifty-three chapters is a forest. <em>The Garden of Tanya</em> clears a path through it with four devices, each doing a different job for your memory:</p>
+  </div>
+  <div class="method reveal">
+    <div class="mcard"><div class="k">01</div><h3>One word per chapter</h3><p>Every chapter is anchored to a single English keyword — <em>Souls, War, Beinoni, Candle, Joy, Temple</em> — in the spirit of Rabbi Shmuel Yehuda HaLevi Weinfeld&rsquo;s <em>Simanei Ha&rsquo;amarim</em>, whose one-word Hebrew headings were designed as symbols and mnemonics.</p></div>
+    <div class="mcard"><div class="k">02</div><h3>One image per chapter</h3><p>Each chapter has its own original illustration — a visual scene the mind files far more easily than an abstract idea. Word and picture lock together into one memory.</p></div>
+    <div class="mcard"><div class="k">03</div><h3>One capsule summary</h3><p>Each chapter is distilled to a few memorizable lines — small enough to rehearse in a minute, faithful enough to unfold back into the full chapter when you return to the text.</p></div>
+    <div class="mcard"><div class="k">04</div><h3>One map of the whole</h3><p>The chapters are grouped into arcs — the two souls, the beinoni, overcoming sadness, love and fear, G-d&rsquo;s presence — and the entire book is retold in &ldquo;Tanya in 1000 Words,&rdquo; so every chapter has an address.</p></div>
+  </div>
+</section>
+
+
+<section class="block" data-screen-label="The 53 keywords">
+  <div class="shead reveal"><div class="num">03</div><h2>The garden, in <em>fifty-three words</em></h2><div class="rule"></div></div>
+  <p class="garden-note reveal">Say these in order and you are walking the whole of Likkutei Amarim. This is the deck the game deals from.</p>
+  <div class="chips reveal" id="chips"></div>
+</section>
+
+<section class="block" data-screen-label="Play lead-in">
+  <div class="gamein reveal">
+    <div class="eyebrow">The memory game</div>
+    <h2>Now plant them <em>where you&rsquo;ll keep them.</em></h2>
+    <p>Flip the cards and match the pairs. Every card is a chapter illustration — and every match reveals its chapter number, keyword, and capsule summary, with a deeper teaching to read before you play on.</p>
+    <ul>
+      <li>Three levels — Little Sprouts (ages 4–7), Growing Scholars (8–12), and Teens &amp; Adults, drawing from all 53 chapters.</li>
+      <li>Play in order to learn the sequence, or shuffled to test yourself.</li>
+      <li>Each match is a chapter learned — word, image, and idea together.</li>
+    </ul>
+    <a class="btn" href="play.html">Start playing</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="copy">© 2026 The Tree of Life Books · <em>The Garden of Tanya</em></div>
+    <div class="links">
+      <a href="/games/">All games</a>
+      <a href="/#collection">Books</a>
+      <a href="https://rabbiboruch.com/">Rabbi Boruch</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── 53 keyword chips ─────────────────────────────────────────────────
+const KEYWORDS = ["Souls","Part of G-d","Ten middot","Garments","Sustenance","Other side","Klipat noga","Prohibited","War","Tzaddik","Rasha","Beinoni","Judges","Attainable","Oved","Hitbonenut","Near","Very near","Candle","Only","Unity","Veil","United","Fragment","Self-control","Depression","Thoughts","Prayer","Crushing","Lowly","Joy","Neighbor","Home","Sanctuary","Action","Desire","Deeds","Kavanah","Lishmah","Ascent","Service","Fear","Love","Yearns","Compassion","Water","Exodus","Greatness","Tzimtzum","Fiery","Presence","Brain","Temple"];
+document.getElementById('chips').innerHTML = KEYWORDS.map((w,i)=>`<span><b>${i+1}</b>${w}</span>`).join('');
+
+// ── Header scroll state ──────────────────────────────────────────────
+const header = document.querySelector('header');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 30);
+}, { passive: true });
+
+// ── Mobile menu ──────────────────────────────────────────────────────
+document.addEventListener('click', e => {
+  const t = e.target.closest('.nav-toggle');
+  const m = document.getElementById('nav-menu');
+  if (!m) return;
+  if (t) m.classList.toggle('open');
+  else if (!e.target.closest('nav')) m.classList.remove('open');
+});
+
+// ── Reveal on scroll ─────────────────────────────────────────────────
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+<!-- network-block -->
+<style>.toln{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 10px;padding:8px 16px;font:400 11px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;border-top:1px solid rgba(128,128,128,.1);color:rgba(128,128,128,.45)}.toln a{color:inherit;text-decoration:none}.toln a:hover{color:rgba(128,128,128,.85);text-decoration:underline}.toln .d{color:rgba(128,128,128,.2)}@media(prefers-color-scheme:dark){.toln{border-top-color:rgba(200,200,200,.07);color:rgba(200,200,200,.35)}.toln a:hover{color:rgba(200,200,200,.8)}.toln .d{color:rgba(200,200,200,.15)}}</style>
+<nav class="toln" aria-label="Related sites"><a href="https://rabbiboruch.com">Rabbi Boruch</a><span class="d">&#183;</span><a href="https://rebbesletters.com">The Rebbe's Letters</a><span class="d">&#183;</span><a href="https://beismoshiach.org">Beis Moshiach</a></nav>
+<script src="https://thetreeoflifebooks.com/network.js" data-site="treeoflife" defer></script>
+<!-- /network-block -->
+</body>
+</html>

@@ -1,0 +1,11 @@
+[[edge_functions]]
+  path = "/*"
+  function = "lily-edge"
+
+# Newsletter is published ONLY here (Tree of Life = single source of truth).
+# Allow the sister sites (rabbiboruch.com, etc.) to read the manifest + PDFs
+# cross-origin so they can inline the latest issue without a second upload.
+[[headers]]
+  for = "/assets/newsletter/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"

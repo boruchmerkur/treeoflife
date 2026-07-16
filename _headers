@@ -1,0 +1,4 @@
+# Let the sister sites (rabbiboruch.com, etc.) read the newsletter list + PDFs
+# so they can show the latest issue without a second upload.
+/assets/newsletter/*
+  Access-Control-Allow-Origin: *

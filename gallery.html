@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gallery — The Tree of Life Books</title>
+<meta name="description" content="Original artwork from The Tree of Life Books — available as framed fine-art prints.">
+<link rel="canonical" href="https://thetreeoflifebooks.com/gallery.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Tree of Life Books">
+<meta property="og:title" content="The Gallery — The Tree of Life Books">
+<meta property="og:description" content="Original artwork from The Tree of Life Books — available as framed fine-art prints.">
+<meta property="og:url" content="https://thetreeoflifebooks.com/gallery.html">
+<meta property="og:image" content="https://thetreeoflifebooks.com/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Gallery — The Tree of Life Books">
+<meta name="twitter:description" content="Original artwork from The Tree of Life Books — available as framed fine-art prints.">
+<meta name="twitter:image" content="https://thetreeoflifebooks.com/assets/og-image.jpg">
+<meta name="theme-color" content="#243a2c">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --logo:url(assets/logo.png);
+  /* Light · warm cream + deep evergreen + rich gold */
+  --cream:#f7f0e2; --cream-2:#fbf6ec; --surface:#fffdf8; --surface-2:#f2ead9;
+  --ink:#26241c; --ink-soft:rgba(38,36,28,.68); --ink-faint:rgba(38,36,28,.45);
+  --green:#33493a; --green-deep:#243a2c; --green-soft:#4f6a56;
+  --gold-1:#7e5717; --gold:#9c6f2e; --gold-2:#b4843a; --gold-3:#c89a44; --gold-pale:#d8b15e;
+  --line:rgba(38,36,28,.12); --line-gold:rgba(156,111,46,.32); --line-hi:rgba(156,111,46,.5);
+  --serif:"Fraunces",Georgia,serif; --body:"EB Garamond",Georgia,serif;
+  --gold-grad:linear-gradient(100deg,#8a5d1f 0%,#b4843a 50%,#cb9e4a 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% -8%, rgba(156,111,46,.10), transparent 70%),
+             radial-gradient(50% 45% at 100% 0%, rgba(51,73,58,.06), transparent 70%);}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:1200px;margin:0 auto;padding:0 34px;position:relative;z-index:2}
+a{color:inherit;text-decoration:none}
+.eyebrow{font-family:var(--body);font-size:.72rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.gold-text{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo-img{background:var(--logo) center/contain no-repeat;aspect-ratio:1300/452;display:block}
+.brand-spacer{display:block;width:173px;height:60px}
+#brandfloat{position:fixed;left:0;top:0;z-index:70;width:min(440px,72vw);background:var(--logo) center/contain no-repeat;aspect-ratio:1300/452;transform-origin:center center;opacity:0;will-change:transform,width;filter:drop-shadow(0 8px 26px rgba(156,111,46,.18))}
+.hero-logo-space{width:100%;height:clamp(150px,22vh,210px)}
+@media(max-width:880px){.brand-spacer{width:150px;height:52px}}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+
+/* Header */
+header{position:fixed;top:0;left:0;right:0;z-index:60;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+header.scrolled{background:rgba(247,240,226,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-gold)}
+.nav{display:flex;align-items:flex-end;justify-content:space-between;height:84px;padding-bottom:16px}
+.brand .logo-img{height:60px;width:173px;margin-bottom:5px}
+nav ul{display:flex;gap:34px;list-style:none;align-items:center}
+nav a{font-family:"Rajdhani",sans-serif;font-weight:500;font-size:.84rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);transition:color .25s;position:relative}
+nav a:hover,nav a.active{color:var(--green);text-shadow:0 0 14px rgba(156,111,46,.45)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--green)}
+.nav-toggle svg{width:28px;height:28px}
+@media(max-width:1160px){
+  .nav-toggle{display:block}
+  nav ul{position:absolute;top:84px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;
+    background:rgba(251,246,236,.98);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-gold);
+    max-height:0;overflow:hidden;transition:max-height .4s ease}
+  nav ul.open{max-height:440px}
+  nav li{width:100%;border-top:1px solid var(--line)}
+  nav ul a{display:block;padding:19px 34px;font-size:.86rem;color:var(--ink)}
+}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 34px;font-family:var(--body);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;border-radius:4px;cursor:pointer;border:1px solid transparent;transition:transform .3s,box-shadow .3s,background .3s,color .3s,border-color .3s}
+.btn svg{width:16px;height:16px}
+.btn-gold{background:rgba(216,177,94,.12);color:#8a6a22;border-color:rgba(216,177,94,.62);font-weight:600}
+.btn-gold:hover{background:rgba(216,177,94,.34);color:#5a4214;border-color:var(--gold-pale);box-shadow:0 0 0 1px var(--gold-pale),0 6px 22px -14px rgba(216,177,94,.5);transform:scale(1.035)}
+.btn-ghost{background:transparent;border-color:var(--green);color:var(--green);font-weight:600}
+.btn-ghost:hover{background:var(--green);color:var(--cream-2);border-color:var(--green);box-shadow:0 0 0 1px var(--green),0 8px 26px -14px rgba(51,73,58,.55);transform:scale(1.035)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:110px 0 100px;position:relative}
+.hero-logo{width:min(560px,82vw);margin:0 auto 6px;filter:drop-shadow(0 8px 30px rgba(156,111,46,.18));opacity:0;animation:fade-up 1.1s cubic-bezier(.2,.7,.2,1) forwards .15s}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(2.1rem,4.6vw,3.5rem);line-height:1.12;letter-spacing:-.01em;max-width:20ch;margin:18px auto 0;color:var(--ink);opacity:0;animation:fade-up 1.1s cubic-bezier(.2,.7,.2,1) forwards .35s}
+.hero h1 em{font-style:italic}
+.hero p{max-width:50ch;margin:24px auto 0;font-size:1.18rem;color:var(--ink-soft);opacity:0;animation:fade-up 1.1s cubic-bezier(.2,.7,.2,1) forwards .55s}
+.hero-cta{margin-top:42px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fade-up 1.1s cubic-bezier(.2,.7,.2,1) forwards .75s}
+.scroll-cue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);color:var(--gold);opacity:.7;animation:bob 2.4s ease-in-out infinite}
+.scroll-cue svg{width:24px;height:24px}
+@keyframes fade-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* Subpage hero */
+.page-hero{text-align:center;padding:170px 0 70px;position:relative}
+.page-hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(2.3rem,5vw,3.6rem);line-height:1.1;margin-top:14px;color:var(--ink)}
+.page-hero h1 em{font-style:italic}
+.page-hero p{max-width:56ch;margin:20px auto 0;font-size:1.12rem;color:var(--ink-soft)}
+
+/* Pillars */
+.pillars{padding:30px 0 40px}
+.pillars .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.pillar{border:1px solid var(--line);border-top:3px solid transparent;border-radius:4px;padding:38px 32px;background:var(--surface);transition:border-color .4s,transform .4s,box-shadow .4s}
+.pillar:hover{border-top-color:var(--gold);transform:translateY(-4px);box-shadow:0 20px 40px -28px rgba(38,36,28,.4)}
+.pillar .num{font-family:var(--serif);font-style:italic;font-size:1.5rem;margin-bottom:14px}
+.pillar h3{font-family:var(--serif);font-weight:500;font-size:1.32rem;margin-bottom:8px;color:var(--green-deep)}
+.pillar p{font-size:1rem;color:var(--ink-soft)}
+@media(max-width:780px){.pillars .wrap{grid-template-columns:1fr}}
+
+/* Section head */
+.section-head{text-align:center;padding:96px 0 8px}
+.section-head h2{font-family:var(--serif);font-weight:300;font-size:clamp(2.1rem,4.4vw,3.2rem);margin-top:12px;line-height:1.1;color:var(--ink)}
+.section-head h2 em{font-style:italic}
+.section-head .rule{width:64px;height:2px;background:var(--gold-grad);margin:24px auto 0;border-radius:2px}
+.section-head .lead{max-width:54ch;margin:20px auto 0;color:var(--ink-soft);font-size:1.1rem}
+
+/* Collection */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;padding:58px 0 30px}
+@media(max-width:920px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:5px;overflow:hidden;transition:transform .4s,box-shadow .4s,border-color .4s}
+.card:hover{transform:translateY(-8px);border-color:var(--line-hi);box-shadow:0 30px 56px -30px rgba(38,36,28,.45)}
+.cover{position:relative;aspect-ratio:1/1;background:var(--surface-2);border-bottom:1px solid var(--line);overflow:hidden}
+.cover img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .7s ease}
+.card:hover .cover img{transform:scale(1.05)}
+.cover-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;background:linear-gradient(155deg,var(--green),var(--green-deep))}
+.cover-ph .cat{font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold-pale);margin-bottom:12px}
+.cover-ph .t{font-family:var(--serif);font-size:1.6rem;line-height:1.15;color:var(--cream-2)}
+.cat-tag{position:absolute;top:14px;left:14px;z-index:2;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--green-deep);background:rgba(255,253,248,.82);backdrop-filter:blur(6px);border:1px solid var(--line-gold);padding:6px 11px;border-radius:2px}
+.card-body{padding:24px 24px 26px;display:flex;flex-direction:column;flex:1}
+.card-body .name{font-family:var(--serif);font-size:1.34rem;font-weight:500;line-height:1.2;color:var(--green-deep)}
+.card-body .desc{font-size:.98rem;color:var(--ink-soft);margin:9px 0 20px;flex:1}
+.buy{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px;border:1px solid var(--green);color:var(--green);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;border-radius:2px;transition:background .35s,color .35s,border-color .35s}
+.buy svg{width:15px;height:15px}
+.buy:hover{background:var(--green);color:var(--cream-2);border-color:var(--green)}
+.buy--soon{border-color:var(--line);color:var(--ink-faint);cursor:default}
+.buy--soon:hover{background:transparent;color:var(--ink-faint)}
+
+/* Art showcase */
+.artshow{padding:96px 0 40px}
+.artgrid{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding:52px 0 10px}
+.artgrid figure{position:relative;margin:0;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.artgrid img{width:100%;height:440px;object-fit:cover;display:block;transition:transform .8s ease}
+.artgrid figure:hover img{transform:scale(1.05)}
+.artgrid figcaption{position:absolute;left:0;right:0;bottom:0;padding:34px 22px 18px;font-family:var(--serif);font-style:italic;font-size:1.05rem;color:#fff;background:linear-gradient(0deg,rgba(20,28,22,.82),transparent)}
+@media(max-width:780px){.artgrid{grid-template-columns:1fr;gap:22px}.artgrid img{height:340px}}
+
+/* Green accent band */
+.band{margin-top:90px;background:linear-gradient(160deg,var(--green),var(--green-deep));color:var(--cream-2)}
+.band .wrap{display:grid;grid-template-columns:1.3fr 1fr;gap:64px;align-items:center;padding:96px 34px}
+.band .eyebrow{color:var(--gold-pale)}
+.band h2{font-family:var(--serif);font-weight:300;font-size:clamp(2rem,4vw,3rem);line-height:1.14;color:var(--cream-2)}
+.band h2 em{font-style:italic;color:var(--gold-pale)}
+.band .gold-text{background:linear-gradient(100deg,#d8b15e,#f0d28a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.band p{margin-top:22px;color:rgba(247,240,226,.82);font-size:1.12rem}
+.band-logo{width:200px;margin:0 auto;filter:drop-shadow(0 10px 30px rgba(0,0,0,.3))}
+@media(max-width:820px){.band .wrap{grid-template-columns:1fr;gap:40px;text-align:center}.band-logo{width:160px}}
+
+/* Prose */
+.prose{max-width:720px;margin:0 auto;padding:24px 0 70px}
+.prose .lead{font-size:1.28rem;color:var(--green-deep);font-family:var(--serif);font-style:italic;line-height:1.5}
+.prose h2{font-family:var(--serif);font-weight:400;font-size:1.9rem;margin:50px 0 14px;line-height:1.2;color:var(--green-deep)}
+.prose p{margin-bottom:20px;color:var(--ink-soft)}
+.prose blockquote{margin:36px 0;padding:8px 0 8px 28px;border-left:3px solid var(--gold);font-family:var(--serif);font-style:italic;font-size:1.28rem;color:var(--green-deep);line-height:1.5}
+.divider{width:64px;height:2px;background:var(--gold-grad);margin:56px auto;border-radius:2px}
+.feature{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center;max-width:1000px;margin:0 auto;padding:30px 0}
+.feature img{width:100%;border-radius:5px;border:1px solid var(--line)}
+@media(max-width:780px){.feature{grid-template-columns:1fr;gap:26px}}
+
+/* Contact / forms */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;max-width:1000px;margin:0 auto;padding:24px 0 80px;align-items:start}
+@media(max-width:820px){.contact-grid{grid-template-columns:1fr;gap:28px}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:38px}
+.panel h3{font-family:var(--serif);font-weight:500;font-size:1.4rem;margin-bottom:8px;color:var(--green-deep)}
+.panel p{color:var(--ink-soft);margin-bottom:12px;font-size:1.02rem}
+.contact-line{display:flex;align-items:center;gap:13px;margin:16px 0;font-size:1.04rem;color:var(--ink)}
+.contact-line svg{width:20px;height:20px;color:var(--gold);flex:none}
+.contact-line a:hover{color:var(--green)}
+.form label{display:block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:20px 0 8px;font-weight:600}
+.form input,.form textarea{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:3px;background:var(--cream-2);font-family:var(--body);font-size:1rem;color:var(--ink);transition:border-color .25s}
+.form input:focus,.form textarea:focus{outline:none;border-color:var(--gold)}
+.form textarea{min-height:140px;resize:vertical}
+.form .btn{margin-top:26px;width:100%}
+.form-note{font-size:.86rem;color:var(--ink-faint);margin-top:16px;line-height:1.55}
+.form-note a{color:var(--gold)}
+
+/* Footer */
+footer{border-top:1px solid var(--line-gold);background:var(--cream-2);padding:72px 0 32px;margin-top:90px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding-bottom:48px;border-bottom:1px solid var(--line)}
+.foot-grid h4{font-family:var(--body);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;font-weight:600}
+.foot-logo{height:52px;width:150px;margin-bottom:18px}
+.foot-grid p{color:var(--ink-soft);font-size:.98rem}
+.foot-grid ul{list-style:none}
+.foot-grid li{margin-bottom:11px}
+.foot-grid a{color:var(--ink-soft);transition:color .25s}
+.foot-grid a:hover{color:var(--green)}
+.copyright{padding-top:28px;font-size:.85rem;text-align:center;color:var(--ink-faint)}
+@media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr;gap:34px}}
+@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
+/* ===== Gallery page ===== */
+.gal-intro{padding:8px 0 0}
+.gallery{columns:3;column-gap:22px;padding:46px 0 20px}
+@media(max-width:900px){.gallery{columns:2}}
+@media(max-width:560px){.gallery{columns:1}}
+.gal-item{break-inside:avoid;margin:0 0 22px;position:relative;border:1px solid var(--line);border-radius:5px;overflow:hidden;background:var(--surface-2);cursor:pointer;display:block;width:100%;padding:0;text-align:left;font-family:inherit}
+.gal-item img{width:100%;display:block;transition:transform .8s ease}
+.gal-item:hover img{transform:scale(1.045)}
+.gal-cap{position:absolute;left:0;right:0;bottom:0;padding:42px 18px 16px;background:linear-gradient(0deg,rgba(20,28,22,.86),transparent);opacity:0;transition:opacity .4s;pointer-events:none}
+.gal-item:hover .gal-cap,.gal-item:focus-visible .gal-cap{opacity:1}
+.gal-cap .t{font-family:var(--serif);font-style:italic;font-size:1.12rem;color:#fff;line-height:1.2}
+.gal-cap .s{display:block;font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-pale);margin-top:6px}
+.gal-frameTag{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:6px;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--green-deep);background:rgba(255,253,248,.86);backdrop-filter:blur(6px);border:1px solid var(--line-gold);padding:6px 10px;border-radius:20px;opacity:0;transition:opacity .4s}
+.gal-item:hover .gal-frameTag{opacity:1}
+.gal-frameTag svg{width:12px;height:12px;color:var(--gold)}
+
+/* Lightbox / order panel */
+.lb{position:fixed;inset:0;z-index:130;display:flex;align-items:center;justify-content:center;padding:4vh 22px;background:rgba(20,28,22,.66);backdrop-filter:blur(9px);opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+.lb.open{opacity:1;visibility:visible}
+.lb-card{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.95fr);grid-template-rows:minmax(0,1fr);max-width:1040px;width:100%;max-height:92vh;background:var(--surface);border:1px solid var(--line-gold);border-radius:8px;overflow:hidden;box-shadow:0 50px 100px -40px rgba(20,16,8,.7);transform:translateY(14px) scale(.99);transition:transform .4s}
+.lb.open .lb-card{transform:none}
+.lb-stage{background:var(--surface-2);display:flex;align-items:center;justify-content:center;padding:26px;border-right:1px solid var(--line);min-width:0;min-height:0}
+.lb-stage img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:3px;box-shadow:0 24px 54px -26px rgba(20,16,8,.55)}
+.lb-panel{padding:36px 34px;overflow-y:auto;display:flex;flex-direction:column}
+.lb-panel .src{font-size:.64rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.lb-panel h3{font-family:var(--serif);font-weight:400;font-size:1.9rem;line-height:1.14;color:var(--green-deep);margin:10px 0 0}
+.lb-panel h3 em{font-style:italic}
+.lb-rule{width:54px;height:2px;background:var(--gold-grad);margin:18px 0;border-radius:2px}
+.lb-panel .blurb{font-size:1rem;color:var(--ink-soft);line-height:1.55}
+.opt-label{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:26px 0 11px}
+.opt-row{display:flex;flex-wrap:wrap;gap:9px}
+.opt{border:1px solid var(--line-gold);background:var(--cream-2);color:var(--ink);font-family:var(--body);font-size:.86rem;padding:9px 15px;border-radius:4px;cursor:pointer;transition:background .25s,color .25s,border-color .25s}
+.opt:hover{border-color:var(--gold)}
+.opt[aria-pressed="true"]{background:var(--green);color:var(--cream-2);border-color:var(--green)}
+.opt-sw{display:flex;align-items:center;gap:8px}
+.opt-sw .chip{width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.2)}
+.lb-actions{margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+.lb-note{font-size:.8rem;color:var(--ink-faint);margin-top:14px;line-height:1.5}
+.lb-note a{color:var(--gold)}
+.lb-close{position:absolute;top:12px;right:12px;z-index:3;width:40px;height:40px;border-radius:50%;border:1px solid var(--line-gold);background:rgba(255,253,248,.9);color:var(--green-deep);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .25s}
+.lb-close:hover{background:#fff}
+.lb-close svg{width:20px;height:20px}
+@media(max-width:760px){.lb-card{grid-template-columns:1fr;grid-template-rows:auto;max-height:94vh;overflow-y:auto}.lb-stage{border-right:none;border-bottom:1px solid var(--line);padding:18px;max-height:42vh}.lb-panel{padding:28px 24px}}
+</style>
+<script src="https://dreamsitedesign.com/credit.js" data-site="treeoflife" data-render="false" defer></script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="brand"><span class="logo-img" role="img" aria-label="The Tree of Life Books"></span></a>
+    <button class="nav-toggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <nav><ul id="nav-menu">
+      <li><a href="index.html#collection">Collection</a></li>
+      <li><a href="gallery.html" class="active">Artwork</a></li>
+      <li><a href="newsletter.html">Newsletter</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="https://rabbiboruch.com/">Rabbi Boruch</a></li>
+      <li><a href="escape/">Game</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+
+<section class="page-hero">
+  <div class="wrap reveal">
+    <span class="eyebrow">The Gallery</span>
+    <h1>The art <em class="gold-text">inside the books</em>.</h1>
+    <p>Original artwork created for our volumes — each piece available as a museum-quality framed print for your home, study, or as a gift.</p>
+  </div>
+</section>
+
+<section class="wrap gal-intro">
+  <div class="gallery">
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/song-the-locked-garden.jpg" data-title="A Garden Locked" data-book="Song of Songs" data-blurb="“A garden locked is my sister, my bride” — in full bloom.">
+      <img src="assets/gallery/song-the-locked-garden.jpg" alt="A Garden Locked — from Song of Songs" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">A Garden Locked</span><span class="s">Song of Songs</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/king-david-shepherd.jpg" data-title="The Shepherd King" data-book="King David" data-blurb="Crowned, yet cradling the lamb — the king who never forgot the flock.">
+      <img src="assets/gallery/king-david-shepherd.jpg" alt="The Shepherd King — from King David" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Shepherd King</span><span class="s">King David</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/esther-the-feast.jpg" data-title="The King’s Feast" data-book="The Book of Esther" data-blurb="Candle and cup at the table where the story turns.">
+      <img src="assets/gallery/esther-the-feast.jpg" alt="The King’s Feast — from The Book of Esther" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The King’s Feast</span><span class="s">The Book of Esther</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/tanya-the-vista.jpg" data-title="The Mountain Vista" data-book="The Garden of Tanya" data-blurb="A soul’s ascent, rendered as light over the hills.">
+      <img src="assets/gallery/tanya-the-vista.jpg" alt="The Mountain Vista — from The Garden of Tanya" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Mountain Vista</span><span class="s">The Garden of Tanya</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/plagues-dawn-of-freedom.jpg" data-title="Dawn of Freedom" data-book="The Ten Plagues" data-blurb="The people walk out of Egypt into the morning light.">
+      <img src="assets/gallery/plagues-dawn-of-freedom.jpg" alt="Dawn of Freedom — from The Ten Plagues" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">Dawn of Freedom</span><span class="s">The Ten Plagues</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/kamtza-the-wave.jpg" data-title="The Gathering Wave" data-book="Kamtza &amp; Bar Kamtza" data-blurb="A quiet swell before the storm of history breaks.">
+      <img src="assets/gallery/kamtza-the-wave.jpg" alt="The Gathering Wave — from Kamtza &amp; Bar Kamtza" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Gathering Wave</span><span class="s">Kamtza & Bar Kamtza</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/esther-the-scribe.jpg" data-title="The Queen’s Pen" data-book="The Book of Esther" data-blurb="Esther sets down the megillah for all generations.">
+      <img src="assets/gallery/esther-the-scribe.jpg" alt="The Queen’s Pen — from The Book of Esther" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Queen’s Pen</span><span class="s">The Book of Esther</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/tanya-peaceable.jpg" data-title="The Peaceable Kingdom" data-book="The Garden of Tanya" data-blurb="The lion and the ox amid a field of flowers.">
+      <img src="assets/gallery/tanya-peaceable.jpg" alt="The Peaceable Kingdom — from The Garden of Tanya" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Peaceable Kingdom</span><span class="s">The Garden of Tanya</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/kamtza-the-youth.jpg" data-title="The Young Witness" data-book="Kamtza &amp; Bar Kamtza" data-blurb="A face from the crowd, watching the world turn.">
+      <img src="assets/gallery/kamtza-the-youth.jpg" alt="The Young Witness — from Kamtza &amp; Bar Kamtza" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Young Witness</span><span class="s">Kamtza & Bar Kamtza</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/king-david-enthroned.jpg" data-title="Enthroned in Light" data-book="King David" data-blurb="The shepherd boy, now Israel’s anointed king.">
+      <img src="assets/gallery/king-david-enthroned.jpg" alt="Enthroned in Light — from King David" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">Enthroned in Light</span><span class="s">King David</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/song-the-vineyard.jpg" data-title="Under the Apple Tree" data-book="Song of Songs" data-blurb="“As an apple tree among the trees of the wood.”">
+      <img src="assets/gallery/song-the-vineyard.jpg" alt="Under the Apple Tree — from Song of Songs" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">Under the Apple Tree</span><span class="s">Song of Songs</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/plagues-darkness.jpg" data-title="The Plague of Beasts" data-book="The Ten Plagues" data-blurb="Wild beasts loosed upon the land.">
+      <img src="assets/gallery/plagues-darkness.jpg" alt="The Plague of Beasts — from The Ten Plagues" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Plague of Beasts</span><span class="s">The Ten Plagues</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/kamtza-the-decree.jpg" data-title="The Decree" data-book="Kamtza &amp; Bar Kamtza" data-blurb="A moment of pride that history would not forget.">
+      <img src="assets/gallery/kamtza-the-decree.jpg" alt="The Decree — from Kamtza &amp; Bar Kamtza" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Decree</span><span class="s">Kamtza & Bar Kamtza</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/plagues-the-staff.jpg" data-title="The Outstretched Staff" data-book="The Ten Plagues" data-blurb="A word, a gesture — and the order of nature bends.">
+      <img src="assets/gallery/plagues-the-staff.jpg" alt="The Outstretched Staff — from The Ten Plagues" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Outstretched Staff</span><span class="s">The Ten Plagues</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/song-the-vineyards.jpg" data-title="The Vineyards" data-book="Song of Songs" data-blurb="“My beloved has gone down to his garden” — vine and harvest.">
+      <img src="assets/gallery/song-the-vineyards.jpg" alt="The Vineyards — from Song of Songs" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Vineyards</span><span class="s">Song of Songs</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/esther-enthroned.jpg" data-title="Esther Enthroned" data-book="The Book of Esther" data-blurb="The queen in her splendor, hidden hand of providence.">
+      <img src="assets/gallery/esther-enthroned.jpg" alt="Esther Enthroned — from The Book of Esther" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">Esther Enthroned</span><span class="s">The Book of Esther</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/king-david-anointing.jpg" data-title="The Anointing" data-book="King David" data-blurb="Samuel’s horn of oil poured over the youngest son.">
+      <img src="assets/gallery/king-david-anointing.jpg" alt="The Anointing — from King David" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Anointing</span><span class="s">King David</span></span>
+    </button>
+    <button class="gal-item reveal" type="button" data-src="assets/gallery/tanya-the-river.jpg" data-title="The Colonnade" data-book="The Garden of Tanya" data-blurb="A green and pillared hall, study made paradise.">
+      <img src="assets/gallery/tanya-the-river.jpg" alt="The Colonnade — from The Garden of Tanya" loading="lazy">
+      <span class="gal-frameTag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg> Framed print</span>
+      <span class="gal-cap"><span class="t">The Colonnade</span><span class="s">The Garden of Tanya</span></span>
+    </button>
+  </div>
+</section>
+
+<!-- Framed-print lightbox -->
+<div class="lb" id="lb" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Order a framed print">
+  <div class="lb-card">
+    <button class="lb-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="lb-stage"><img id="lb-img" alt=""></div>
+    <div class="lb-panel">
+      <span class="src" id="lb-book"></span>
+      <h3 id="lb-title"></h3>
+      <div class="lb-rule"></div>
+      <p class="blurb" id="lb-blurb"></p>
+
+      <div class="opt-label">Print size</div>
+      <div class="opt-row" id="lb-sizes">
+        <button class="opt" type="button" data-size="12&Prime; × 12&Prime;">12&Prime; square</button>
+        <button class="opt" type="button" data-size="18&Prime; × 18&Prime;" aria-pressed="true">18&Prime; square</button>
+        <button class="opt" type="button" data-size="24&Prime; × 24&Prime;">24&Prime; square</button>
+      </div>
+
+      <div class="opt-label">Frame</div>
+      <div class="opt-row" id="lb-frames">
+        <button class="opt opt-sw" type="button" data-frame="Natural Oak" aria-pressed="true"><span class="chip" style="background:#caa472"></span>Natural Oak</button>
+        <button class="opt opt-sw" type="button" data-frame="Matte Black"><span class="chip" style="background:#2a2a2a"></span>Matte Black</button>
+        <button class="opt opt-sw" type="button" data-frame="Antique Gold"><span class="chip" style="background:linear-gradient(135deg,#b4843a,#e6c25f)"></span>Antique Gold</button>
+      </div>
+
+      <div class="lb-actions">
+        <a class="btn btn-gold" id="lb-order" style="width:100%" href="#">Request this framed print</a>
+        <p class="lb-note" id="lb-note">Hand-finished and shipped to your door. Tell us the size and frame and we’ll send a quote and proof — or <a href="contact.html">contact us</a> with any question.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="band" style="margin-top:80px">
+  <div class="wrap">
+    <div class="reveal"><span class="eyebrow">Bring the art home</span>
+      <h2>A page from the tradition, <em class="gold-text">framed for your wall</em>.</h2>
+      <p>Every print is drawn from the original artwork of our books. Choose a piece above to request it as a framed fine-art print, or write to us for a custom size.</p>
+      <a href="contact.html" class="btn btn-gold" style="margin-top:28px">Contact Us</a>
+    </div>
+    <div class="reveal d1"><span class="band-logo logo-img" role="img" aria-label="The Tree of Life Books"></span></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  // ---- Fulfillment config ----------------------------------------------
+  // mode 'inquire': opens a prefilled email so you can take orders today (no setup).
+  // mode 'link'   : sends buyers to your print-on-demand storefront instead.
+  var PRINT = { mode:'inquire', email:'orders@thetreeoflifebooks.com', storeUrl:'' };
+  // ----------------------------------------------------------------------
+  var lb=document.getElementById('lb'); if(!lb) return;
+  var img=document.getElementById('lb-img'), bk=document.getElementById('lb-book'),
+      tt=document.getElementById('lb-title'), bl=document.getElementById('lb-blurb'),
+      order=document.getElementById('lb-order'), last=null;
+  var sel={size:'18&Prime; × 18&Prime;', frame:'Natural Oak', title:'', book:''};
+  function plain(s){return (s||'').replace(/&Prime;/g,'"');}
+  function group(id,key){
+    document.getElementById(id).addEventListener('click',function(e){
+      var b=e.target.closest('.opt'); if(!b) return;
+      [].forEach.call(this.children,function(c){c.setAttribute('aria-pressed','false');});
+      b.setAttribute('aria-pressed','true'); sel[key]=b.getAttribute('data-'+key); updateOrder();
+    });
+  }
+  group('lb-sizes','size'); group('lb-frames','frame');
+  function updateOrder(){
+    if(PRINT.mode==='link' && PRINT.storeUrl){ order.href=PRINT.storeUrl; order.target='_blank'; order.rel='noopener'; return; }
+    var subj='Framed print request — '+sel.title;
+    var body='I would like to order this artwork as a framed print:\n\n'
+      +'• Artwork: '+sel.title+'\n'
+      +'• From: '+sel.book+'\n'
+      +'• Size: '+plain(sel.size)+'\n'
+      +'• Frame: '+sel.frame+'\n\n'
+      +'Please send me a quote and a proof. Thank you!';
+    order.href='mailto:'+PRINT.email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+    order.removeAttribute('target');
+  }
+  function open(btn){
+    last=btn;
+    sel.title=btn.dataset.title; sel.book=btn.dataset.book;
+    img.src=btn.dataset.src; img.alt=btn.dataset.title;
+    bk.textContent=btn.dataset.book; tt.textContent=btn.dataset.title; bl.textContent=btn.dataset.blurb;
+    updateOrder();
+    lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+    lb.querySelector('.lb-close').focus();
+  }
+  function close(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); document.body.style.overflow=''; img.removeAttribute('src'); if(last)last.focus(); }
+  document.querySelector('.gallery').addEventListener('click',function(e){ var b=e.target.closest('.gal-item'); if(b) open(b); });
+  lb.addEventListener('click',function(e){ if(e.target===lb||e.target.closest('.lb-close')) close(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&lb.classList.contains('open')) close(); });
+})();
+</script>
+
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <span class="foot-logo logo-img" role="img" aria-label="The Tree of Life Books"></span>
+        <p>970 Lawrence Ave W.<br>North York, ON, Canada</p>
+      </div>
+      <div><h4>Browse</h4><ul><li><a href="index.html#collection">Collection</a></li><li><a href="index.html#art">Artwork</a></li></ul></div>
+      <div><h4>More</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div><h4>Connect</h4><ul><li><a href="https://rabbiboruch.com/" target="_blank" rel="noopener">Rabbi Boruch</a></li><li><a href="https://www.facebook.com/RabbiBoruch" target="_blank" rel="noopener">Facebook</a></li><li><a href="https://www.instagram.com/rabbiboruchmerkur" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://www.youtube.com/@rabbiboruchmerkur" target="_blank" rel="noopener">YouTube</a></li><li><a href="mailto:rabbiboruchmerkur@gmail.com">Email Us</a></li></ul></div>
+    </div>
+    <div class="copyright">© 2026 The Tree of Life Books. All rights reserved.</div>
+  </div>
+</footer>
+<script>
+// header solidify on scroll
+const hdr=document.querySelector('header');
+const onScroll=()=>{(window.scrollY>40)?hdr.classList.add('scrolled'):hdr.classList.remove('scrolled')};
+onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+// mobile menu
+document.addEventListener('click',e=>{
+  const t=e.target.closest('.nav-toggle');const m=document.getElementById('nav-menu');if(!m)return;
+  if(t){m.classList.toggle('open');}else if(!e.target.closest('nav')){m.classList.remove('open');}
+});
+// reveal on scroll
+const io=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+<!-- network-block -->
+<style>.toln{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 10px;padding:8px 16px;font:400 11px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;border-top:1px solid rgba(128,128,128,.1);color:rgba(128,128,128,.45)}.toln a{color:inherit;text-decoration:none}.toln a:hover{color:rgba(128,128,128,.85);text-decoration:underline}.toln .d{color:rgba(128,128,128,.2)}@media(prefers-color-scheme:dark){.toln{border-top-color:rgba(200,200,200,.07);color:rgba(200,200,200,.35)}.toln a:hover{color:rgba(200,200,200,.8)}.toln .d{color:rgba(200,200,200,.15)}}</style>
+<nav class="toln" aria-label="Related sites"><a href="https://rabbiboruch.com">Rabbi Boruch</a><span class="d">&#183;</span><a href="https://rebbesletters.com">The Rebbe's Letters</a><span class="d">&#183;</span><a href="https://beismoshiach.org">Beis Moshiach</a></nav>
+<script src="https://thetreeoflifebooks.com/network.js" data-site="treeoflife" defer></script>
+<!-- /network-block -->
+</body>
+</html>
