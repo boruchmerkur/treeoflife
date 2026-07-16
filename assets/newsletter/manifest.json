@@ -1,0 +1,126 @@
+{
+  "_comment": "Tree of Life Newsletter — issues archive. Add a new issue by dropping the PDF into assets/newsletter/ following the issue-NN-slug.pdf convention, then adding an entry here. Sorted by 'number' descending on the archive page. 'tags' is the searchable list (parsha + holiday names). 'parshaDisplay' is the spelling as it appears in the newsletter.",
+  "issues": [
+    {
+      "number": 12,
+      "slug": "matot-masei",
+      "parshaDisplay": "Matot · Masei",
+      "holiday": null,
+      "subtitle": "In the Merit of Flags",
+      "summary": "",
+      "date": "2026-07-10",
+      "pdf": "issue-12-matot-masei.pdf",
+      "tags": ["Matot", "Masei", "Bamidbar", "The Three Weeks", "Flags", "Degalim"]
+    },
+    {
+      "number": 11,
+      "slug": "pinchas",
+      "parshaDisplay": "Pinchas",
+      "holiday": "The Three Weeks",
+      "subtitle": "The Three Weeks",
+      "summary": "",
+      "date": "2026-07-03",
+      "pdf": "issue-11-pinchas.pdf",
+      "tags": ["Pinchas", "Bamidbar", "The Three Weeks", "17 Tammuz", "Bein HaMetzarim", "Tammuz"]
+    },
+    {
+      "number": 10,
+      "slug": "chukas-balak",
+      "parshaDisplay": "Chukas · Balak",
+      "holiday": "Yud-Beis Tammuz",
+      "subtitle": "The Festival of Liberation",
+      "summary": "",
+      "date": "2026-06-26",
+      "pdf": "issue-10-chukas-balak.pdf",
+      "tags": ["Chukas", "Balak", "Bamidbar", "Yud-Beis Tammuz", "12 Tammuz", "Tammuz", "Chag HaGeulah"]
+    },
+    {
+      "number": 8,
+      "slug": "shlach",
+      "parshaDisplay": "Shlach",
+      "holiday": null,
+      "subtitle": "The Broken Covenant",
+      "summary": "A civic covenant is signed by people, and people can break it. The covenant of the parsha was sworn by Hashem — and what He swears, no one can break.",
+      "date": "2026-06-12",
+      "pdf": "issue-08-shlach.pdf",
+      "tags": ["Shlach", "Bamidbar", "The Spies"]
+    },
+    {
+      "number": 7,
+      "slug": "behaaloscha",
+      "parshaDisplay": "Beha'aloscha",
+      "holiday": null,
+      "subtitle": "The Trumpet",
+      "summary": "A nation can be ready to strike and still forget Who fights for it. The trumpet is the refusal to call the war an accident.",
+      "date": "2026-06-06",
+      "pdf": "issue-07-behaaloscha.pdf",
+      "tags": ["Beha'aloscha", "Bamidbar"]
+    },
+    {
+      "number": 6,
+      "slug": "naso",
+      "parshaDisplay": "Naso",
+      "holiday": null,
+      "subtitle": null,
+      "summary": "",
+      "date": "2026-05-30",
+      "pdf": "issue-06-naso.pdf",
+      "tags": ["Naso", "Bamidbar"]
+    },
+    {
+      "number": 5,
+      "slug": "shavuos",
+      "parshaDisplay": null,
+      "holiday": "Shavuos",
+      "subtitle": "A Shavuos Edition",
+      "summary": "",
+      "date": "2026-05-22",
+      "pdf": "issue-05-shavuos.pdf",
+      "tags": ["Shavuos", "Matan Torah", "Sivan"]
+    },
+    {
+      "number": 4,
+      "slug": "bamidbar",
+      "parshaDisplay": "Bamidbar",
+      "holiday": null,
+      "subtitle": null,
+      "summary": "",
+      "date": "2026-05-16",
+      "pdf": "issue-04-bamidbar.pdf",
+      "tags": ["Bamidbar", "Sefer Bamidbar"]
+    },
+    {
+      "number": 3,
+      "slug": "behar-bechukosai",
+      "parshaDisplay": "Behar · Bechukosai",
+      "holiday": null,
+      "subtitle": null,
+      "summary": "",
+      "date": "2026-05-09",
+      "pdf": "issue-03-behar-bechukosai.pdf",
+      "tags": ["Behar", "Bechukosai", "Vayikra"]
+    },
+    {
+      "number": 2,
+      "slug": "emor",
+      "parshaDisplay": "Emor",
+      "holiday": null,
+      "subtitle": null,
+      "summary": "",
+      "date": "2026-05-02",
+      "pdf": "issue-02-emor.pdf",
+      "tags": ["Emor", "Vayikra"]
+    },
+    {
+      "number": 1,
+      "slug": "acharei-mot-kedoshim",
+      "parshaDisplay": "Acharei Mot · Kedoshim",
+      "holiday": null,
+      "subtitle": "The Inaugural Issue",
+      "summary": "",
+      "date": "2026-04-25",
+      "pdf": "issue-01-acharei-mot-kedoshim.pdf",
+      "tags": ["Acharei Mot", "Kedoshim", "Acharei", "Vayikra", "Iyar", "Inaugural"]
+    }
+  ]
+}
