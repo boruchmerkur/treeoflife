@@ -2,6 +2,17 @@
   "_comment": "Tree of Life Newsletter — issues archive. Add a new issue by dropping the PDF into assets/newsletter/ following the issue-NN-slug.pdf convention, then adding an entry here. Sorted by 'number' descending on the archive page. 'tags' is the searchable list (parsha + holiday names). 'parshaDisplay' is the spelling as it appears in the newsletter.",
   "issues": [
     {
+      "number": 13,
+      "slug": "dvarim",
+      "parshaDisplay": "Devarim",
+      "holiday": "Shabbos Chazon",
+      "subtitle": "Whose Heads Gonna Roll?",
+      "summary": "",
+      "date": "2026-07-17",
+      "pdf": "issue-13-dvarim.pdf",
+      "tags": ["Devarim", "Dvarim", "Shabbos Chazon", "The Three Weeks", "The Nine Days", "Tisha B'Av", "Chazon", "Av", "Measure for Measure"]
+    },
+    {
       "number": 12,
       "slug": "matot-masei",
       "parshaDisplay": "Matot · Masei",
