@@ -1,0 +1,25 @@
+{
+  "signs": [
+    { "file": "card-08-insolence-swells.html", "sign": 1,  "he": "חוצפא יסגא",              "en": "Insolence is the last growth industry.",              "src": "Mishnah Sotah 9:15" },
+    { "file": "card-11-house-of-assembly.html", "sign": 2,  "he": "בית הועד לזנות",           "en": "The meeting house became something else.",           "src": "Sanhedrin 97a" },
+    { "file": "card-03-northern-border.html",   "sign": 3,  "he": "והגבלן יאשם",             "en": "The Galilee emptied. The Golan emptied. In that order.", "src": "Sanhedrin 97a" },
+    { "file": "card-06-scribes-wisdom.html",    "sign": 4,  "he": "חכמת הסופרים תסרח",        "en": "The wisdom of the scribes is spoiling.",              "src": "Sanhedrin 97a" },
+    { "file": "card-09-face-of-the-dog.html",   "sign": 5,  "he": "פני הדור כפני כלב",         "en": "The face of the generation is the face of a dog.",    "src": "Sanhedrin 97a" },
+    { "file": "card-04-truth-absent.html",      "sign": 6,  "he": "האמת נעדרת",              "en": "Truth didn’t vanish. It split into flocks.",          "src": "Sanhedrin 97a" },
+    { "file": "card-10-elders-rise.html",       "sign": 7,  "he": "נערים ילבינו פני זקנים",    "en": "The elders now rise before the children.",            "src": "Sanhedrin 97a" },
+    { "file": "card-05-family-strife.html",     "sign": 8,  "he": "ובת קמה באמה",            "en": "A study gave it a name: the political breakup.",      "src": "Sanhedrin 97a" },
+    { "file": "card-02-vine-and-wine.html",     "sign": 9,  "he": "הגפן יתן פריו",            "en": "The vine gives its fruit. Nobody can afford the wine.", "src": "Sanhedrin 97a" },
+    { "file": "card-13-kingdom-turns.html",     "sign": 10, "he": "תתהפך המלכות למינות",      "en": "When the whole kingdom turns.",                       "src": "Sanhedrin 97a" },
+    { "file": "card-01-perutah.html",           "sign": 11, "he": "עד שתכלה פרוטה מן הכיס",   "en": "The coin is gone from the pocket.",                   "src": "Sanhedrin 97a" },
+    { "file": "card-12-fruit-taste.html",       "sign": 12, "he": "ניטל טעם הפירות",          "en": "Even the fruit doesn’t taste like it used to.",       "src": "Mishnah Sotah 9:12" },
+    { "file": "card-07-kings-provoke.html",     "sign": 13, "he": "מלך פרס מתגרה",           "en": "The king of Persia against the king of Arabia.",      "src": "Yalkut Shimoni 499" }
+  ],
+  "readings": [
+    { "file": "reading-01-maharal.html", "he": "נצח ישראל · פרק לה", "en": "The ruin a new world requires",     "src": "Maharal, Netzach Yisrael 35" },
+    { "file": "reading-02-tanya.html",   "he": "אגרת הקודש · סימן י", "en": "Kindness without a measure",         "src": "Tanya, Iggeret HaKodesh 10" }
+  ],
+  "sugyot": [
+    { "file": "reading-03-sanhedrin-97b.html", "he": "סנהדרין צז ע״ב", "en": "When will he come — and can we know?", "src": "Sanhedrin 97b" },
+    { "file": "reading-04-sanhedrin-98a.html", "he": "סנהדרין צח ע״א", "en": "A second cluster of signs",           "src": "Sanhedrin 98a" }
+  ]
+}

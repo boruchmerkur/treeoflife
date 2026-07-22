@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simanei Moshiach — a sign to sit with</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#e7e0d2}
+  #card{display:block;width:100%;height:100%;border:0;opacity:0;transition:opacity .45s ease}
+  #card.ready{opacity:1}
+
+  /* loading veil — shown until the chosen card paints */
+  #veil{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;gap:16px;background:#e7e0d2;
+        transition:opacity .4s ease}
+  #veil.hidden{opacity:0;pointer-events:none}
+  #veil .glyph{font-family:'Frank Ruhl Libre',Georgia,serif;font-size:44px;color:#b8801a;
+        direction:rtl;letter-spacing:.04em;opacity:.9}
+  #veil .sub{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;
+        letter-spacing:.16em;text-transform:uppercase;color:#5a5346}
+  #veil .spin{width:22px;height:22px;border-radius:50%;border:2px solid rgba(184,128,26,.28);
+        border-top-color:#b8801a;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* reshuffle control — floats over the card, bottom-right */
+  #shuffle{position:fixed;right:18px;bottom:18px;z-index:10;
+        display:inline-flex;align-items:center;gap:9px;
+        font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-weight:600;
+        font-size:13px;letter-spacing:.01em;color:#f7f4ee;
+        background:#100f0d;border:1px solid rgba(224,178,95,.4);border-radius:999px;
+        padding:11px 17px;cursor:pointer;white-space:nowrap;box-shadow:0 4px 16px rgba(16,15,13,.22);
+        transition:transform .15s ease,background .15s ease,box-shadow .15s ease}
+  #shuffle:hover{background:#1c1a16;box-shadow:0 6px 22px rgba(16,15,13,.3);transform:translateY(-1px)}
+  #shuffle:active{transform:translateY(0)}
+  #shuffle svg{width:15px;height:15px;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+  #shuffle.spinning svg{transform:rotate(360deg)}
+  #shuffle .cap{color:#e0b25f}
+  @media (max-width:520px){ #shuffle{right:12px;bottom:12px;padding:10px 15px;font-size:12.5px} }
+
+  #err{position:fixed;left:16px;right:16px;bottom:16px;z-index:20;display:none;
+        font-family:ui-monospace,monospace;font-size:12px;line-height:1.5;color:#7a2b12;
+        background:#f7ede2;border:1px solid #d9b48c;border-radius:8px;padding:12px 14px}
+</style>
+</head>
+<body>
+  <div id="veil">
+    <div class="glyph" dir="rtl">סימני משיח</div>
+    <div class="spin"></div>
+    <div class="sub">Drawing a sign</div>
+  </div>
+
+  <iframe id="card" title="A sign of the era of Moshiach" loading="eager"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+  <button id="shuffle" type="button" aria-label="Show another sign">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+    </svg>
+    Another sign <span class="cap" id="shuffleCap"></span>
+  </button>
+
+  <div id="err"></div>
+
+<script>
+(function () {
+  var iframe   = document.getElementById('card');
+  var veil     = document.getElementById('veil');
+  var shuffle  = document.getElementById('shuffle');
+  var cap      = document.getElementById('shuffleCap');
+  var errBox   = document.getElementById('err');
+
+  var params   = new URLSearchParams(location.search);
+  var poolName = (params.get('pool') || 'all').toLowerCase();   // all | signs | readings | sugyot
+  var pinned   = params.get('card');                            // exact file → deep link
+  var entries  = [];
+  var lastFile = null;
+
+  function fail(msg) {
+    errBox.style.display = 'block';
+    errBox.textContent = msg;
+    veil.classList.add('hidden');
+  }
+
+  function buildPool(m) {
+    var out = [];
+    if (poolName === 'signs')          out = m.signs || [];
+    else if (poolName === 'readings')  out = m.readings || [];
+    else if (poolName === 'sugyot')    out = m.sugyot || [];
+    else out = [].concat(m.signs || [], m.readings || [], m.sugyot || []);
+    return out;
+  }
+
+  function pick() {
+    if (entries.length === 1) return entries[0];
+    var e, guard = 0;
+    do { e = entries[Math.floor(Math.random() * entries.length)]; guard++; }
+    while (e.file === lastFile && guard < 20);
+    return e;
+  }
+
+  function show(entry, spin) {
+    lastFile = entry.file;
+    cap.textContent = entry.sign ? ('· ' + entry.sign) : '';
+    if (spin) shuffle.classList.add('spinning');
+    iframe.classList.remove('ready');
+    veil.classList.remove('hidden');
+    iframe.src = entry.file;
+  }
+
+  iframe.addEventListener('load', function () {
+    // ignore the initial about:blank load
+    if (!iframe.src || iframe.src === 'about:blank') return;
+    iframe.classList.add('ready');
+    veil.classList.add('hidden');
+    setTimeout(function () { shuffle.classList.remove('spinning'); }, 500);
+  });
+
+  shuffle.addEventListener('click', function () {
+    if (!entries.length) return;
+    show(pick(), true);
+  });
+
+  fetch('manifest.json', { cache: 'no-cache' })
+    .then(function (r) { if (!r.ok) throw new Error('manifest.json HTTP ' + r.status); return r.json(); })
+    .then(function (m) {
+      entries = buildPool(m);
+      if (!entries.length) { fail('No cards in pool "' + poolName + '".'); return; }
+      if (pinned) {
+        var found = [].concat(m.signs||[], m.readings||[], m.sugyot||[])
+                      .filter(function (e) { return e.file === pinned; })[0];
+        show(found || pick(), false);
+      } else {
+        show(pick(), false);
+      }
+    })
+    .catch(function (e) { fail('Could not load manifest.json — ' + e.message); });
+})();
+</script>
+</body>
+</html>
