@@ -320,12 +320,12 @@ footer{border-top:1px solid var(--line-gold);background:var(--cream-2);padding:7
 <section class="wrap">
   <div class="issue-bar reveal">
     <div class="meta">
-      <div class="kicker">Volume I &middot; Issue Thirteen &middot; Parshas Devarim</div>
-      <h2>Whose Heads Gonna <em>Roll?</em></h2>
-      <div class="zline">Erev Shabbos &middot; 3 Av 5786 &middot; July 17, 2026 &middot; Shabbos Chazon &middot; <em>Vaughan, ON</em></div>
+      <div class="kicker">Volume I &middot; Issue Fifteen &middot; Parshas Eikev</div>
+      <h2>They Can&rsquo;t Take the Torah <em>Out of Us</em></h2>
+      <div class="zline">Erev Shabbos &middot; 17 Av 5786 &middot; July 31, 2026 &middot; <em>Vaughan, ON</em></div>
     </div>
     <div class="actions">
-      <a href="assets/newsletter/issue-13-dvarim.pdf" target="_blank" rel="noopener" class="btn btn-ghost" onclick="printIssue(event)" aria-label="Print this issue" title="Print this issue">Print <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg></a>
+      <a href="assets/newsletter/issue-15-eikev.pdf" target="_blank" rel="noopener" class="btn btn-ghost" onclick="printIssue(event)" aria-label="Print this issue" title="Print this issue">Print <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg></a>
       <a href="#subscribe" class="btn btn-gold">Subscribe</a>
     </div>
   </div>
@@ -333,9 +333,9 @@ footer{border-top:1px solid var(--line-gold);background:var(--cream-2);padding:7
 
 <section class="wrap nl-reader" aria-label="Read this week's issue">
   <div class="nl-frame-wrap">
-    <iframe class="nl-frame" src="assets/newsletter/current.pdf#toolbar=0&navpanes=0&view=Fit" title="This week's newsletter — Whose Heads Gonna Roll? (Devarim)" loading="lazy"></iframe>
+    <iframe class="nl-frame" src="assets/newsletter/current.pdf#toolbar=0&navpanes=0&view=Fit" title="This week's newsletter — They Can’t Take the Torah Out of Us (Eikev)" loading="lazy"></iframe>
   </div>
-  <div class="nl-fallback">Trouble viewing? <a href="assets/newsletter/issue-13-dvarim.pdf" target="_blank" rel="noopener">Open the PDF in a new tab</a> &middot; <a href="assets/newsletter/issue-13-dvarim.pdf" download>download</a> &middot; <a href="newsletter/archive.html">browse all past issues →</a></div>
+  <div class="nl-fallback">Trouble viewing? <a href="assets/newsletter/issue-15-eikev.pdf" target="_blank" rel="noopener">Open the PDF in a new tab</a> &middot; <a href="assets/newsletter/issue-15-eikev.pdf" download>download</a> &middot; <a href="newsletter/archive.html">browse all past issues →</a></div>
 </section>
 
 <section class="wrap subscribe" id="subscribe" style="margin-top:84px">
@@ -369,12 +369,12 @@ footer{border-top:1px solid var(--line-gold);background:var(--cream-2);padding:7
       </div>
       <div><h4>Browse</h4><ul><li><a href="index.html#collection">Collection</a></li><li><a href="gallery.html">Artwork</a></li></ul></div>
       <div><h4>More</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-      <div><h4>Connect</h4><ul><li><a href="https://rabbiboruch.com/" target="_blank" rel="noopener">Rabbi Boruch</a></li><li><a href="https://www.facebook.com/RabbiBoruch" target="_blank" rel="noopener">Facebook</a></li><li><a href="https://www.instagram.com/rabbiboruchmerkur" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://www.youtube.com/@rabbiboruchmerkur" target="_blank" rel="noopener">YouTube</a></li><li><a href="/cdn-cgi/l/email-protection#582a393a3a313a372a2d3b30353d2a332d2a183f35393134763b3735">Email Us</a></li></ul></div>
+      <div><h4>Connect</h4><ul><li><a href="https://rabbiboruch.com/" target="_blank" rel="noopener">Rabbi Boruch</a></li><li><a href="https://www.facebook.com/RabbiBoruch" target="_blank" rel="noopener">Facebook</a></li><li><a href="https://www.instagram.com/rabbiboruchmerkur" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://www.youtube.com/@rabbiboruchmerkur" target="_blank" rel="noopener">YouTube</a></li><li><a href="mailto:rabbiboruchmerkur@gmail.com">Email Us</a></li></ul></div>
     </div>
     <div class="copyright">© 2026 The Tree of Life Books. All rights reserved.</div>
   </div>
 </footer>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // header solidify on scroll
 const hdr=document.querySelector('header');
 const onScroll=()=>{(window.scrollY>40)?hdr.classList.add('scrolled'):hdr.classList.remove('scrolled')};
@@ -392,7 +392,7 @@ setTimeout(function(){document.querySelectorAll('.reveal:not(.in)').forEach(func
 // quick-print this week's issue (same-origin PDF → hidden iframe print, with fallback)
 function printIssue(e){
   if(e) e.preventDefault();
-  var url='assets/newsletter/issue-13-dvarim.pdf';
+  var url='assets/newsletter/issue-15-eikev.pdf';
   var f=document.createElement('iframe');
   f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
   f.src=url;

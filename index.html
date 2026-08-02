@@ -162,6 +162,9 @@ nav a:hover,nav a.active{color:var(--green);text-shadow:0 0 14px rgba(156,111,46
 .buy:hover{background:var(--green);color:var(--cream-2);border-color:var(--green)}
 .buy--soon{border-color:var(--line-gold);color:var(--gold)}
 .buy--soon:hover{background:var(--gold);color:var(--cream-2);border-color:var(--gold)}
+.review-link{margin-top:11px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:var(--sans);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;transition:color .25s}
+.review-link svg{width:14px;height:14px}
+.review-link:hover{color:var(--green-deep)}
 
 /* Quick look */
 .cover{cursor:zoom-in;appearance:none;-webkit-appearance:none;font:inherit;color:inherit;text-align:left;display:block;width:100%;padding:0;border:0;border-bottom:1px solid var(--line);background:var(--surface-2)}
@@ -626,11 +629,13 @@ const REELS={
 };
 const playGlyph='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
 const watchBadge=(b,i)=>REELS[b.slug]?`<button type="button" class="watch-badge" data-reel="${i}" aria-label="Watch the reel — ${b.title}"><span class="play">${playGlyph}</span>Watch</button>`:'';
+const giftIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11h16v9H4z"/><path d="M2 7h20v4H2zM12 7v13"/><path d="M12 7S10.5 3 8 4.2C6.2 5 7 7 7 7zM12 7s1.5-4 4-2.8C17.8 5 17 7 17 7z"/></svg>';
+const reviewLink=(b)=>`<a class="review-link" href="review-copies.html?book=${encodeURIComponent(b.title)}#request">${giftIcon} Free review copy</a>`;
 document.getElementById('book-grid').innerHTML=books.map((b,i)=>{
  const look=`<span class="cover-look"><span>${lookIcon} ${b.pv?'Look inside':'Quick look'}</span></span>`;
  const cover=`<button type="button" class="cover" data-ql="${i}" aria-label="Quick look — ${b.title}">${coverInner(b)}${look}</button>`;
  const d=['','d1','d2'][i%3];
- return `<article class="card reveal ${d}">${cover}${watchBadge(b,i)}<div class="card-body"><span class="name">${b.title}</span><span class="desc">${b.desc}</span>${actionHTML(b)}</div></article>`;
+ return `<article class="card reveal ${d}">${cover}${watchBadge(b,i)}<div class="card-body"><span class="name">${b.title}</span><span class="desc">${b.desc}</span>${actionHTML(b)}${reviewLink(b)}</div></article>`;
 }).join('');
 document.querySelectorAll('.card.reveal').forEach(el=>{new IntersectionObserver((es,o)=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');o.unobserve(en.target);}}),{threshold:.12}).observe(el);});
 
@@ -664,6 +669,7 @@ document.querySelectorAll('.card.reveal').forEach(el=>{new IntersectionObserver(
    elCat.textContent=b.category; elTitle.textContent=b.title; elDesc.textContent=b.desc;
    elAction.innerHTML=actionHTML(b);
    if(typeof REELS!=='undefined' && REELS[b.slug]){ elAction.insertAdjacentHTML('beforeend','<button type="button" class="ql-watch" data-reel-idx="'+i+'"><span class="play">'+playGlyph+'</span> Watch the reel</button>'); }
+   elAction.insertAdjacentHTML('beforeend','<div style="margin-top:14px">'+reviewLink(b)+'</div>');
    var elAudio=document.getElementById('ql-audio');
    if(elAudio){ if(b.audio){ elAudio.hidden=false; elAudio.innerHTML='<span class="eyebrow">Listen · audio reading</span><div class="ql-audio-frame"><iframe src="https://www.youtube.com/embed/'+b.audio+'" title="'+b.title+' — audio reading" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>'; } else { elAudio.hidden=true; elAudio.innerHTML=''; } }
    if(b.pv||b.tv){ elLook.hidden=false; elLookText.textContent='Look inside · '+((b.pv||0)+(b.tv||0))+' pages'; }

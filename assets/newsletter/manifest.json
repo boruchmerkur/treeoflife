@@ -2,6 +2,31 @@
   "_comment": "Tree of Life Newsletter — issues archive. Add a new issue by dropping the PDF into assets/newsletter/ following the issue-NN-slug.pdf convention, then adding an entry here. Sorted by 'number' descending on the archive page. 'tags' is the searchable list (parsha + holiday names). 'parshaDisplay' is the spelling as it appears in the newsletter.",
   "issues": [
     {
+      "number": 15,
+      "numberWord": "Fifteen",
+      "slug": "eikev",
+      "parsha": "Eikev",
+      "parshaDisplay": "Eikev",
+      "holiday": null,
+      "subtitle": "They Can’t Take the Torah Out of Us",
+      "summary": "",
+      "date": "2026-07-31",
+      "pdf": "issue-15-eikev.pdf",
+      "tags": ["Eikev", "Ekev", "Consolation", "Seven Weeks of Comfort", "Nechemta", "Av", "Antisemitism", "Torah Scrolls", "Paris", "Levallois-Perret", "Pirkei Avos", "Ben Zoma"]
+    },
+    {
+      "number": 14,
+      "numberWord": "Fourteen",
+      "parsha": "Vaeschanan",
+      "parshaDisplay": "Va'eschanan",
+      "holiday": "Shabbos Nachamu",
+      "subtitle": "Consoled by Erev Shabbos",
+      "summary": "",
+      "date": "2026-07-24",
+      "pdf": "issue-14-vaeschanan.pdf",
+      "tags": ["Va'eschanan", "Vaeschanan", "Shabbos Nachamu", "Nachamu", "Tisha B'Av", "Consolation", "Seven Weeks of Comfort", "Av", "Antisemitism"]
+    },
+    {
       "number": 13,
       "slug": "dvarim",
       "parshaDisplay": "Devarim",
