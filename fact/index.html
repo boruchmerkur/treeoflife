@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FACT. — Argue with evidence</title>
+<meta name="description" content="FACT. is a debating platform where every claim is labeled, every fact needs a source, and the winner is whoever changes the most minds.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FACT. — Argue with evidence">
+<meta property="og:description" content="Pick a side before you read. Facts need sources. The winner is whoever changes the most minds.">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230d0d0d'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900' font-size='44' fill='%23ffe600'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0d0d; --paper:#f3efe6; --white:#ffffff;
+  --yellow:#ffe600; --for:#1f4bff; --against:#ff3d1f; --undecided:#9a9488;
+  --mute:#5f5a50; --line:3px solid var(--ink);
+  --display:"Archivo Black","Arial Black",Impact,sans-serif;
+  --body:"Archivo",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme: light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--for);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;width:100%}
+main{flex:1}
+
+/* ---------- top bar ---------- */
+.bar{background:var(--ink);color:var(--white);border-bottom:var(--line);position:sticky;top:0;z-index:20}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.logo{font-family:var(--display);font-size:30px;letter-spacing:-.02em;color:var(--yellow);text-decoration:none;line-height:1}
+.logo span{color:var(--white)}
+.nav{display:flex;gap:10px;align-items:center}
+.nav a{font-weight:700;text-decoration:none;font-size:14px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px}
+.nav a:hover{color:var(--yellow)}
+.nav .cta{background:var(--yellow);color:var(--ink);border:2px solid var(--yellow)}
+.nav .cta:hover{background:var(--white);color:var(--ink);border-color:var(--white)}
+
+/* ---------- buttons, tags ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:var(--line);background:var(--white);padding:10px 16px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);text-decoration:none;transition:transform .06s,box-shadow .06s;white-space:nowrap}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.y{background:var(--yellow)}
+.btn.k{background:var(--ink);color:var(--white)}
+.btn.f{background:var(--for);color:var(--white)}
+.btn.a{background:var(--against);color:var(--white)}
+.btn.sm{padding:6px 10px;font-size:12px;box-shadow:3px 3px 0 var(--ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.btn[aria-current="true"]{opacity:1;cursor:default;box-shadow:none;transform:translate(3px,3px);outline:3px solid var(--yellow);outline-offset:-7px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:3px 7px;border:2px solid var(--ink);background:var(--white);line-height:1.2}
+.tag.fact{background:var(--ink);color:var(--yellow)}
+.tag.opinion{background:var(--white);color:var(--ink);border-style:dashed}
+.tag.checked{background:#16c172;color:var(--ink)}
+.tag.disputed{background:var(--against);color:var(--white)}
+.tag.cat{background:var(--yellow)}
+.tag.sample{background:transparent;border-color:var(--mute);color:var(--mute)}
+.kicker{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.12em}
+
+/* ---------- home ---------- */
+.hero{padding:56px 0 40px;border-bottom:var(--line)}
+.hero h1{font-family:var(--display);font-size:clamp(48px,10vw,128px);line-height:.88;letter-spacing:-.035em;text-transform:uppercase}
+.hero h1 .hl{background:var(--yellow);padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero p.lede{font-size:clamp(18px,2.2vw,22px);max-width:640px;margin-top:22px;font-weight:500}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);border:var(--line);margin-top:36px;background:var(--white)}
+.rule{padding:20px 22px;border-right:var(--line)}
+.rule:last-child{border-right:0}
+.rule b{display:block;font-family:var(--display);font-size:44px;line-height:1;margin-bottom:8px}
+.rule h3{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.01em;margin-bottom:4px}
+.rule p{color:var(--mute);font-size:15px}
+
+.listhead{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:40px 0 18px;flex-wrap:wrap}
+.listhead h2{font-family:var(--display);font-size:clamp(30px,4vw,44px);text-transform:uppercase;letter-spacing:-.02em;line-height:1}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--ink);background:transparent;padding:6px 12px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--yellow)}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;padding-bottom:64px}
+.card{display:flex;flex-direction:column;border:var(--line);background:var(--white);box-shadow:6px 6px 0 var(--ink);text-decoration:none;transition:transform .08s,box-shadow .08s}
+.card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.card .top{padding:20px 22px 18px;flex:1}
+.card .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.card h3{font-family:var(--display);font-size:clamp(22px,2.4vw,28px);line-height:1.05;letter-spacing:-.015em}
+.card .foot{display:flex;justify-content:space-between;gap:10px;padding:10px 22px;border-top:var(--line);font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;flex-wrap:wrap}
+.split{display:flex;height:34px;border-top:var(--line);font-family:var(--display);font-size:14px;color:var(--white)}
+.split div{display:flex;align-items:center;padding:0 10px;min-width:0;overflow:hidden;white-space:nowrap;transition:flex-basis .4s}
+.split .s-for{background:var(--for)}
+.split .s-und{background:var(--undecided);justify-content:center;color:var(--ink)}
+.split .s-against{background:var(--against);justify-content:flex-end}
+.empty{border:3px dashed var(--ink);padding:40px;text-align:center;grid-column:1/-1}
+
+/* ---------- debate ---------- */
+.dhead{padding:40px 0 28px;border-bottom:var(--line)}
+.back{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:13px;text-decoration:none;display:inline-block;margin-bottom:20px}
+.back:hover{text-decoration:underline;text-underline-offset:4px}
+.dhead .kicker{margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.motion{font-family:var(--display);font-size:clamp(34px,6vw,76px);line-height:.95;letter-spacing:-.03em;max-width:1000px}
+.context{margin-top:18px;max-width:760px;font-size:18px;color:#2a2722}
+
+.stance{display:grid;grid-template-columns:1.1fr 1fr;border:var(--line);margin:28px 0;background:var(--white);box-shadow:6px 6px 0 var(--ink)}
+.stance .ask{padding:22px;border-right:var(--line)}
+.stance .ask h2{font-family:var(--display);font-size:24px;text-transform:uppercase;line-height:1.05;margin-bottom:6px}
+.stance .ask p{color:var(--mute);font-size:15px;margin-bottom:16px}
+.stance .ask .row{display:flex;gap:10px;flex-wrap:wrap}
+.stance .res{padding:22px;display:flex;flex-direction:column;gap:12px}
+.resrow{display:grid;grid-template-columns:70px 1fr;align-items:center;gap:10px}
+.resrow .lbl{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.resrow .split{border:2px solid var(--ink);height:28px;font-size:12px}
+.verdict{font-family:var(--display);font-size:20px;text-transform:uppercase;line-height:1.1;padding-top:6px;border-top:2px solid var(--ink)}
+.verdict .for{color:var(--for)} .verdict .against{color:var(--against)}
+.mine{font-weight:700}
+.mine .for{color:var(--for)} .mine .against{color:var(--against)}
+
+.arena{display:grid;grid-template-columns:1fr 1fr;gap:0;border:var(--line);margin-bottom:64px;background:var(--white)}
+.col{min-width:0}
+.col + .col{border-left:var(--line)}
+.colhead{padding:16px 20px;color:var(--white);display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:var(--line);position:sticky;top:64px;z-index:5}
+.col.for .colhead{background:var(--for)}
+.col.against .colhead{background:var(--against)}
+.colhead h2{font-family:var(--display);font-size:32px;line-height:1;letter-spacing:-.01em}
+.colhead .ev{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;text-align:right}
+.points{padding:16px;display:flex;flex-direction:column;gap:14px}
+.point{border:var(--line);background:var(--white);position:relative}
+.col.for .point{box-shadow:5px 5px 0 var(--for)}
+.col.against .point{box-shadow:5px 5px 0 var(--against)}
+.point.is-disputed .ptext{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--against)}
+.point .ph{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:12px 14px 0}
+.point .ph .who{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--mute);font-weight:500}
+.ptext{padding:10px 14px 4px;font-size:17px;font-weight:500;overflow-wrap:anywhere}
+.src{display:flex;gap:8px;align-items:center;margin:6px 14px 0;padding:6px 8px;background:var(--paper);border:2px solid var(--ink);font-family:var(--mono);font-size:12px;font-weight:600;text-decoration:none;overflow:hidden}
+.src span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src:hover{background:var(--yellow)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;padding:12px 14px 14px}
+.act{border:2px solid var(--ink);background:var(--white);padding:4px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.act:hover{background:var(--paper)}
+.act[aria-pressed="true"]{background:var(--ink);color:var(--yellow)}
+.act.convince{border-color:var(--ink);background:var(--yellow)}
+.act.convince:hover{background:var(--ink);color:var(--yellow)}
+.act b{font-family:var(--mono);font-weight:600}
+.convinced{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:var(--yellow);border-top:var(--line);padding:6px 14px}
+.replies{border-top:2px dashed var(--ink);padding:10px 14px;display:flex;flex-direction:column;gap:8px;background:#faf8f3}
+.reply{font-size:15px;padding-left:12px;border-left:4px solid var(--ink);overflow-wrap:anywhere}
+.reply .who{font-family:var(--mono);font-size:11px;color:var(--mute);display:block}
+.reply.r-for{border-left-color:var(--for)} .reply.r-against{border-left-color:var(--against)}
+.noside{padding:28px 20px;text-align:center;color:var(--mute);font-weight:600}
+
+/* ---------- forms ---------- */
+.compose{border-top:var(--line);padding:16px;background:var(--paper)}
+.compose h3{font-family:var(--display);font-size:18px;text-transform:uppercase;margin-bottom:10px}
+.kind{display:flex;border:var(--line);margin-bottom:10px}
+.kind label{flex:1;text-align:center;padding:8px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;background:var(--white)}
+.kind label + label{border-left:var(--line)}
+.kind input{position:absolute;opacity:0;pointer-events:none}
+.kind label:has(input:checked){background:var(--ink);color:var(--yellow)}
+.kind label:has(input:focus-visible){outline:3px solid var(--for);outline-offset:-6px}
+.field{display:block;margin-bottom:10px}
+.field > span{display:block;font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.input,.textarea,.select{width:100%;border:var(--line);background:var(--white);padding:10px 12px;font-size:16px;border-radius:0;appearance:none}
+.textarea{resize:vertical;min-height:84px}
+.input:focus,.textarea:focus,.select:focus{outline:none;box-shadow:4px 4px 0 var(--yellow),4px 4px 0 3px var(--ink)}
+.hint{font-size:13px;color:var(--mute);margin-top:4px}
+.err{color:var(--against);font-weight:700;font-size:14px;margin-bottom:8px;min-height:0}
+.rform{display:flex;gap:8px;padding:0 14px 14px}
+.rform .input{padding:8px 10px;font-size:15px}
+
+.newpage{padding:40px 0 64px;max-width:760px}
+.newpage h1{font-family:var(--display);font-size:clamp(40px,7vw,80px);line-height:.9;letter-spacing:-.03em;text-transform:uppercase;margin-bottom:12px}
+.newpage .lede{font-size:18px;margin-bottom:28px;color:#2a2722}
+.panel{border:var(--line);background:var(--white);padding:24px;box-shadow:6px 6px 0 var(--ink)}
+.panel .field{margin-bottom:16px}
+.preview{margin-top:18px;border:3px dashed var(--ink);padding:16px}
+.preview .motion{font-size:clamp(26px,4vw,40px)}
+
+/* ---------- footer, toast ---------- */
+footer{background:var(--ink);color:#cfcabf;border-top:var(--line);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;padding:22px 24px;flex-wrap:wrap;align-items:center}
+footer .logo{font-size:22px}
+footer button{background:none;border:0;color:#cfcabf;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:14px}
+footer button:hover{color:var(--yellow)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);background:var(--yellow);border:var(--line);box-shadow:5px 5px 0 var(--ink);padding:12px 18px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:14px;z-index:50;transition:transform .2s;max-width:calc(100% - 32px);text-align:center}
+.toast.on{transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .grid{grid-template-columns:1fr}
+  .rules{grid-template-columns:1fr}
+  .rule{border-right:0;border-bottom:var(--line)}
+  .rule:last-child{border-bottom:0}
+  .stance{grid-template-columns:1fr}
+  .stance .ask{border-right:0;border-bottom:var(--line)}
+  .arena{grid-template-columns:1fr}
+  .col + .col{border-left:0;border-top:var(--line)}
+}
+@media (max-width:520px){
+  .wrap{padding:0 16px}
+  .nav a.hide-sm{display:none}
+  .hero{padding:36px 0 28px}
+  .colhead h2{font-size:26px}
+  .points{padding:12px}
+  footer .wrap{padding:20px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#/">FACT<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#/" class="hide-sm">Debates</a>
+      <a href="#/new" class="cta">+ Start a debate</a>
+    </nav>
+  </div>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer>
+  <div class="wrap">
+    <span class="logo">FACT<span>.</span></span>
+    <span>Opinions are cheap. Bring a fact. &nbsp;·&nbsp; Debates are saved in this browser.</span>
+    <span><button type="button" data-action="export">Export</button> &nbsp; <button type="button" data-action="reset">Reset demo</button></span>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* =========================================================
+   STORAGE
+   ========================================================= */
+var KEY = 'fact.v1';
+var CATS = ['Society','Tech','Science','Economy','Education','Culture'];
+
+function uid(){ return Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-3); }
+function now(){ return Date.now(); }
+var DAY = 86400000;
+
+function seed(){
+  var t = now();
+  function P(side, kind, text, src, author, s, v, d, c, replies){
+    return {id:uid(), side:side, kind:kind, text:text, src:src||'', author:author, created:t - Math.random()*5*DAY,
+            strong:s||0, verified:v||0, disputed:d||0, changed:c||0, replies:replies||[]};
+  }
+  function R(side, author, text){ return {id:uid(), side:side, author:author, text:text, created:t - Math.random()*2*DAY}; }
+  return {
+    v:1, me:{name:''}, mine:{}, votes:{},
+    debates:[
+      {
+        id:uid(), sample:true, cat:'Science', author:'fact.team', created:t - 3*DAY,
+        motion:'Nuclear power is the fastest route to a zero-carbon grid.',
+        context:'Renewables are cheap and quick to build. Nuclear is reliable but slow and expensive. Which gets a country to clean electricity first?',
+        before:{'for':41,'against':38,'undecided':21}, now:{'for':47,'against':40,'undecided':13},
+        points:[
+          P('for','fact','Across its life cycle, nuclear electricity has greenhouse-gas emissions in the same low range as wind and far below coal and gas.',
+            'https://en.wikipedia.org/wiki/Life-cycle_greenhouse_gas_emissions_of_energy_sources','grid_nerd',34,18,1,6,
+            [R('against','sunny_side','Low emissions per kWh is not the same as fast. The motion is about speed.')]),
+          P('for','fact','France built most of its nuclear fleet in roughly 15 years in the 1970s–80s and now runs one of the lowest-carbon grids in Europe.',
+            'https://en.wikipedia.org/wiki/Nuclear_power_in_France','ohm_my',27,12,3,4),
+          P('for','opinion','A grid needs power when the wind is still. Firm, always-on supply is what lets you actually switch the coal plants off.','',
+            'baseload_ben',19,0,0,2),
+          P('against','fact','Several recent Western reactor projects ran years late and billions over budget, among them Flamanville 3 in France.',
+            'https://en.wikipedia.org/wiki/Flamanville_Nuclear_Power_Plant','sunny_side',31,15,2,5,
+            [R('for','grid_nerd','Those were first-of-a-kind builds after decades of not building. Repeat builds get faster.')]),
+          P('against','fact','Solar and wind are now among the cheapest sources of new electricity in much of the world.',
+            'https://en.wikipedia.org/wiki/Cost_of_electricity_by_source','watt_if',24,10,1,3),
+          P('against','opinion','Every dollar locked into a 15-year reactor build is a dollar not spent on panels, batteries and transmission that can go live this year.','',
+            'kilo_watt',15,0,0,1)
+        ]
+      },
+      {
+        id:uid(), sample:true, cat:'Society', author:'fact.team', created:t - 2*DAY,
+        motion:'City centres should be car-free.',
+        context:'Some cities have pedestrianised their cores. Others say it kills shops and shuts out people who need to drive.',
+        before:{'for':35,'against':44,'undecided':21}, now:{'for':46,'against':42,'undecided':12},
+        points:[
+          P('for','fact','Pontevedra in Spain banned most cars from its historic centre in 1999 and has become a widely studied example of pedestrian-first planning.',
+            'https://en.wikipedia.org/wiki/Pontevedra','walk_this_way',29,14,1,7),
+          P('for','opinion','Streets are the biggest public space a city owns. Using most of it to store parked cars is a choice, not a law of nature.','',
+            'curb_appeal',22,0,0,3),
+          P('against','opinion','Car-free cores work for tourists and the young. Disabled residents, tradespeople with tools, and parents with three kids get left out.','',
+            'van_life',26,0,0,4,
+            [R('for','walk_this_way','Most schemes allow access for disabled drivers, deliveries and residents. "Car-free" rarely means zero vehicles.')]),
+          P('against','fact','Congestion pricing, as used in London and Stockholm, cuts traffic without banning cars outright.',
+            'https://en.wikipedia.org/wiki/Congestion_pricing','toll_free',18,9,0,2)
+        ]
+      },
+      {
+        id:uid(), sample:true, cat:'Education', author:'fact.team', created:t - 1*DAY,
+        motion:'Primary schools should abolish homework.',
+        context:'Is homework for young children building good habits, or just stress at the kitchen table?',
+        before:{'for':48,'against':33,'undecided':19}, now:{'for':45,'against':41,'undecided':14},
+        points:[
+          P('for','opinion','After six hours of school, a seven-year-old learns more from play, reading for fun and sleep than from worksheets.','',
+            'recess_now',21,0,0,2),
+          P('for','fact','Some countries, Finland among them, are known for giving young pupils little homework and still score well internationally.',
+            'https://en.wikipedia.org/wiki/Education_in_Finland','nordic_notes',17,6,4,1),
+          P('against','opinion','A little homework is how parents get to see what their child is learning. Abolishing it cuts families out of school.','',
+            'pta_pat',23,0,0,4),
+          P('against','fact','Reviews of the research find the benefit of homework is much clearer for older students than for young children. That argues for less homework, not none.',
+            'https://en.wikipedia.org/wiki/Homework','data_dad',25,11,1,5,
+            [R('for','recess_now','"Less" for young kids is pretty close to "none". The motion is about primary school.')])
+        ]
+      },
+      {
+        id:uid(), sample:true, cat:'Tech', author:'fact.team', created:t - 6*3600000,
+        motion:'Social media apps should be banned for under-16s.',
+        context:'Some governments are moving to set a minimum age for social media. Is that protection or overreach?',
+        before:{'for':52,'against':30,'undecided':18}, now:{'for':50,'against':36,'undecided':14},
+        points:[
+          P('for','fact','Australia passed a law in 2024 setting a minimum age of 16 for many social media platforms.',
+            'https://www.esafety.gov.au/','policy_wonk',20,9,0,2),
+          P('for','opinion','We already set ages for driving, drinking and gambling. Apps built to be addictive belong on that list.','',
+            'screen_time',18,0,0,1),
+          P('against','opinion','A ban just teaches teens to lie about their age, and pushes them to corners of the internet with even less moderation.','',
+            'vpn_kid',22,0,0,3),
+          P('against','opinion','Enforcing it means age checks for everyone, which means handing ID to tech companies. That is a privacy cost for adults too.','',
+            'priv_acy',16,0,0,2)
+        ]
+      }
+    ]
+  };
+}
+
+var S;
+function load(){
+  try { var raw = localStorage.getItem(KEY); if (raw) { S = JSON.parse(raw); if (S && S.v === 1 && Array.isArray(S.debates)) return; } } catch(e){}
+  S = seed(); save();
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function safeUrl(u){ try { var x = new URL(u); return (x.protocol === 'http:' || x.protocol === 'https:') ? x.href : ''; } catch(e){ return ''; } }
+function host(u){ try { return new URL(u).hostname.replace(/^www\./,''); } catch(e){ return ''; } }
+function ago(ts){
+  var s = Math.max(1, Math.round((now() - ts)/1000));
+  if (s < 60) return 'just now';
+  var m = Math.round(s/60); if (m < 60) return m + 'm ago';
+  var h = Math.round(m/60); if (h < 24) return h + 'h ago';
+  var d = Math.round(h/24); return d + 'd ago';
+}
+function find(id){ for (var i=0;i<S.debates.length;i++) if (S.debates[i].id === id) return S.debates[i]; return null; }
+function findPoint(d, pid){ for (var i=0;i<d.points.length;i++) if (d.points[i].id === pid) return d.points[i]; return null; }
+function total(o){ return (o['for']||0) + (o.against||0) + (o.undecided||0); }
+function pct(o, k){ var t = total(o); return t ? Math.round(100 * (o[k]||0) / t) : 0; }
+function swing(d, side){ return pct(d.now, side) - pct(d.before, side); }
+function signed(n){ return (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n); }
+function sideName(s){ return s === 'for' ? 'FOR' : s === 'against' ? 'AGAINST' : 'UNDECIDED'; }
+function me(){ return (S.me && S.me.name) || 'anonymous'; }
+
+function status(p){
+  if (p.kind !== 'fact') return '';
+  if (p.disputed >= 2 && p.disputed > p.verified) return 'disputed';
+  if (p.verified >= 3 && p.verified >= p.disputed * 2) return 'checked';
+  return '';
+}
+function score(p){
+  var st = status(p);
+  var s = p.strong + p.changed * 3;
+  if (p.kind === 'fact') s += (p.verified - p.disputed) * 2;
+  if (st === 'disputed') s -= 20;
+  return s;
+}
+function evidence(d, side){
+  var f = 0, o = 0;
+  d.points.forEach(function(p){ if (p.side !== side) return; if (p.kind === 'fact' && status(p) !== 'disputed') f++; else o++; });
+  return {facts:f, opinions:o};
+}
+function leader(d){
+  var a = swing(d,'for'), b = swing(d,'against');
+  if (total(d.now) === 0 || a === b) return null;
+  return a > b ? 'for' : 'against';
+}
+
+function splitBar(o){
+  var f = pct(o,'for'), a = pct(o,'against'), u = Math.max(0, 100 - f - a);
+  return '<div class="split" role="img" aria-label="For ' + f + '%, undecided ' + u + '%, against ' + a + '%">' +
+    '<div class="s-for" style="flex-basis:' + f + '%">' + (f >= 12 ? f + '%' : '') + '</div>' +
+    '<div class="s-und" style="flex-basis:' + u + '%">' + (u >= 12 ? u + '%' : '') + '</div>' +
+    '<div class="s-against" style="flex-basis:' + a + '%">' + (a >= 12 ? a + '%' : '') + '</div></div>';
+}
+
+var toastT;
+function toast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(function(){ el.classList.remove('on'); }, 2200);
+}
+
+/* =========================================================
+   VIEWS
+   ========================================================= */
+var homeFilter = 'All', homeSort = 'hot';
+
+function viewHome(){
+  var list = S.debates.filter(function(d){ return homeFilter === 'All' || d.cat === homeFilter; });
+  list.sort(homeSort === 'new'
+    ? function(a,b){ return b.created - a.created; }
+    : function(a,b){ return (total(b.now) + b.points.length*5) - (total(a.now) + a.points.length*5); });
+
+  var cats = ['All'].concat(CATS.filter(function(c){ return S.debates.some(function(d){ return d.cat === c; }); }));
+
+  var cards = list.map(function(d){
+    var L = leader(d), ev = d.points.filter(function(p){ return p.kind === 'fact'; }).length;
+    return '<a class="card" href="#/d/' + d.id + '">' +
+      '<div class="top"><div class="meta"><span class="tag cat">' + esc(d.cat) + '</span>' +
+        (d.sample ? '<span class="tag sample">Sample</span>' : '') + '</div>' +
+        '<h3>' + esc(d.motion) + '</h3></div>' +
+      splitBar(d.now) +
+      '<div class="foot"><span>' + d.points.length + ' points · ' + ev + ' sourced</span>' +
+        '<span>' + (L ? sideName(L) + ' is winning minds ' + signed(swing(d,L)) : 'Dead even') + '</span></div>' +
+    '</a>';
+  }).join('');
+
+  return '<section class="hero"><div class="wrap">' +
+      '<div class="kicker" style="margin-bottom:18px">The debating platform</div>' +
+      '<h1>Opinions are cheap.<br><span class="hl">Bring a fact.</span></h1>' +
+      '<p class="lede">FACT. is where arguments get settled with evidence. Every point is labeled. Every fact needs a source. And nobody wins by shouting — you win by changing minds.</p>' +
+      '<div class="rules">' +
+        '<div class="rule"><b>01</b><h3>Pick a side first</h3><p>Say where you stand before you read. We count where you end up.</p></div>' +
+        '<div class="rule"><b>02</b><h3>Facts need sources</h3><p>Call it a fact and you must link it. Anything else is labeled opinion. Readers check both.</p></div>' +
+        '<div class="rule"><b>03</b><h3>Win the swing</h3><p>The winner isn’t the bigger crowd. It’s the side that moved the most people.</p></div>' +
+      '</div>' +
+    '</div></section>' +
+    '<section class="wrap">' +
+      '<div class="listhead"><h2>Live debates</h2>' +
+        '<div class="chips" role="group" aria-label="Filter by topic">' +
+          cats.map(function(c){ return '<button class="chip" type="button" data-action="filter" data-v="' + esc(c) + '" aria-pressed="' + (c === homeFilter) + '">' + esc(c) + '</button>'; }).join('') +
+          '<button class="chip" type="button" data-action="sort" aria-pressed="false" title="Change sort order">Sort: ' + (homeSort === 'hot' ? 'Hot' : 'New') + '</button>' +
+        '</div></div>' +
+      '<div class="grid">' + (cards || '<div class="empty"><p style="font-weight:700;margin-bottom:14px">No debates here yet.</p><a class="btn y" href="#/new">Start one</a></div>') + '</div>' +
+    '</section>';
+}
+
+function viewDebate(d){
+  var mine = S.mine[d.id] || null;
+  var L = leader(d);
+
+  var ask;
+  if (!mine){
+    ask = '<h2>Where do you stand?</h2><p>Vote before you read the arguments. You can change your mind afterwards. That’s the point.</p>' +
+      '<div class="row">' +
+        '<button class="btn f" type="button" data-action="stance" data-side="for">For</button>' +
+        '<button class="btn" type="button" data-action="stance" data-side="undecided">Undecided</button>' +
+        '<button class="btn a" type="button" data-action="stance" data-side="against">Against</button>' +
+      '</div>';
+  } else {
+    var moved = mine.before !== mine.now;
+    ask = '<h2>' + (moved ? 'You changed your mind.' : 'Read. Then decide again.') + '</h2>' +
+      '<p class="mine">You started <span class="' + mine.before + '">' + sideName(mine.before) + '</span>' +
+        (moved ? ' and now you’re <span class="' + mine.now + '">' + sideName(mine.now) + '</span>.' : '. Still there?') + '</p>' +
+      '<div class="row">' +
+        ['for','undecided','against'].map(function(s){
+          return '<button class="btn sm ' + (s === 'for' ? 'f' : s === 'against' ? 'a' : '') + '" type="button" data-action="restance" data-side="' + s + '"' +
+            (mine.now === s ? ' disabled aria-current="true"' : '') + '>' + (mine.now === s ? '● ' : '') + sideName(s) + '</button>';
+        }).join('') +
+      '</div>';
+  }
+
+  var res = '<div class="resrow"><span class="lbl">Before</span>' + splitBar(d.before) + '</div>' +
+            '<div class="resrow"><span class="lbl">Now</span>' + splitBar(d.now) + '</div>' +
+            '<div class="verdict">' + (L
+              ? '<span class="' + L + '">' + sideName(L) + '</span> is winning the swing · FOR ' + signed(swing(d,'for')) + ' / AGAINST ' + signed(swing(d,'against'))
+              : 'Dead even on the swing') + '</div>' +
+            '<div class="kicker" style="color:var(--mute)">' + total(d.now) + ' votes</div>';
+
+  return '<section class="dhead"><div class="wrap">' +
+      '<a class="back" href="#/">← All debates</a>' +
+      '<div class="kicker"><span class="tag cat">' + esc(d.cat) + '</span>' + (d.sample ? '<span class="tag sample">Sample debate</span>' : '') +
+        '<span>Opened by ' + esc(d.author) + ' · ' + ago(d.created) + '</span></div>' +
+      '<h1 class="motion">' + esc(d.motion) + '</h1>' +
+      (d.context ? '<p class="context">' + esc(d.context) + '</p>' : '') +
+    '</div></section>' +
+    '<section class="wrap">' +
+      '<div class="stance"><div class="ask">' + ask + '</div><div class="res">' + res + '</div></div>' +
+      '<div class="arena">' + column(d, 'for', mine) + column(d, 'against', mine) + '</div>' +
+    '</section>';
+}
+
+function column(d, side, mine){
+  var pts = d.points.filter(function(p){ return p.side === side; }).sort(function(a,b){ return score(b) - score(a); });
+  var ev = evidence(d, side);
+  return '<div class="col ' + side + '">' +
+    '<div class="colhead"><h2>' + sideName(side) + '</h2><div class="ev">' + ev.facts + ' fact' + (ev.facts === 1 ? '' : 's') + '<br>' + ev.opinions + ' opinion' + (ev.opinions === 1 ? '' : 's') + '</div></div>' +
+    '<div class="points">' + (pts.length ? pts.map(function(p){ return pointHtml(d, p, mine); }).join('') : '<div class="noside">No arguments yet. Be the first.</div>') + '</div>' +
+    composer(d, side) +
+  '</div>';
+}
+
+function pointHtml(d, p, mine){
+  var v = S.votes[p.id] || {};
+  var st = status(p);
+  var url = safeUrl(p.src);
+  var canConvince = mine && mine.now !== p.side;
+  var convincedMe = mine && mine.by === p.id;
+
+  return '<article class="point' + (st === 'disputed' ? ' is-disputed' : '') + '" id="p-' + p.id + '">' +
+    '<div class="ph"><span class="tag ' + p.kind + '">' + (p.kind === 'fact' ? 'Fact' : 'Opinion') + '</span>' +
+      (st === 'checked' ? '<span class="tag checked">✓ Checked</span>' : '') +
+      (st === 'disputed' ? '<span class="tag disputed">✗ Disputed</span>' : '') +
+      '<span class="who">' + esc(p.author) + ' · ' + ago(p.created) + '</span></div>' +
+    '<p class="ptext">' + esc(p.text) + '</p>' +
+    (url ? '<a class="src" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer nofollow"><b aria-hidden="true">↗</b><span>Source: ' + esc(host(url)) + '</span></a>' : '') +
+    '<div class="acts">' +
+      '<button class="act" type="button" data-action="strong" data-p="' + p.id + '" aria-pressed="' + !!v.strong + '" title="Strong argument">▲ Strong <b>' + p.strong + '</b></button>' +
+      (p.kind === 'fact'
+        ? '<button class="act" type="button" data-action="verify" data-p="' + p.id + '" aria-pressed="' + !!v.verify + '" title="I checked the source and it holds up">✓ Holds up <b>' + p.verified + '</b></button>' +
+          '<button class="act" type="button" data-action="dispute" data-p="' + p.id + '" aria-pressed="' + !!v.dispute + '" title="The source does not support this">✗ Dispute <b>' + p.disputed + '</b></button>'
+        : '') +
+      '<button class="act" type="button" data-action="rebut" data-p="' + p.id + '" aria-expanded="false">↩ Rebut' + (p.replies.length ? ' <b>' + p.replies.length + '</b>' : '') + '</button>' +
+      (canConvince ? '<button class="act convince" type="button" data-action="convince" data-p="' + p.id + '" title="Switch your vote to ' + sideName(p.side) + ' because of this point">This changed my mind</button>' : '') +
+    '</div>' +
+    (p.changed ? '<div class="convinced">' + (convincedMe ? 'You + ' + (p.changed - 1) : p.changed) + ' ' + (p.changed === 1 && !convincedMe ? 'mind' : 'minds') + ' changed by this</div>' : '') +
+    (p.replies.length ? '<div class="replies">' + p.replies.map(function(r){
+        return '<div class="reply r-' + r.side + '"><span class="who">' + esc(r.author) + ' · ' + sideName(r.side) + ' · ' + ago(r.created) + '</span>' + esc(r.text) + '</div>';
+      }).join('') + '</div>' : '') +
+    '<form class="rform" data-form="reply" data-p="' + p.id + '" hidden>' +
+      '<label class="sr" style="position:absolute;left:-9999px" for="r-' + p.id + '">Your rebuttal</label>' +
+      '<input class="input" id="r-' + p.id + '" name="text" maxlength="280" placeholder="Rebut in one sentence…" required>' +
+      '<button class="btn sm k" type="submit">Post</button>' +
+    '</form>' +
+  '</article>';
+}
+
+function composer(d, side){
+  var id = side + '-' + d.id;
+  return '<form class="compose" data-form="point" data-side="' + side + '" novalidate>' +
+    '<h3>Argue ' + sideName(side) + '</h3>' +
+    '<div class="kind" role="radiogroup" aria-label="Type of point">' +
+      '<label><input type="radio" name="kind" value="fact" checked> Fact + source</label>' +
+      '<label><input type="radio" name="kind" value="opinion"> Opinion</label>' +
+    '</div>' +
+    '<label class="field"><span>Your point</span><textarea class="textarea" name="text" maxlength="400" placeholder="Make one clear point."></textarea></label>' +
+    '<label class="field" data-src><span>Source link (required for facts)</span><input class="input" name="src" type="url" inputmode="url" placeholder="https://"></label>' +
+    (S.me.name ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
+    '<p class="err" aria-live="polite"></p>' +
+    '<button class="btn ' + (side === 'for' ? 'f' : 'a') + '" type="submit">Post to ' + sideName(side) + '</button>' +
+  '</form>';
+}
+
+function viewNew(){
+  return '<section class="wrap newpage">' +
+    '<a class="back" href="#/">← All debates</a>' +
+    '<h1>Start a debate.</h1>' +
+    '<p class="lede">Write a motion: one clear statement someone can be for or against. “Is coffee good?” is a question. “Coffee does more good than harm” is a motion.</p>' +
+    '<form class="panel" data-form="debate" novalidate>' +
+      '<label class="field"><span>The motion</span><input class="input" name="motion" maxlength="140" placeholder="This house believes…" autocomplete="off"></label>' +
+      '<label class="field"><span>Context (optional)</span><textarea class="textarea" name="context" maxlength="400" placeholder="Why does this matter? What should people know before they vote?"></textarea></label>' +
+      '<label class="field"><span>Topic</span><select class="select" name="cat">' + CATS.map(function(c){ return '<option>' + c + '</option>'; }).join('') + '</select></label>' +
+      (S.me.name ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
+      '<p class="err" aria-live="polite"></p>' +
+      '<button class="btn y" type="submit">Open the floor →</button>' +
+      '<div class="preview" aria-hidden="true"><div class="kicker" style="margin-bottom:8px">Preview</div><div class="motion" data-preview>Your motion appears here.</div></div>' +
+    '</form>' +
+  '</section>';
+}
+
+function viewMissing(){
+  return '<section class="wrap newpage"><h1>No such debate.</h1><p class="lede">It may have been reset in this browser.</p><a class="btn y" href="#/">See all debates</a></section>';
+}
+
+/* =========================================================
+   ROUTER
+   ========================================================= */
+var app = document.getElementById('app');
+function route(keepScroll){
+  var h = location.hash.replace(/^#/, '') || '/';
+  var m, html;
+  if (h === '/new') html = viewNew();
+  else if ((m = h.match(/^\/d\/([\w-]+)$/))) { var d = find(m[1]); html = d ? viewDebate(d) : viewMissing(); }
+  else html = viewHome();
+  var y = window.scrollY;
+  app.innerHTML = html;
+  if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
+  var t = h === '/new' ? 'Start a debate' : (m && find(m[1]) ? find(m[1]).motion : '');
+  document.title = t ? t + ' — FACT.' : 'FACT. — Argue with evidence';
+}
+function current(){ var m = location.hash.match(/^#\/d\/([\w-]+)$/); return m ? find(m[1]) : null; }
+window.addEventListener('hashchange', function(){ route(false); });
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+function setStance(d, side, byPoint){
+  var mine = S.mine[d.id];
+  if (!mine){
+    S.mine[d.id] = {before:side, now:side, by:null};
+    d.before[side] = (d.before[side]||0) + 1;
+    d.now[side] = (d.now[side]||0) + 1;
+  } else {
+    if (mine.now === side) return;
+    d.now[mine.now] = Math.max(0, (d.now[mine.now]||0) - 1);
+    d.now[side] = (d.now[side]||0) + 1;
+    if (mine.by){ var old = findPoint(d, mine.by); if (old) old.changed = Math.max(0, old.changed - 1); }
+    mine.now = side; mine.by = byPoint || null;
+    if (byPoint){ var p = findPoint(d, byPoint); if (p) p.changed++; }
+  }
+  save();
+}
+
+function toggleVote(p, key, field){
+  var v = S.votes[p.id] || (S.votes[p.id] = {});
+  v[key] = !v[key];
+  p[field] += v[key] ? 1 : -1;
+  if (key === 'verify' && v.verify && v.dispute){ v.dispute = false; p.disputed--; }
+  if (key === 'dispute' && v.dispute && v.verify){ v.verify = false; p.verified--; }
+  save();
+}
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-action]'); if (!b) return;
+  var a = b.getAttribute('data-action'), d = current(), p;
+
+  if (a === 'filter'){ homeFilter = b.getAttribute('data-v'); route(true); return; }
+  if (a === 'sort'){ homeSort = homeSort === 'hot' ? 'new' : 'hot'; route(true); return; }
+  if (a === 'export'){ exportData(); return; }
+  if (a === 'reset'){
+    if (confirm('Reset FACT. in this browser? Your debates and votes here will be replaced with the sample debates.')){
+      S = seed(); save(); location.hash = '#/'; route(false); toast('Reset to sample debates');
+    }
+    return;
+  }
+  if (!d) return;
+
+  if (a === 'stance'){ setStance(d, b.getAttribute('data-side')); route(true); toast('Locked in. Now read both sides.'); return; }
+  if (a === 'restance'){ setStance(d, b.getAttribute('data-side')); route(true); toast('Vote updated'); return; }
+
+  p = findPoint(d, b.getAttribute('data-p')); if (!p) return;
+  if (a === 'strong'){ toggleVote(p, 'strong', 'strong'); route(true); return; }
+  if (a === 'verify'){ toggleVote(p, 'verify', 'verified'); route(true); return; }
+  if (a === 'dispute'){ toggleVote(p, 'dispute', 'disputed'); route(true); return; }
+  if (a === 'convince'){
+    setStance(d, p.side, p.id); route(true);
+    toast('Mind changed → ' + sideName(p.side) + '. Respect.');
+    var el = document.getElementById('p-' + p.id); if (el) el.scrollIntoView({block:'nearest'});
+    return;
+  }
+  if (a === 'rebut'){
+    var f = b.closest('.point').querySelector('form[data-form="reply"]');
+    f.hidden = !f.hidden; b.setAttribute('aria-expanded', String(!f.hidden));
+    if (!f.hidden) f.querySelector('input').focus();
+  }
+});
+
+document.addEventListener('change', function(e){
+  var f = e.target.closest('form[data-form="point"]');
+  if (f && e.target.name === 'kind'){
+    var fact = e.target.value === 'fact';
+    var src = f.querySelector('[data-src]');
+    src.style.display = fact ? '' : 'none';
+    f.querySelector('[name="text"]').placeholder = fact ? 'Make one clear point.' : 'Make one clear point. It will be labeled as opinion.';
+  }
+});
+
+document.addEventListener('input', function(e){
+  if (e.target.name === 'motion'){
+    var pv = document.querySelector('[data-preview]');
+    if (pv) pv.textContent = e.target.value.trim() || 'Your motion appears here.';
+  }
+});
+
+function takeName(f){
+  var n = f.querySelector('[name="name"]');
+  if (n){ var v = n.value.trim().replace(/\s+/g,'_').slice(0,24); if (v){ S.me.name = v; } }
+}
+
+document.addEventListener('submit', function(e){
+  var f = e.target, type = f.getAttribute('data-form'); if (!type) return;
+  e.preventDefault();
+  var err = f.querySelector('.err');
+  function fail(msg, field){ if (err) err.textContent = msg; if (field) field.focus(); }
+
+  if (type === 'debate'){
+    var mt = f.motion.value.trim().replace(/\s+/g,' ');
+    if (mt.length < 10) return fail('Write a full motion — at least 10 characters.', f.motion);
+    if (/\?$/.test(mt)) return fail('That’s a question. Make it a statement people can be for or against.', f.motion);
+    takeName(f);
+    var nd = {id:uid(), cat:f.cat.value, author:me(), created:now(), motion:mt, context:f.context.value.trim(),
+              before:{'for':0,'against':0,'undecided':0}, now:{'for':0,'against':0,'undecided':0}, points:[]};
+    S.debates.unshift(nd); save();
+    location.hash = '#/d/' + nd.id; toast('The floor is open');
+    return;
+  }
+
+  var d = current(); if (!d) return;
+
+  if (type === 'point'){
+    var side = f.getAttribute('data-side');
+    var kind = f.querySelector('[name="kind"]:checked').value;
+    var text = f.text.value.trim().replace(/\s+/g,' ');
+    var src = f.src.value.trim();
+    if (text.length < 12) return fail('Make a real point — at least 12 characters.', f.text);
+    if (kind === 'fact'){
+      if (!src) return fail('Facts need a source. Add a link, or post it as an opinion.', f.src);
+      if (!safeUrl(src)) return fail('That link doesn’t look right. Use a full https:// address.', f.src);
+    }
+    takeName(f);
+    var np = {id:uid(), side:side, kind:kind, text:text, src:kind === 'fact' ? safeUrl(src) : '', author:me(), created:now(),
+              strong:0, verified:0, disputed:0, changed:0, replies:[]};
+    d.points.push(np); save(); route(true);
+    toast('Posted to ' + sideName(side));
+    var el = document.getElementById('p-' + np.id); if (el) el.scrollIntoView({block:'center', behavior:'smooth'});
+    return;
+  }
+
+  if (type === 'reply'){
+    var p = findPoint(d, f.getAttribute('data-p')); if (!p) return;
+    var t = f.text.value.trim().replace(/\s+/g,' ');
+    if (t.length < 3) { f.text.focus(); return; }
+    var mine = S.mine[d.id];
+    var rs = mine && mine.now !== 'undecided' ? mine.now : (p.side === 'for' ? 'against' : 'for');
+    p.replies.push({id:uid(), side:rs, author:me(), text:t, created:now()});
+    save(); route(true); toast('Rebuttal posted');
+  }
+});
+
+function exportData(){
+  try {
+    var blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'fact-debates.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  } catch(e){ toast('Export failed'); }
+}
+
+load();
+route(false);
+})();
+</script>
+</body>
+</html>
