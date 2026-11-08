@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>/* /fact → /fact/ so relative files resolve */if(/\/fact$/.test(location.pathname))location.replace(location.pathname+"/"+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FACT. — Argue with evidence</title>
 <meta name="description" content="FACT. is a debating platform where every claim is labeled, every fact needs a source, and the winner is whoever changes the most minds.">
@@ -186,6 +187,21 @@ footer button:hover{color:var(--yellow)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);background:var(--yellow);border:var(--line);box-shadow:5px 5px 0 var(--ink);padding:12px 18px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:14px;z-index:50;transition:transform .2s;max-width:calc(100% - 32px);text-align:center}
 .toast.on{transform:translate(-50%,0)}
 
+/* ---------- live, loading, delete, moderator ---------- */
+.livedot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#16c172;margin-right:6px;vertical-align:1px;box-shadow:0 0 0 2px var(--ink)}
+.offdot{background:var(--undecided)}
+.loading{padding:80px 0;text-align:center;font-family:var(--display);font-size:28px;text-transform:uppercase;letter-spacing:-.01em}
+.loading span{display:inline-block;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+.act.del{border-style:dashed;color:var(--mute);margin-left:auto}
+.act.del:hover{background:var(--against);color:var(--white);border-style:solid;border-color:var(--ink)}
+.reply .x{float:right;background:none;border:0;font-weight:800;cursor:pointer;color:var(--mute);padding:0 4px;font-size:14px}
+.reply .x:hover{color:var(--against)}
+.dtools{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+.splitnone{display:flex;align-items:center;justify-content:center;height:34px;border-top:var(--line);font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;background:var(--paper)}
+.resrow .splitnone{border:2px solid var(--ink);height:28px}
+.modbadge{background:var(--against);color:var(--white);font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 7px;text-transform:uppercase;letter-spacing:.08em}
+
 /* ---------- responsive ---------- */
 @media (max-width:860px){
   .grid{grid-template-columns:1fr}
@@ -222,140 +238,101 @@ footer button:hover{color:var(--yellow)}
 <footer>
   <div class="wrap">
     <span class="logo">FACT<span>.</span></span>
-    <span>Opinions are cheap. Bring a fact. &nbsp;·&nbsp; Debates are saved in this browser.</span>
-    <span><button type="button" data-action="export">Export</button> &nbsp; <button type="button" data-action="reset">Reset demo</button></span>
+    <span id="modeline">Opinions are cheap. Bring a fact.</span>
+    <span id="foottools"></span>
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script>
-(function(){
-'use strict';
+<script type="module">
+import { CATS, RuleError, newDebate, apply, toView, toSummary, sampleDebates, canDeleteDebate, safeUrl } from './core.mjs';
 
 /* =========================================================
-   STORAGE
+   THIS BROWSER: voter id, handle, moderator key
    ========================================================= */
-var KEY = 'fact.v1';
-var CATS = ['Society','Tech','Science','Economy','Education','Culture'];
-
-function uid(){ return Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-3); }
-function now(){ return Date.now(); }
-var DAY = 86400000;
-
-function seed(){
-  var t = now();
-  function P(side, kind, text, src, author, s, v, d, c, replies){
-    return {id:uid(), side:side, kind:kind, text:text, src:src||'', author:author, created:t - Math.random()*5*DAY,
-            strong:s||0, verified:v||0, disputed:d||0, changed:c||0, replies:replies||[]};
-  }
-  function R(side, author, text){ return {id:uid(), side:side, author:author, text:text, created:t - Math.random()*2*DAY}; }
-  return {
-    v:1, me:{name:''}, mine:{}, votes:{},
-    debates:[
-      {
-        id:uid(), sample:true, cat:'Science', author:'fact.team', created:t - 3*DAY,
-        motion:'Nuclear power is the fastest route to a zero-carbon grid.',
-        context:'Renewables are cheap and quick to build. Nuclear is reliable but slow and expensive. Which gets a country to clean electricity first?',
-        before:{'for':41,'against':38,'undecided':21}, now:{'for':47,'against':40,'undecided':13},
-        points:[
-          P('for','fact','Across its life cycle, nuclear electricity has greenhouse-gas emissions in the same low range as wind and far below coal and gas.',
-            'https://en.wikipedia.org/wiki/Life-cycle_greenhouse_gas_emissions_of_energy_sources','grid_nerd',34,18,1,6,
-            [R('against','sunny_side','Low emissions per kWh is not the same as fast. The motion is about speed.')]),
-          P('for','fact','France built most of its nuclear fleet in roughly 15 years in the 1970s–80s and now runs one of the lowest-carbon grids in Europe.',
-            'https://en.wikipedia.org/wiki/Nuclear_power_in_France','ohm_my',27,12,3,4),
-          P('for','opinion','A grid needs power when the wind is still. Firm, always-on supply is what lets you actually switch the coal plants off.','',
-            'baseload_ben',19,0,0,2),
-          P('against','fact','Several recent Western reactor projects ran years late and billions over budget, among them Flamanville 3 in France.',
-            'https://en.wikipedia.org/wiki/Flamanville_Nuclear_Power_Plant','sunny_side',31,15,2,5,
-            [R('for','grid_nerd','Those were first-of-a-kind builds after decades of not building. Repeat builds get faster.')]),
-          P('against','fact','Solar and wind are now among the cheapest sources of new electricity in much of the world.',
-            'https://en.wikipedia.org/wiki/Cost_of_electricity_by_source','watt_if',24,10,1,3),
-          P('against','opinion','Every dollar locked into a 15-year reactor build is a dollar not spent on panels, batteries and transmission that can go live this year.','',
-            'kilo_watt',15,0,0,1)
-        ]
-      },
-      {
-        id:uid(), sample:true, cat:'Society', author:'fact.team', created:t - 2*DAY,
-        motion:'City centres should be car-free.',
-        context:'Some cities have pedestrianised their cores. Others say it kills shops and shuts out people who need to drive.',
-        before:{'for':35,'against':44,'undecided':21}, now:{'for':46,'against':42,'undecided':12},
-        points:[
-          P('for','fact','Pontevedra in Spain banned most cars from its historic centre in 1999 and has become a widely studied example of pedestrian-first planning.',
-            'https://en.wikipedia.org/wiki/Pontevedra','walk_this_way',29,14,1,7),
-          P('for','opinion','Streets are the biggest public space a city owns. Using most of it to store parked cars is a choice, not a law of nature.','',
-            'curb_appeal',22,0,0,3),
-          P('against','opinion','Car-free cores work for tourists and the young. Disabled residents, tradespeople with tools, and parents with three kids get left out.','',
-            'van_life',26,0,0,4,
-            [R('for','walk_this_way','Most schemes allow access for disabled drivers, deliveries and residents. "Car-free" rarely means zero vehicles.')]),
-          P('against','fact','Congestion pricing, as used in London and Stockholm, cuts traffic without banning cars outright.',
-            'https://en.wikipedia.org/wiki/Congestion_pricing','toll_free',18,9,0,2)
-        ]
-      },
-      {
-        id:uid(), sample:true, cat:'Education', author:'fact.team', created:t - 1*DAY,
-        motion:'Primary schools should abolish homework.',
-        context:'Is homework for young children building good habits, or just stress at the kitchen table?',
-        before:{'for':48,'against':33,'undecided':19}, now:{'for':45,'against':41,'undecided':14},
-        points:[
-          P('for','opinion','After six hours of school, a seven-year-old learns more from play, reading for fun and sleep than from worksheets.','',
-            'recess_now',21,0,0,2),
-          P('for','fact','Some countries, Finland among them, are known for giving young pupils little homework and still score well internationally.',
-            'https://en.wikipedia.org/wiki/Education_in_Finland','nordic_notes',17,6,4,1),
-          P('against','opinion','A little homework is how parents get to see what their child is learning. Abolishing it cuts families out of school.','',
-            'pta_pat',23,0,0,4),
-          P('against','fact','Reviews of the research find the benefit of homework is much clearer for older students than for young children. That argues for less homework, not none.',
-            'https://en.wikipedia.org/wiki/Homework','data_dad',25,11,1,5,
-            [R('for','recess_now','"Less" for young kids is pretty close to "none". The motion is about primary school.')])
-        ]
-      },
-      {
-        id:uid(), sample:true, cat:'Tech', author:'fact.team', created:t - 6*3600000,
-        motion:'Social media apps should be banned for under-16s.',
-        context:'Some governments are moving to set a minimum age for social media. Is that protection or overreach?',
-        before:{'for':52,'against':30,'undecided':18}, now:{'for':50,'against':36,'undecided':14},
-        points:[
-          P('for','fact','Australia passed a law in 2024 setting a minimum age of 16 for many social media platforms.',
-            'https://www.esafety.gov.au/','policy_wonk',20,9,0,2),
-          P('for','opinion','We already set ages for driving, drinking and gambling. Apps built to be addictive belong on that list.','',
-            'screen_time',18,0,0,1),
-          P('against','opinion','A ban just teaches teens to lie about their age, and pushes them to corners of the internet with even less moderation.','',
-            'vpn_kid',22,0,0,3),
-          P('against','opinion','Enforcing it means age checks for everyone, which means handing ID to tech companies. That is a privacy cost for adults too.','',
-            'priv_acy',16,0,0,2)
-        ]
-      }
-    ]
-  };
+const mem = {};
+const ls = {
+  get(k){ try { return localStorage.getItem(k); } catch { return mem[k] ?? null; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch { mem[k] = v; } },
+  del(k){ try { localStorage.removeItem(k); } catch { delete mem[k]; } },
+};
+function makeVid(){
+  try { return crypto.randomUUID().replace(/-/g, ''); }
+  catch { let s = ''; while (s.length < 32) s += Math.random().toString(36).slice(2); return s.slice(0, 32); }
 }
+let vid = ls.get('fact.voter');
+if (!/^[A-Za-z0-9_-]{16,64}$/.test(vid || '')) { vid = makeVid(); ls.set('fact.voter', vid); }
+const getName = () => ls.get('fact.name') || '';
+const setName = (n) => ls.set('fact.name', n);
+let modKey = ls.get('fact.mod') || '';
 
-var S;
-function load(){
-  try { var raw = localStorage.getItem(KEY); if (raw) { S = JSON.parse(raw); if (S && S.v === 1 && Array.isArray(S.debates)) return; } } catch(e){}
-  S = seed(); save();
-}
-function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+/* =========================================================
+   BACKENDS — live (shared, via /api/fact) or this-browser-only
+   ========================================================= */
+class Offline extends Error {}
+
+const live = {
+  async call(method, path, body){
+    const headers = { 'X-Fact-Voter': vid };
+    if (modKey) headers['X-Fact-Admin'] = modKey;
+    if (body) headers['Content-Type'] = 'application/json';
+    let r, data;
+    try { r = await fetch('/api/fact' + path, { method, headers, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' }); }
+    catch { throw new Offline('offline'); }
+    try { data = await r.json(); } catch { throw new Offline('not json'); }
+    if (!r.ok) throw new RuleError(data.error || 'Something went wrong.', r.status);
+    return data;
+  },
+  async list(){ return (await this.call('GET', '/debates')).debates; },
+  async get(id){ return (await this.call('GET', '/debates/' + id)).debate; },
+  async create(input){ return (await this.call('POST', '/debates', input)).debate; },
+  async act(id, action){ return (await this.call('POST', '/debates/' + id, action)).debate; },
+  async remove(id){ await this.call('DELETE', '/debates/' + id); },
+  async isMod(key){
+    const r = await fetch('/api/fact/me', { headers: { 'X-Fact-Admin': key }, cache: 'no-store' });
+    return !!(await r.json()).admin;
+  },
+};
+
+const LKEY = 'fact.local.v2';
+const local = {
+  docs: null,
+  load(){
+    if (this.docs) return;
+    try { const d = JSON.parse(ls.get(LKEY) || 'null'); if (Array.isArray(d)) { this.docs = d; return; } } catch {}
+    this.docs = sampleDebates(); this.save();
+  },
+  save(){ ls.set(LKEY, JSON.stringify(this.docs)); },
+  find(id){ this.load(); const d = this.docs.find((x) => x.id === id); if (!d) throw new RuleError('No such debate.', 404); return d; },
+  async list(){ this.load(); return this.docs.map(toSummary); },
+  async get(id){ return toView(this.find(id), vid); },
+  async create(input){ this.load(); const d = newDebate(input, vid); this.docs.unshift(d); this.save(); return toView(d, vid); },
+  async act(id, action){ const d = this.find(id); apply(d, vid, action); this.save(); return toView(d, vid); },
+  async remove(id){ const d = this.find(id); if (!canDeleteDebate(d, vid)) throw new RuleError('You can only delete debates you opened.', 403); this.docs = this.docs.filter((x) => x !== d); this.save(); },
+  reset(){ this.docs = sampleDebates(); this.save(); },
+};
+
+let api = live, isLive = true, isMod = false;
+let prefetched = null;   // the first list, fetched while checking the API
 
 /* =========================================================
    HELPERS
    ========================================================= */
-function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function safeUrl(u){ try { var x = new URL(u); return (x.protocol === 'http:' || x.protocol === 'https:') ? x.href : ''; } catch(e){ return ''; } }
-function host(u){ try { return new URL(u).hostname.replace(/^www\./,''); } catch(e){ return ''; } }
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
 function ago(ts){
-  var s = Math.max(1, Math.round((now() - ts)/1000));
+  const s = Math.max(1, Math.round((Date.now() - ts) / 1000));
   if (s < 60) return 'just now';
-  var m = Math.round(s/60); if (m < 60) return m + 'm ago';
-  var h = Math.round(m/60); if (h < 24) return h + 'h ago';
-  var d = Math.round(h/24); return d + 'd ago';
+  const m = Math.round(s / 60); if (m < 60) return m + 'm ago';
+  const h = Math.round(m / 60); if (h < 24) return h + 'h ago';
+  return Math.round(h / 24) + 'd ago';
 }
-function find(id){ for (var i=0;i<S.debates.length;i++) if (S.debates[i].id === id) return S.debates[i]; return null; }
-function findPoint(d, pid){ for (var i=0;i<d.points.length;i++) if (d.points[i].id === pid) return d.points[i]; return null; }
-function total(o){ return (o['for']||0) + (o.against||0) + (o.undecided||0); }
-function pct(o, k){ var t = total(o); return t ? Math.round(100 * (o[k]||0) / t) : 0; }
-function swing(d, side){ return pct(d.now, side) - pct(d.before, side); }
-function signed(n){ return (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n); }
-function sideName(s){ return s === 'for' ? 'FOR' : s === 'against' ? 'AGAINST' : 'UNDECIDED'; }
-function me(){ return (S.me && S.me.name) || 'anonymous'; }
+const total = (o) => (o.for || 0) + (o.against || 0) + (o.undecided || 0);
+const pct = (o, k) => { const t = total(o); return t ? Math.round(100 * (o[k] || 0) / t) : 0; };
+const swing = (d, side) => pct(d.now, side) - pct(d.before, side);
+const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n);
+const sideName = (s) => s === 'for' ? 'FOR' : s === 'against' ? 'AGAINST' : 'UNDECIDED';
+const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
 
 function status(p){
   if (p.kind !== 'fact') return '';
@@ -364,65 +341,61 @@ function status(p){
   return '';
 }
 function score(p){
-  var st = status(p);
-  var s = p.strong + p.changed * 3;
+  let s = p.strong + p.changed * 3;
   if (p.kind === 'fact') s += (p.verified - p.disputed) * 2;
-  if (st === 'disputed') s -= 20;
+  if (status(p) === 'disputed') s -= 20;
   return s;
 }
 function evidence(d, side){
-  var f = 0, o = 0;
-  d.points.forEach(function(p){ if (p.side !== side) return; if (p.kind === 'fact' && status(p) !== 'disputed') f++; else o++; });
-  return {facts:f, opinions:o};
+  let facts = 0, opinions = 0;
+  for (const p of d.points) { if (p.side !== side) continue; if (p.kind === 'fact' && status(p) !== 'disputed') facts++; else opinions++; }
+  return { facts, opinions };
 }
 function leader(d){
-  var a = swing(d,'for'), b = swing(d,'against');
-  if (total(d.now) === 0 || a === b) return null;
+  const a = swing(d, 'for'), b = swing(d, 'against');
+  if (!total(d.now) || a === b) return null;
   return a > b ? 'for' : 'against';
 }
-
 function splitBar(o){
-  var f = pct(o,'for'), a = pct(o,'against'), u = Math.max(0, 100 - f - a);
+  if (!total(o)) return '<div class="splitnone">No votes yet</div>';
+  const f = pct(o, 'for'), a = pct(o, 'against'), u = Math.max(0, 100 - f - a);
   return '<div class="split" role="img" aria-label="For ' + f + '%, undecided ' + u + '%, against ' + a + '%">' +
     '<div class="s-for" style="flex-basis:' + f + '%">' + (f >= 12 ? f + '%' : '') + '</div>' +
     '<div class="s-und" style="flex-basis:' + u + '%">' + (u >= 12 ? u + '%' : '') + '</div>' +
     '<div class="s-against" style="flex-basis:' + a + '%">' + (a >= 12 ? a + '%' : '') + '</div></div>';
 }
 
-var toastT;
+let toastT;
 function toast(msg){
-  var el = document.getElementById('toast');
+  const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('on');
-  clearTimeout(toastT); toastT = setTimeout(function(){ el.classList.remove('on'); }, 2200);
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 2400);
 }
 
 /* =========================================================
    VIEWS
    ========================================================= */
-var homeFilter = 'All', homeSort = 'hot';
+let homeFilter = 'All', homeSort = 'hot';
 
-function viewHome(){
-  var list = S.debates.filter(function(d){ return homeFilter === 'All' || d.cat === homeFilter; });
-  list.sort(homeSort === 'new'
-    ? function(a,b){ return b.created - a.created; }
-    : function(a,b){ return (total(b.now) + b.points.length*5) - (total(a.now) + a.points.length*5); });
+function viewHome(list){
+  const shown = list.filter((d) => homeFilter === 'All' || d.cat === homeFilter);
+  shown.sort(homeSort === 'new' ? (a, b) => b.created - a.created : (a, b) => b.activity - a.activity || b.created - a.created);
+  const cats = ['All', ...CATS.filter((c) => list.some((d) => d.cat === c))];
 
-  var cats = ['All'].concat(CATS.filter(function(c){ return S.debates.some(function(d){ return d.cat === c; }); }));
-
-  var cards = list.map(function(d){
-    var L = leader(d), ev = d.points.filter(function(p){ return p.kind === 'fact'; }).length;
+  const cards = shown.map((d) => {
+    const L = leader(d);
     return '<a class="card" href="#/d/' + d.id + '">' +
       '<div class="top"><div class="meta"><span class="tag cat">' + esc(d.cat) + '</span>' +
         (d.sample ? '<span class="tag sample">Sample</span>' : '') + '</div>' +
         '<h3>' + esc(d.motion) + '</h3></div>' +
       splitBar(d.now) +
-      '<div class="foot"><span>' + d.points.length + ' points · ' + ev + ' sourced</span>' +
-        '<span>' + (L ? sideName(L) + ' is winning minds ' + signed(swing(d,L)) : 'Dead even') + '</span></div>' +
+      '<div class="foot"><span>' + plural(d.points, 'point') + ' · ' + d.facts + ' sourced</span>' +
+        '<span>' + (!total(d.now) ? 'Be the first to vote' : L ? sideName(L) + ' is winning minds ' + signed(swing(d, L)) : 'Dead even') + '</span></div>' +
     '</a>';
   }).join('');
 
   return '<section class="hero"><div class="wrap">' +
-      '<div class="kicker" style="margin-bottom:18px">The debating platform</div>' +
+      '<div class="kicker" style="margin-bottom:18px">' + (isLive ? '<span class="livedot"></span>Live · the debating platform' : 'The debating platform') + '</div>' +
       '<h1>Opinions are cheap.<br><span class="hl">Bring a fact.</span></h1>' +
       '<p class="lede">FACT. is where arguments get settled with evidence. Every point is labeled. Every fact needs a source. And nobody wins by shouting — you win by changing minds.</p>' +
       '<div class="rules">' +
@@ -432,9 +405,9 @@ function viewHome(){
       '</div>' +
     '</div></section>' +
     '<section class="wrap">' +
-      '<div class="listhead"><h2>Live debates</h2>' +
+      '<div class="listhead"><h2>' + (isLive ? 'Live debates' : 'Debates') + '</h2>' +
         '<div class="chips" role="group" aria-label="Filter by topic">' +
-          cats.map(function(c){ return '<button class="chip" type="button" data-action="filter" data-v="' + esc(c) + '" aria-pressed="' + (c === homeFilter) + '">' + esc(c) + '</button>'; }).join('') +
+          cats.map((c) => '<button class="chip" type="button" data-action="filter" data-v="' + esc(c) + '" aria-pressed="' + (c === homeFilter) + '">' + esc(c) + '</button>').join('') +
           '<button class="chip" type="button" data-action="sort" aria-pressed="false" title="Change sort order">Sort: ' + (homeSort === 'hot' ? 'Hot' : 'New') + '</button>' +
         '</div></div>' +
       '<div class="grid">' + (cards || '<div class="empty"><p style="font-weight:700;margin-bottom:14px">No debates here yet.</p><a class="btn y" href="#/new">Start one</a></div>') + '</div>' +
@@ -442,10 +415,8 @@ function viewHome(){
 }
 
 function viewDebate(d){
-  var mine = S.mine[d.id] || null;
-  var L = leader(d);
-
-  var ask;
+  const mine = d.mine, L = leader(d);
+  let ask;
   if (!mine){
     ask = '<h2>Where do you stand?</h2><p>Vote before you read the arguments. You can change your mind afterwards. That’s the point.</p>' +
       '<div class="row">' +
@@ -454,24 +425,21 @@ function viewDebate(d){
         '<button class="btn a" type="button" data-action="stance" data-side="against">Against</button>' +
       '</div>';
   } else {
-    var moved = mine.before !== mine.now;
+    const moved = mine.before !== mine.now;
     ask = '<h2>' + (moved ? 'You changed your mind.' : 'Read. Then decide again.') + '</h2>' +
       '<p class="mine">You started <span class="' + mine.before + '">' + sideName(mine.before) + '</span>' +
         (moved ? ' and now you’re <span class="' + mine.now + '">' + sideName(mine.now) + '</span>.' : '. Still there?') + '</p>' +
-      '<div class="row">' +
-        ['for','undecided','against'].map(function(s){
-          return '<button class="btn sm ' + (s === 'for' ? 'f' : s === 'against' ? 'a' : '') + '" type="button" data-action="restance" data-side="' + s + '"' +
-            (mine.now === s ? ' disabled aria-current="true"' : '') + '>' + (mine.now === s ? '● ' : '') + sideName(s) + '</button>';
-        }).join('') +
+      '<div class="row">' + ['for', 'undecided', 'against'].map((s) =>
+        '<button class="btn sm ' + (s === 'for' ? 'f' : s === 'against' ? 'a' : '') + '" type="button" data-action="stance" data-side="' + s + '"' +
+          (mine.now === s ? ' disabled aria-current="true"' : '') + '>' + (mine.now === s ? '● ' : '') + sideName(s) + '</button>').join('') +
       '</div>';
   }
-
-  var res = '<div class="resrow"><span class="lbl">Before</span>' + splitBar(d.before) + '</div>' +
-            '<div class="resrow"><span class="lbl">Now</span>' + splitBar(d.now) + '</div>' +
-            '<div class="verdict">' + (L
-              ? '<span class="' + L + '">' + sideName(L) + '</span> is winning the swing · FOR ' + signed(swing(d,'for')) + ' / AGAINST ' + signed(swing(d,'against'))
-              : 'Dead even on the swing') + '</div>' +
-            '<div class="kicker" style="color:var(--mute)">' + total(d.now) + ' votes</div>';
+  const res = '<div class="resrow"><span class="lbl">Before</span>' + splitBar(d.before) + '</div>' +
+    '<div class="resrow"><span class="lbl">Now</span>' + splitBar(d.now) + '</div>' +
+    '<div class="verdict">' + (!total(d.now) ? 'No votes yet. Yours is first.' : L
+      ? '<span class="' + L + '">' + sideName(L) + '</span> is winning the swing · FOR ' + signed(swing(d, 'for')) + ' / AGAINST ' + signed(swing(d, 'against'))
+      : 'Dead even on the swing') + '</div>' +
+    '<div class="kicker" style="color:var(--mute)">' + (isLive ? '<span class="livedot"></span>' : '') + plural(total(d.now), 'vote') + '</div>';
 
   return '<section class="dhead"><div class="wrap">' +
       '<a class="back" href="#/">← All debates</a>' +
@@ -479,52 +447,52 @@ function viewDebate(d){
         '<span>Opened by ' + esc(d.author) + ' · ' + ago(d.created) + '</span></div>' +
       '<h1 class="motion">' + esc(d.motion) + '</h1>' +
       (d.context ? '<p class="context">' + esc(d.context) + '</p>' : '') +
+      (d.canDelete ? '<div class="dtools"><button class="btn sm" type="button" data-action="delDebate">Delete debate</button></div>' : '') +
     '</div></section>' +
     '<section class="wrap">' +
       '<div class="stance"><div class="ask">' + ask + '</div><div class="res">' + res + '</div></div>' +
-      '<div class="arena">' + column(d, 'for', mine) + column(d, 'against', mine) + '</div>' +
+      '<div class="arena">' + column(d, 'for') + column(d, 'against') + '</div>' +
     '</section>';
 }
 
-function column(d, side, mine){
-  var pts = d.points.filter(function(p){ return p.side === side; }).sort(function(a,b){ return score(b) - score(a); });
-  var ev = evidence(d, side);
+function column(d, side){
+  const pts = d.points.filter((p) => p.side === side).sort((a, b) => score(b) - score(a));
+  const ev = evidence(d, side);
   return '<div class="col ' + side + '">' +
-    '<div class="colhead"><h2>' + sideName(side) + '</h2><div class="ev">' + ev.facts + ' fact' + (ev.facts === 1 ? '' : 's') + '<br>' + ev.opinions + ' opinion' + (ev.opinions === 1 ? '' : 's') + '</div></div>' +
-    '<div class="points">' + (pts.length ? pts.map(function(p){ return pointHtml(d, p, mine); }).join('') : '<div class="noside">No arguments yet. Be the first.</div>') + '</div>' +
+    '<div class="colhead"><h2>' + sideName(side) + '</h2><div class="ev">' + plural(ev.facts, 'fact') + '<br>' + plural(ev.opinions, 'opinion') + '</div></div>' +
+    '<div class="points">' + (pts.length ? pts.map((p) => pointHtml(d, p)).join('') : '<div class="noside">No arguments yet. Be the first.</div>') + '</div>' +
     composer(d, side) +
   '</div>';
 }
 
-function pointHtml(d, p, mine){
-  var v = S.votes[p.id] || {};
-  var st = status(p);
-  var url = safeUrl(p.src);
-  var canConvince = mine && mine.now !== p.side;
-  var convincedMe = mine && mine.by === p.id;
-
+function pointHtml(d, p){
+  const v = p.myVote, st = status(p), url = safeUrl(p.src), mine = d.mine;
+  const canConvince = mine && mine.now !== p.side;
+  const convincedMe = mine && mine.by === p.id;
   return '<article class="point' + (st === 'disputed' ? ' is-disputed' : '') + '" id="p-' + p.id + '">' +
     '<div class="ph"><span class="tag ' + p.kind + '">' + (p.kind === 'fact' ? 'Fact' : 'Opinion') + '</span>' +
       (st === 'checked' ? '<span class="tag checked">✓ Checked</span>' : '') +
       (st === 'disputed' ? '<span class="tag disputed">✗ Disputed</span>' : '') +
       '<span class="who">' + esc(p.author) + ' · ' + ago(p.created) + '</span></div>' +
     '<p class="ptext">' + esc(p.text) + '</p>' +
-    (url ? '<a class="src" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer nofollow"><b aria-hidden="true">↗</b><span>Source: ' + esc(host(url)) + '</span></a>' : '') +
+    (url ? '<a class="src" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer nofollow ugc"><b aria-hidden="true">↗</b><span>Source: ' + esc(host(url)) + '</span></a>' : '') +
     '<div class="acts">' +
-      '<button class="act" type="button" data-action="strong" data-p="' + p.id + '" aria-pressed="' + !!v.strong + '" title="Strong argument">▲ Strong <b>' + p.strong + '</b></button>' +
+      '<button class="act" type="button" data-action="vote" data-kind="strong" data-p="' + p.id + '" aria-pressed="' + v.strong + '" title="Strong argument">▲ Strong <b>' + p.strong + '</b></button>' +
       (p.kind === 'fact'
-        ? '<button class="act" type="button" data-action="verify" data-p="' + p.id + '" aria-pressed="' + !!v.verify + '" title="I checked the source and it holds up">✓ Holds up <b>' + p.verified + '</b></button>' +
-          '<button class="act" type="button" data-action="dispute" data-p="' + p.id + '" aria-pressed="' + !!v.dispute + '" title="The source does not support this">✗ Dispute <b>' + p.disputed + '</b></button>'
+        ? '<button class="act" type="button" data-action="vote" data-kind="verify" data-p="' + p.id + '" aria-pressed="' + v.verify + '" title="I checked the source and it holds up">✓ Holds up <b>' + p.verified + '</b></button>' +
+          '<button class="act" type="button" data-action="vote" data-kind="dispute" data-p="' + p.id + '" aria-pressed="' + v.dispute + '" title="The source does not support this">✗ Dispute <b>' + p.disputed + '</b></button>'
         : '') +
       '<button class="act" type="button" data-action="rebut" data-p="' + p.id + '" aria-expanded="false">↩ Rebut' + (p.replies.length ? ' <b>' + p.replies.length + '</b>' : '') + '</button>' +
       (canConvince ? '<button class="act convince" type="button" data-action="convince" data-p="' + p.id + '" title="Switch your vote to ' + sideName(p.side) + ' because of this point">This changed my mind</button>' : '') +
+      (p.canDelete ? '<button class="act del" type="button" data-action="delPoint" data-p="' + p.id + '">Delete</button>' : '') +
     '</div>' +
-    (p.changed ? '<div class="convinced">' + (convincedMe ? 'You + ' + (p.changed - 1) : p.changed) + ' ' + (p.changed === 1 && !convincedMe ? 'mind' : 'minds') + ' changed by this</div>' : '') +
-    (p.replies.length ? '<div class="replies">' + p.replies.map(function(r){
-        return '<div class="reply r-' + r.side + '"><span class="who">' + esc(r.author) + ' · ' + sideName(r.side) + ' · ' + ago(r.created) + '</span>' + esc(r.text) + '</div>';
-      }).join('') + '</div>' : '') +
+    (p.changed ? '<div class="convinced">' + (convincedMe ? (p.changed === 1 ? 'You changed your mind because of this' : 'You + ' + plural(p.changed - 1, 'other') + ' changed your minds because of this') : plural(p.changed, 'mind') + ' changed by this') + '</div>' : '') +
+    (p.replies.length ? '<div class="replies">' + p.replies.map((r) =>
+        '<div class="reply r-' + r.side + '">' +
+          (r.canDelete ? '<button class="x" type="button" data-action="delReply" data-p="' + p.id + '" data-r="' + r.id + '" aria-label="Delete rebuttal" title="Delete">×</button>' : '') +
+          '<span class="who">' + esc(r.author) + ' · ' + sideName(r.side) + ' · ' + ago(r.created) + '</span>' + esc(r.text) + '</div>').join('') + '</div>' : '') +
     '<form class="rform" data-form="reply" data-p="' + p.id + '" hidden>' +
-      '<label class="sr" style="position:absolute;left:-9999px" for="r-' + p.id + '">Your rebuttal</label>' +
+      '<label style="position:absolute;left:-9999px" for="r-' + p.id + '">Your rebuttal</label>' +
       '<input class="input" id="r-' + p.id + '" name="text" maxlength="280" placeholder="Rebut in one sentence…" required>' +
       '<button class="btn sm k" type="submit">Post</button>' +
     '</form>' +
@@ -532,7 +500,6 @@ function pointHtml(d, p, mine){
 }
 
 function composer(d, side){
-  var id = side + '-' + d.id;
   return '<form class="compose" data-form="point" data-side="' + side + '" novalidate>' +
     '<h3>Argue ' + sideName(side) + '</h3>' +
     '<div class="kind" role="radiogroup" aria-label="Type of point">' +
@@ -541,7 +508,7 @@ function composer(d, side){
     '</div>' +
     '<label class="field"><span>Your point</span><textarea class="textarea" name="text" maxlength="400" placeholder="Make one clear point."></textarea></label>' +
     '<label class="field" data-src><span>Source link (required for facts)</span><input class="input" name="src" type="url" inputmode="url" placeholder="https://"></label>' +
-    (S.me.name ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
+    (getName() ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
     '<p class="err" aria-live="polite"></p>' +
     '<button class="btn ' + (side === 'for' ? 'f' : 'a') + '" type="submit">Post to ' + sideName(side) + '</button>' +
   '</form>';
@@ -555,8 +522,8 @@ function viewNew(){
     '<form class="panel" data-form="debate" novalidate>' +
       '<label class="field"><span>The motion</span><input class="input" name="motion" maxlength="140" placeholder="This house believes…" autocomplete="off"></label>' +
       '<label class="field"><span>Context (optional)</span><textarea class="textarea" name="context" maxlength="400" placeholder="Why does this matter? What should people know before they vote?"></textarea></label>' +
-      '<label class="field"><span>Topic</span><select class="select" name="cat">' + CATS.map(function(c){ return '<option>' + c + '</option>'; }).join('') + '</select></label>' +
-      (S.me.name ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
+      '<label class="field"><span>Topic</span><select class="select" name="cat">' + CATS.map((c) => '<option>' + c + '</option>').join('') + '</select></label>' +
+      (getName() ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
       '<p class="err" aria-live="polite"></p>' +
       '<button class="btn y" type="submit">Open the floor →</button>' +
       '<div class="preview" aria-hidden="true"><div class="kicker" style="margin-bottom:8px">Preview</div><div class="motion" data-preview>Your motion appears here.</div></div>' +
@@ -564,177 +531,238 @@ function viewNew(){
   '</section>';
 }
 
-function viewMissing(){
-  return '<section class="wrap newpage"><h1>No such debate.</h1><p class="lede">It may have been reset in this browser.</p><a class="btn y" href="#/">See all debates</a></section>';
+function viewMod(){
+  const body = !isLive
+    ? '<p class="lede">Moderation works on the live site, where debates are shared.</p>'
+    : isMod
+      ? '<p class="lede"><span class="modbadge">Moderator</span>&nbsp; You can delete any debate, point or rebuttal from this browser.</p><button class="btn" type="button" data-action="modOff">Turn off moderator mode</button>'
+      : '<p class="lede">Enter the moderator key to delete posts that break the rules.</p>' +
+        '<form class="panel" data-form="mod" novalidate>' +
+          '<label class="field"><span>Moderator key</span><input class="input" name="key" type="password" autocomplete="off"></label>' +
+          '<p class="err" aria-live="polite"></p><button class="btn k" type="submit">Turn on</button></form>';
+  return '<section class="wrap newpage"><a class="back" href="#/">← All debates</a><h1>Moderators.</h1>' + body + '</section>';
 }
 
+const viewMissing = () => '<section class="wrap newpage"><h1>No such debate.</h1><p class="lede">It may have been deleted.</p><a class="btn y" href="#/">See all debates</a></section>';
+const viewError = (msg) => '<section class="wrap newpage"><h1>Hold on.</h1><p class="lede">' + esc(msg) + '</p><button class="btn y" type="button" data-action="retry">Try again</button></section>';
+
 /* =========================================================
-   ROUTER
+   ROUTER + RENDER
    ========================================================= */
-var app = document.getElementById('app');
-function route(keepScroll){
-  var h = location.hash.replace(/^#/, '') || '/';
-  var m, html;
-  if (h === '/new') html = viewNew();
-  else if ((m = h.match(/^\/d\/([\w-]+)$/))) { var d = find(m[1]); html = d ? viewDebate(d) : viewMissing(); }
-  else html = viewHome();
-  var y = window.scrollY;
+const app = document.getElementById('app');
+let cur = null;          // the debate on screen (view object)
+let busy = false;
+
+function paint(html, keepScroll){
+  const y = window.scrollY;
   app.innerHTML = html;
-  if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
-  var t = h === '/new' ? 'Start a debate' : (m && find(m[1]) ? find(m[1]).motion : '');
-  document.title = t ? t + ' — FACT.' : 'FACT. — Argue with evidence';
+  window.scrollTo(0, keepScroll ? y : 0);
 }
-function current(){ var m = location.hash.match(/^#\/d\/([\w-]+)$/); return m ? find(m[1]) : null; }
-window.addEventListener('hashchange', function(){ route(false); });
+function paintDebate(d, keepScroll){
+  cur = d;
+  paint(viewDebate(d), keepScroll);
+  document.title = d.motion + ' — FACT.';
+}
+function footer(){
+  document.getElementById('modeline').innerHTML = isLive
+    ? '<span class="livedot"></span>Live — everyone sees the same debates.' + (isMod ? ' &nbsp;<span class="modbadge">Moderator</span>' : '')
+    : '<span class="livedot offdot"></span>Offline demo — debates are saved in this browser only.';
+  document.getElementById('foottools').innerHTML = isLive
+    ? '<a href="#/mod" style="color:#cfcabf">Moderators</a>'
+    : '<button type="button" data-action="reset">Reset demo</button>';
+}
+
+let routeSeq = 0;
+async function route(keepScroll = false){
+  const seq = ++routeSeq;
+  const h = location.hash.replace(/^#/, '') || '/';
+  let m;
+  cur = null;
+  if (h === '/new'){ paint(viewNew()); document.title = 'Start a debate — FACT.'; return; }
+  if (h === '/mod'){ paint(viewMod()); document.title = 'Moderators — FACT.'; return; }
+
+  const slow = setTimeout(() => { if (seq === routeSeq && !keepScroll) paint('<div class="loading">Loading<span>…</span></div>'); }, 180);
+  try {
+    if ((m = h.match(/^\/d\/([\w-]+)$/))){
+      const d = await api.get(m[1]);
+      if (seq !== routeSeq) return;
+      paintDebate(d, keepScroll);
+    } else {
+      const list = prefetched || await api.list();
+      prefetched = null;
+      if (seq !== routeSeq) return;
+      paint(viewHome(list), keepScroll);
+      document.title = 'FACT. — Argue with evidence';
+    }
+  } catch (e) {
+    if (seq !== routeSeq) return;
+    if (e instanceof RuleError && e.status === 404) paint(viewMissing());
+    else paint(viewError(e instanceof Offline ? 'Can’t reach FACT. right now. Check your connection.' : e.message));
+  } finally { clearTimeout(slow); }
+}
+window.addEventListener('hashchange', () => route(false));
+
+// Keep an open debate fresh while people are arguing in it.
+setInterval(async () => {
+  if (!isLive || !cur || busy || document.hidden) return;
+  const a = document.activeElement;
+  if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA')) return;
+  if (app.querySelector('form[data-form="reply"]:not([hidden])')) return;
+  try {
+    const id = cur.id, d = await api.get(id);
+    if (cur && cur.id === id && !busy && JSON.stringify(d) !== JSON.stringify(cur)) paintDebate(d, true);
+  } catch {}
+}, 15000);
 
 /* =========================================================
    ACTIONS
    ========================================================= */
-function setStance(d, side, byPoint){
-  var mine = S.mine[d.id];
-  if (!mine){
-    S.mine[d.id] = {before:side, now:side, by:null};
-    d.before[side] = (d.before[side]||0) + 1;
-    d.now[side] = (d.now[side]||0) + 1;
-  } else {
-    if (mine.now === side) return;
-    d.now[mine.now] = Math.max(0, (d.now[mine.now]||0) - 1);
-    d.now[side] = (d.now[side]||0) + 1;
-    if (mine.by){ var old = findPoint(d, mine.by); if (old) old.changed = Math.max(0, old.changed - 1); }
-    mine.now = side; mine.by = byPoint || null;
-    if (byPoint){ var p = findPoint(d, byPoint); if (p) p.changed++; }
-  }
-  save();
+async function act(action, okMsg){
+  if (!cur || busy) return null;
+  busy = true;
+  try {
+    const d = await api.act(cur.id, action);
+    paintDebate(d, true);
+    if (okMsg) toast(okMsg);
+    return d;
+  } catch (e) {
+    toast(e instanceof Offline ? 'Can’t reach FACT. — try again' : e.message);
+    return null;
+  } finally { busy = false; }
 }
 
-function toggleVote(p, key, field){
-  var v = S.votes[p.id] || (S.votes[p.id] = {});
-  v[key] = !v[key];
-  p[field] += v[key] ? 1 : -1;
-  if (key === 'verify' && v.verify && v.dispute){ v.dispute = false; p.disputed--; }
-  if (key === 'dispute' && v.dispute && v.verify){ v.verify = false; p.verified--; }
-  save();
-}
-
-document.addEventListener('click', function(e){
-  var b = e.target.closest('[data-action]'); if (!b) return;
-  var a = b.getAttribute('data-action'), d = current(), p;
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-action]'); if (!b) return;
+  const a = b.getAttribute('data-action');
+  const pid = b.getAttribute('data-p');
 
   if (a === 'filter'){ homeFilter = b.getAttribute('data-v'); route(true); return; }
   if (a === 'sort'){ homeSort = homeSort === 'hot' ? 'new' : 'hot'; route(true); return; }
-  if (a === 'export'){ exportData(); return; }
+  if (a === 'retry'){ route(false); return; }
   if (a === 'reset'){
-    if (confirm('Reset FACT. in this browser? Your debates and votes here will be replaced with the sample debates.')){
-      S = seed(); save(); location.hash = '#/'; route(false); toast('Reset to sample debates');
+    if (confirm('Reset FACT. in this browser? Debates and votes saved here will be replaced with the sample debates.')){
+      local.reset(); location.hash = '#/'; route(false); toast('Reset to sample debates');
     }
     return;
   }
-  if (!d) return;
+  if (a === 'modOff'){ modKey = ''; isMod = false; ls.del('fact.mod'); footer(); route(false); toast('Moderator mode off'); return; }
 
-  if (a === 'stance'){ setStance(d, b.getAttribute('data-side')); route(true); toast('Locked in. Now read both sides.'); return; }
-  if (a === 'restance'){ setStance(d, b.getAttribute('data-side')); route(true); toast('Vote updated'); return; }
-
-  p = findPoint(d, b.getAttribute('data-p')); if (!p) return;
-  if (a === 'strong'){ toggleVote(p, 'strong', 'strong'); route(true); return; }
-  if (a === 'verify'){ toggleVote(p, 'verify', 'verified'); route(true); return; }
-  if (a === 'dispute'){ toggleVote(p, 'dispute', 'disputed'); route(true); return; }
+  if (a === 'stance'){
+    const first = !cur?.mine;
+    await act({ type: 'stance', side: b.getAttribute('data-side') }, first ? 'Locked in. Now read both sides.' : 'Vote updated');
+    return;
+  }
+  if (a === 'vote'){ await act({ type: 'vote', pid, kind: b.getAttribute('data-kind') }); return; }
   if (a === 'convince'){
-    setStance(d, p.side, p.id); route(true);
-    toast('Mind changed → ' + sideName(p.side) + '. Respect.');
-    var el = document.getElementById('p-' + p.id); if (el) el.scrollIntoView({block:'nearest'});
+    const p = cur?.points.find((x) => x.id === pid);
+    const d = await act({ type: 'convince', pid }, p ? 'Mind changed → ' + sideName(p.side) + '. Respect.' : '');
+    if (d) document.getElementById('p-' + pid)?.scrollIntoView({ block: 'nearest' });
     return;
   }
   if (a === 'rebut'){
-    var f = b.closest('.point').querySelector('form[data-form="reply"]');
+    const f = b.closest('.point').querySelector('form[data-form="reply"]');
     f.hidden = !f.hidden; b.setAttribute('aria-expanded', String(!f.hidden));
     if (!f.hidden) f.querySelector('input').focus();
+    return;
+  }
+  if (a === 'delPoint'){ if (confirm('Delete this point and its rebuttals?')) await act({ type: 'deletePoint', pid }, 'Point deleted'); return; }
+  if (a === 'delReply'){ if (confirm('Delete this rebuttal?')) await act({ type: 'deleteReply', pid, rid: b.getAttribute('data-r') }, 'Rebuttal deleted'); return; }
+  if (a === 'delDebate'){
+    if (!cur || busy || !confirm('Delete this whole debate? This can’t be undone.')) return;
+    busy = true;
+    try { await api.remove(cur.id); location.hash = '#/'; toast('Debate deleted'); }
+    catch (err) { toast(err.message); }
+    finally { busy = false; }
   }
 });
 
-document.addEventListener('change', function(e){
-  var f = e.target.closest('form[data-form="point"]');
+document.addEventListener('change', (e) => {
+  const f = e.target.closest('form[data-form="point"]');
   if (f && e.target.name === 'kind'){
-    var fact = e.target.value === 'fact';
-    var src = f.querySelector('[data-src]');
-    src.style.display = fact ? '' : 'none';
+    const fact = e.target.value === 'fact';
+    f.querySelector('[data-src]').style.display = fact ? '' : 'none';
     f.querySelector('[name="text"]').placeholder = fact ? 'Make one clear point.' : 'Make one clear point. It will be labeled as opinion.';
   }
 });
 
-document.addEventListener('input', function(e){
+document.addEventListener('input', (e) => {
   if (e.target.name === 'motion'){
-    var pv = document.querySelector('[data-preview]');
+    const pv = document.querySelector('[data-preview]');
     if (pv) pv.textContent = e.target.value.trim() || 'Your motion appears here.';
   }
 });
 
 function takeName(f){
-  var n = f.querySelector('[name="name"]');
-  if (n){ var v = n.value.trim().replace(/\s+/g,'_').slice(0,24); if (v){ S.me.name = v; } }
+  const n = f.querySelector('[name="name"]');
+  if (n && n.value.trim()) setName(n.value.trim().replace(/\s+/g, '_').slice(0, 24));
+  return getName() || 'anonymous';
 }
 
-document.addEventListener('submit', function(e){
-  var f = e.target, type = f.getAttribute('data-form'); if (!type) return;
+document.addEventListener('submit', async (e) => {
+  const f = e.target, type = f.getAttribute('data-form'); if (!type) return;
   e.preventDefault();
-  var err = f.querySelector('.err');
-  function fail(msg, field){ if (err) err.textContent = msg; if (field) field.focus(); }
+  const err = f.querySelector('.err');
+  const fail = (msg, field) => { if (err) err.textContent = msg; if (field) field.focus(); };
+  const btn = f.querySelector('button[type="submit"]');
 
-  if (type === 'debate'){
-    var mt = f.motion.value.trim().replace(/\s+/g,' ');
-    if (mt.length < 10) return fail('Write a full motion — at least 10 characters.', f.motion);
-    if (/\?$/.test(mt)) return fail('That’s a question. Make it a statement people can be for or against.', f.motion);
-    takeName(f);
-    var nd = {id:uid(), cat:f.cat.value, author:me(), created:now(), motion:mt, context:f.context.value.trim(),
-              before:{'for':0,'against':0,'undecided':0}, now:{'for':0,'against':0,'undecided':0}, points:[]};
-    S.debates.unshift(nd); save();
-    location.hash = '#/d/' + nd.id; toast('The floor is open');
+  if (type === 'mod'){
+    const key = f.key.value.trim();
+    if (!key) return fail('Enter the key.', f.key);
+    try {
+      if (await live.isMod(key)){ modKey = key; isMod = true; ls.set('fact.mod', key); footer(); paint(viewMod()); toast('Moderator mode on'); }
+      else fail('That key isn’t right.', f.key);
+    } catch { fail('Can’t reach FACT. right now.'); }
     return;
   }
 
-  var d = current(); if (!d) return;
+  if (type === 'debate'){
+    const motion = f.motion.value;
+    if (motion.trim().endsWith('?')) return fail('That’s a question. Make it a statement people can be for or against.', f.motion);
+    if (busy) return; busy = true; btn.disabled = true;
+    try {
+      const d = await api.create({ motion, context: f.context.value, cat: f.cat.value, author: takeName(f) });
+      busy = false;
+      location.hash = '#/d/' + d.id; toast('The floor is open');
+    } catch (ex) { fail(ex instanceof Offline ? 'Can’t reach FACT. — try again.' : ex.message, f.motion); }
+    finally { busy = false; btn.disabled = false; }
+    return;
+  }
+
+  if (!cur) return;
 
   if (type === 'point'){
-    var side = f.getAttribute('data-side');
-    var kind = f.querySelector('[name="kind"]:checked').value;
-    var text = f.text.value.trim().replace(/\s+/g,' ');
-    var src = f.src.value.trim();
-    if (text.length < 12) return fail('Make a real point — at least 12 characters.', f.text);
-    if (kind === 'fact'){
-      if (!src) return fail('Facts need a source. Add a link, or post it as an opinion.', f.src);
-      if (!safeUrl(src)) return fail('That link doesn’t look right. Use a full https:// address.', f.src);
-    }
-    takeName(f);
-    var np = {id:uid(), side:side, kind:kind, text:text, src:kind === 'fact' ? safeUrl(src) : '', author:me(), created:now(),
-              strong:0, verified:0, disputed:0, changed:0, replies:[]};
-    d.points.push(np); save(); route(true);
+    const side = f.getAttribute('data-side');
+    const kind = f.querySelector('[name="kind"]:checked').value;
+    if (kind === 'fact' && !f.src.value.trim()) return fail('Facts need a source. Add a link, or post it as an opinion.', f.src);
+    btn.disabled = true;
+    const before = new Set(cur.points.map((p) => p.id));
+    const d = await act({ type: 'point', side, kind, text: f.text.value, src: f.src.value, author: takeName(f) });
+    if (!d){ btn.disabled = false; return; }
+    const np = d.points.find((p) => !before.has(p.id));
     toast('Posted to ' + sideName(side));
-    var el = document.getElementById('p-' + np.id); if (el) el.scrollIntoView({block:'center', behavior:'smooth'});
+    if (np) document.getElementById('p-' + np.id)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     return;
   }
 
   if (type === 'reply'){
-    var p = findPoint(d, f.getAttribute('data-p')); if (!p) return;
-    var t = f.text.value.trim().replace(/\s+/g,' ');
+    const t = f.text.value.trim();
     if (t.length < 3) { f.text.focus(); return; }
-    var mine = S.mine[d.id];
-    var rs = mine && mine.now !== 'undecided' ? mine.now : (p.side === 'for' ? 'against' : 'for');
-    p.replies.push({id:uid(), side:rs, author:me(), text:t, created:now()});
-    save(); route(true); toast('Rebuttal posted');
+    await act({ type: 'reply', pid: f.getAttribute('data-p'), text: t, author: takeName(f) }, 'Rebuttal posted');
   }
 });
 
-function exportData(){
+/* =========================================================
+   START — use the live API if it answers, else this browser
+   ========================================================= */
+(async () => {
   try {
-    var blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = 'fact-debates.json';
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
-  } catch(e){ toast('Export failed'); }
-}
-
-load();
-route(false);
+    prefetched = await live.list();
+    if (modKey) { try { isMod = await live.isMod(modKey); } catch {} if (!isMod) { modKey = ''; ls.del('fact.mod'); } }
+  } catch (e) {
+    if (e instanceof Offline) { api = local; isLive = false; }
+  }
+  footer();
+  route(false);
 })();
 </script>
 </body>

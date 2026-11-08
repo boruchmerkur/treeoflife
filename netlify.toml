@@ -9,3 +9,10 @@
   for = "/assets/newsletter/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
+
+# FACT. (/fact/) loads its shared rules as an ES module — make sure browsers
+# get a JavaScript MIME type for .mjs.
+[[headers]]
+  for = "/fact/*.mjs"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
