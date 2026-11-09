@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* /fact → /fact/ so relative files resolve */if(/\/fact$/.test(location.pathname))location.replace(location.pathname+"/"+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FACT. — Argue with evidence</title>
+<meta name="description" content="FACT. is a debating platform where every claim is labeled, every fact needs a source, and the winner is whoever changes the most minds.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FACT. — Argue with evidence">
+<meta property="og:description" content="Pick a side before you read. Facts need sources. The winner is whoever changes the most minds.">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230d0d0d'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900' font-size='44' fill='%23ffe600'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0d0d; --paper:#f3efe6; --white:#ffffff;
+  --yellow:#ffe600; --for:#1f4bff; --against:#ff3d1f; --undecided:#9a9488;
+  --mute:#5f5a50; --line:3px solid var(--ink);
+  --display:"Archivo Black","Arial Black",Impact,sans-serif;
+  --body:"Archivo",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme: light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--for);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;width:100%}
+main{flex:1}
+
+/* ---------- top bar ---------- */
+.bar{background:var(--ink);color:var(--white);border-bottom:var(--line);position:sticky;top:0;z-index:20}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.logo{font-family:var(--display);font-size:30px;letter-spacing:-.02em;color:var(--yellow);text-decoration:none;line-height:1}
+.logo span{color:var(--white)}
+.nav{display:flex;gap:10px;align-items:center}
+.nav a{font-weight:700;text-decoration:none;font-size:14px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px}
+.nav a:hover{color:var(--yellow)}
+.nav .cta{background:var(--yellow);color:var(--ink);border:2px solid var(--yellow)}
+.nav .cta:hover{background:var(--white);color:var(--ink);border-color:var(--white)}
+
+/* ---------- buttons, tags ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:var(--line);background:var(--white);padding:10px 16px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);text-decoration:none;transition:transform .06s,box-shadow .06s;white-space:nowrap}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.y{background:var(--yellow)}
+.btn.k{background:var(--ink);color:var(--white)}
+.btn.f{background:var(--for);color:var(--white)}
+.btn.a{background:var(--against);color:var(--white)}
+.btn.sm{padding:6px 10px;font-size:12px;box-shadow:3px 3px 0 var(--ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.btn[aria-current="true"]{opacity:1;cursor:default;box-shadow:none;transform:translate(3px,3px);outline:3px solid var(--yellow);outline-offset:-7px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:3px 7px;border:2px solid var(--ink);background:var(--white);line-height:1.2}
+.tag.fact{background:var(--ink);color:var(--yellow)}
+.tag.opinion{background:var(--white);color:var(--ink);border-style:dashed}
+.tag.checked{background:#16c172;color:var(--ink)}
+.tag.disputed{background:var(--against);color:var(--white)}
+.tag.cat{background:var(--yellow)}
+.tag.sample{background:transparent;border-color:var(--mute);color:var(--mute)}
+.kicker{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.12em}
+
+/* ---------- home ---------- */
+.hero{padding:56px 0 40px;border-bottom:var(--line)}
+.hero h1{font-family:var(--display);font-size:clamp(48px,10vw,128px);line-height:.88;letter-spacing:-.035em;text-transform:uppercase}
+.hero h1 .hl{background:var(--yellow);padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero p.lede{font-size:clamp(18px,2.2vw,22px);max-width:640px;margin-top:22px;font-weight:500}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);border:var(--line);margin-top:36px;background:var(--white)}
+.rule{padding:20px 22px;border-right:var(--line)}
+.rule:last-child{border-right:0}
+.rule b{display:block;font-family:var(--display);font-size:44px;line-height:1;margin-bottom:8px}
+.rule h3{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.01em;margin-bottom:4px}
+.rule p{color:var(--mute);font-size:15px}
+
+.listhead{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:40px 0 18px;flex-wrap:wrap}
+.listhead h2{font-family:var(--display);font-size:clamp(30px,4vw,44px);text-transform:uppercase;letter-spacing:-.02em;line-height:1}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--ink);background:transparent;padding:6px 12px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--yellow)}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;padding-bottom:64px}
+.card{display:flex;flex-direction:column;border:var(--line);background:var(--white);box-shadow:6px 6px 0 var(--ink);text-decoration:none;transition:transform .08s,box-shadow .08s}
+.card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.card .top{padding:20px 22px 18px;flex:1}
+.card .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.card h3{font-family:var(--display);font-size:clamp(22px,2.4vw,28px);line-height:1.05;letter-spacing:-.015em}
+.card .foot{display:flex;justify-content:space-between;gap:10px;padding:10px 22px;border-top:var(--line);font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;flex-wrap:wrap}
+.split{display:flex;height:34px;border-top:var(--line);font-family:var(--display);font-size:14px;color:var(--white)}
+.split div{display:flex;align-items:center;padding:0 10px;min-width:0;overflow:hidden;white-space:nowrap;transition:flex-basis .4s}
+.split .s-for{background:var(--for)}
+.split .s-und{background:var(--undecided);justify-content:center;color:var(--ink)}
+.split .s-against{background:var(--against);justify-content:flex-end}
+.empty{border:3px dashed var(--ink);padding:40px;text-align:center;grid-column:1/-1}
+
+/* ---------- debate ---------- */
+.dhead{padding:40px 0 28px;border-bottom:var(--line)}
+.back{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:13px;text-decoration:none;display:inline-block;margin-bottom:20px}
+.back:hover{text-decoration:underline;text-underline-offset:4px}
+.dhead .kicker{margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.motion{font-family:var(--display);font-size:clamp(34px,6vw,76px);line-height:.95;letter-spacing:-.03em;max-width:1000px}
+.context{margin-top:18px;max-width:760px;font-size:18px;color:#2a2722}
+
+.stance{display:grid;grid-template-columns:1.1fr 1fr;border:var(--line);margin:28px 0;background:var(--white);box-shadow:6px 6px 0 var(--ink)}
+.stance .ask{padding:22px;border-right:var(--line)}
+.stance .ask h2{font-family:var(--display);font-size:24px;text-transform:uppercase;line-height:1.05;margin-bottom:6px}
+.stance .ask p{color:var(--mute);font-size:15px;margin-bottom:16px}
+.stance .ask .row{display:flex;gap:10px;flex-wrap:wrap}
+.stance .res{padding:22px;display:flex;flex-direction:column;gap:12px}
+.resrow{display:grid;grid-template-columns:70px 1fr;align-items:center;gap:10px}
+.resrow .lbl{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.resrow .split{border:2px solid var(--ink);height:28px;font-size:12px}
+.verdict{font-family:var(--display);font-size:20px;text-transform:uppercase;line-height:1.1;padding-top:6px;border-top:2px solid var(--ink)}
+.verdict .for{color:var(--for)} .verdict .against{color:var(--against)}
+.mine{font-weight:700}
+.mine .for{color:var(--for)} .mine .against{color:var(--against)}
+
+.arena{display:grid;grid-template-columns:1fr 1fr;gap:0;border:var(--line);margin-bottom:64px;background:var(--white)}
+.col{min-width:0}
+.col + .col{border-left:var(--line)}
+.colhead{padding:16px 20px;color:var(--white);display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:var(--line);position:sticky;top:64px;z-index:5}
+.col.for .colhead{background:var(--for)}
+.col.against .colhead{background:var(--against)}
+.colhead h2{font-family:var(--display);font-size:32px;line-height:1;letter-spacing:-.01em}
+.colhead .ev{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;text-align:right}
+.points{padding:16px;display:flex;flex-direction:column;gap:14px}
+.point{border:var(--line);background:var(--white);position:relative}
+.col.for .point{box-shadow:5px 5px 0 var(--for)}
+.col.against .point{box-shadow:5px 5px 0 var(--against)}
+.point.is-disputed .ptext{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--against)}
+.point .ph{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:12px 14px 0}
+.point .ph .who{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--mute);font-weight:500}
+.ptext{padding:10px 14px 4px;font-size:17px;font-weight:500;overflow-wrap:anywhere}
+.src{display:flex;gap:8px;align-items:center;margin:6px 14px 0;padding:6px 8px;background:var(--paper);border:2px solid var(--ink);font-family:var(--mono);font-size:12px;font-weight:600;text-decoration:none;overflow:hidden}
+.src span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src:hover{background:var(--yellow)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;padding:12px 14px 14px}
+.act{border:2px solid var(--ink);background:var(--white);padding:4px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.act:hover{background:var(--paper)}
+.act[aria-pressed="true"]{background:var(--ink);color:var(--yellow)}
+.act.convince{border-color:var(--ink);background:var(--yellow)}
+.act.convince:hover{background:var(--ink);color:var(--yellow)}
+.act b{font-family:var(--mono);font-weight:600}
+.convinced{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:var(--yellow);border-top:var(--line);padding:6px 14px}
+.replies{border-top:2px dashed var(--ink);padding:10px 14px;display:flex;flex-direction:column;gap:8px;background:#faf8f3}
+.reply{font-size:15px;padding-left:12px;border-left:4px solid var(--ink);overflow-wrap:anywhere}
+.reply .who{font-family:var(--mono);font-size:11px;color:var(--mute);display:block}
+.reply.r-for{border-left-color:var(--for)} .reply.r-against{border-left-color:var(--against)}
+.noside{padding:28px 20px;text-align:center;color:var(--mute);font-weight:600}
+
+/* ---------- forms ---------- */
+.compose{border-top:var(--line);padding:16px;background:var(--paper)}
+.compose h3{font-family:var(--display);font-size:18px;text-transform:uppercase;margin-bottom:10px}
+.kind{display:flex;border:var(--line);margin-bottom:10px}
+.kind label{flex:1;text-align:center;padding:8px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;background:var(--white)}
+.kind label + label{border-left:var(--line)}
+.kind input{position:absolute;opacity:0;pointer-events:none}
+.kind label:has(input:checked){background:var(--ink);color:var(--yellow)}
+.kind label:has(input:focus-visible){outline:3px solid var(--for);outline-offset:-6px}
+.field{display:block;margin-bottom:10px}
+.field > span{display:block;font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.input,.textarea,.select{width:100%;border:var(--line);background:var(--white);padding:10px 12px;font-size:16px;border-radius:0;appearance:none}
+.textarea{resize:vertical;min-height:84px}
+.input:focus,.textarea:focus,.select:focus{outline:none;box-shadow:4px 4px 0 var(--yellow),4px 4px 0 3px var(--ink)}
+.hint{font-size:13px;color:var(--mute);margin-top:4px}
+.err{color:var(--against);font-weight:700;font-size:14px;margin-bottom:8px;min-height:0}
+.rform{display:flex;gap:8px;padding:0 14px 14px}
+.rform .input{padding:8px 10px;font-size:15px}
+
+.newpage{padding:40px 0 64px;max-width:760px}
+.newpage h1{font-family:var(--display);font-size:clamp(40px,7vw,80px);line-height:.9;letter-spacing:-.03em;text-transform:uppercase;margin-bottom:12px}
+.newpage .lede{font-size:18px;margin-bottom:28px;color:#2a2722}
+.panel{border:var(--line);background:var(--white);padding:24px;box-shadow:6px 6px 0 var(--ink)}
+.panel .field{margin-bottom:16px}
+.preview{margin-top:18px;border:3px dashed var(--ink);padding:16px}
+.preview .motion{font-size:clamp(26px,4vw,40px)}
+
+/* ---------- footer, toast ---------- */
+footer{background:var(--ink);color:#cfcabf;border-top:var(--line);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;padding:22px 24px;flex-wrap:wrap;align-items:center}
+footer .logo{font-size:22px}
+footer button{background:none;border:0;color:#cfcabf;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:14px}
+footer button:hover{color:var(--yellow)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);background:var(--yellow);border:var(--line);box-shadow:5px 5px 0 var(--ink);padding:12px 18px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;font-size:14px;z-index:50;transition:transform .2s;max-width:calc(100% - 32px);text-align:center}
+.toast.on{transform:translate(-50%,0)}
+
+/* ---------- live, loading, delete, moderator ---------- */
+.livedot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#16c172;margin-right:6px;vertical-align:1px;box-shadow:0 0 0 2px var(--ink)}
+.offdot{background:var(--undecided)}
+.loading{padding:80px 0;text-align:center;font-family:var(--display);font-size:28px;text-transform:uppercase;letter-spacing:-.01em}
+.loading span{display:inline-block;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+.act.del{border-style:dashed;color:var(--mute);margin-left:auto}
+.act.del:hover{background:var(--against);color:var(--white);border-style:solid;border-color:var(--ink)}
+.reply .x{float:right;background:none;border:0;font-weight:800;cursor:pointer;color:var(--mute);padding:0 4px;font-size:14px}
+.reply .x:hover{color:var(--against)}
+.dtools{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+.splitnone{display:flex;align-items:center;justify-content:center;height:34px;border-top:var(--line);font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;background:var(--paper)}
+.resrow .splitnone{border:2px solid var(--ink);height:28px}
+.modbadge{background:var(--against);color:var(--white);font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 7px;text-transform:uppercase;letter-spacing:.08em}
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .grid{grid-template-columns:1fr}
+  .rules{grid-template-columns:1fr}
+  .rule{border-right:0;border-bottom:var(--line)}
+  .rule:last-child{border-bottom:0}
+  .stance{grid-template-columns:1fr}
+  .stance .ask{border-right:0;border-bottom:var(--line)}
+  .arena{grid-template-columns:1fr}
+  .col + .col{border-left:0;border-top:var(--line)}
+}
+@media (max-width:520px){
+  .wrap{padding:0 16px}
+  .nav a.hide-sm{display:none}
+  .hero{padding:36px 0 28px}
+  .colhead h2{font-size:26px}
+  .points{padding:12px}
+  footer .wrap{padding:20px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#/">FACT<span>.</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#/" class="hide-sm">Debates</a>
+      <a href="#/new" class="cta">+ Start a debate</a>
+    </nav>
+  </div>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer>
+  <div class="wrap">
+    <span class="logo">FACT<span>.</span></span>
+    <span id="modeline">Opinions are cheap. Bring a fact.</span>
+    <span id="foottools"></span>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+import { CATS, RuleError, newDebate, apply, toView, toSummary, sampleDebates, canDeleteDebate, safeUrl } from './core.mjs';
+
+/* =========================================================
+   THIS BROWSER: voter id, handle, moderator key
+   ========================================================= */
+const mem = {};
+const ls = {
+  get(k){ try { return localStorage.getItem(k); } catch { return mem[k] ?? null; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch { mem[k] = v; } },
+  del(k){ try { localStorage.removeItem(k); } catch { delete mem[k]; } },
+};
+function makeVid(){
+  try { return crypto.randomUUID().replace(/-/g, ''); }
+  catch { let s = ''; while (s.length < 32) s += Math.random().toString(36).slice(2); return s.slice(0, 32); }
+}
+let vid = ls.get('fact.voter');
+if (!/^[A-Za-z0-9_-]{16,64}$/.test(vid || '')) { vid = makeVid(); ls.set('fact.voter', vid); }
+const getName = () => ls.get('fact.name') || '';
+const setName = (n) => ls.set('fact.name', n);
+let modKey = ls.get('fact.mod') || '';
+
+/* =========================================================
+   BACKENDS — live (shared, via /api/fact) or this-browser-only
+   ========================================================= */
+class Offline extends Error {}
+
+const live = {
+  async call(method, path, body){
+    const headers = { 'X-Fact-Voter': vid };
+    if (modKey) headers['X-Fact-Admin'] = modKey;
+    if (body) headers['Content-Type'] = 'application/json';
+    let r, data;
+    try { r = await fetch('/api/fact' + path, { method, headers, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' }); }
+    catch { throw new Offline('offline'); }
+    try { data = await r.json(); } catch { throw new Offline('not json'); }
+    if (!r.ok) throw new RuleError(data.error || 'Something went wrong.', r.status);
+    return data;
+  },
+  async list(){ return (await this.call('GET', '/debates')).debates; },
+  async get(id){ return (await this.call('GET', '/debates/' + id)).debate; },
+  async create(input){ return (await this.call('POST', '/debates', input)).debate; },
+  async act(id, action){ return (await this.call('POST', '/debates/' + id, action)).debate; },
+  async remove(id){ await this.call('DELETE', '/debates/' + id); },
+  async isMod(key){
+    const r = await fetch('/api/fact/me', { headers: { 'X-Fact-Admin': key }, cache: 'no-store' });
+    return !!(await r.json()).admin;
+  },
+};
+
+const LKEY = 'fact.local.v2';
+const local = {
+  docs: null,
+  load(){
+    if (this.docs) return;
+    try { const d = JSON.parse(ls.get(LKEY) || 'null'); if (Array.isArray(d)) { this.docs = d; return; } } catch {}
+    this.docs = sampleDebates(); this.save();
+  },
+  save(){ ls.set(LKEY, JSON.stringify(this.docs)); },
+  find(id){ this.load(); const d = this.docs.find((x) => x.id === id); if (!d) throw new RuleError('No such debate.', 404); return d; },
+  async list(){ this.load(); return this.docs.map(toSummary); },
+  async get(id){ return toView(this.find(id), vid); },
+  async create(input){ this.load(); const d = newDebate(input, vid); this.docs.unshift(d); this.save(); return toView(d, vid); },
+  async act(id, action){ const d = this.find(id); apply(d, vid, action); this.save(); return toView(d, vid); },
+  async remove(id){ const d = this.find(id); if (!canDeleteDebate(d, vid)) throw new RuleError('You can only delete debates you opened.', 403); this.docs = this.docs.filter((x) => x !== d); this.save(); },
+  reset(){ this.docs = sampleDebates(); this.save(); },
+};
+
+let api = live, isLive = true, isMod = false;
+let prefetched = null;   // the first list, fetched while checking the API
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
+function ago(ts){
+  const s = Math.max(1, Math.round((Date.now() - ts) / 1000));
+  if (s < 60) return 'just now';
+  const m = Math.round(s / 60); if (m < 60) return m + 'm ago';
+  const h = Math.round(m / 60); if (h < 24) return h + 'h ago';
+  return Math.round(h / 24) + 'd ago';
+}
+const total = (o) => (o.for || 0) + (o.against || 0) + (o.undecided || 0);
+const pct = (o, k) => { const t = total(o); return t ? Math.round(100 * (o[k] || 0) / t) : 0; };
+const swing = (d, side) => pct(d.now, side) - pct(d.before, side);
+const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + Math.abs(n);
+const sideName = (s) => s === 'for' ? 'FOR' : s === 'against' ? 'AGAINST' : 'UNDECIDED';
+const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+
+function status(p){
+  if (p.kind !== 'fact') return '';
+  if (p.disputed >= 2 && p.disputed > p.verified) return 'disputed';
+  if (p.verified >= 3 && p.verified >= p.disputed * 2) return 'checked';
+  return '';
+}
+function score(p){
+  let s = p.strong + p.changed * 3;
+  if (p.kind === 'fact') s += (p.verified - p.disputed) * 2;
+  if (status(p) === 'disputed') s -= 20;
+  return s;
+}
+function evidence(d, side){
+  let facts = 0, opinions = 0;
+  for (const p of d.points) { if (p.side !== side) continue; if (p.kind === 'fact' && status(p) !== 'disputed') facts++; else opinions++; }
+  return { facts, opinions };
+}
+function leader(d){
+  const a = swing(d, 'for'), b = swing(d, 'against');
+  if (!total(d.now) || a === b) return null;
+  return a > b ? 'for' : 'against';
+}
+function splitBar(o){
+  if (!total(o)) return '<div class="splitnone">No votes yet</div>';
+  const f = pct(o, 'for'), a = pct(o, 'against'), u = Math.max(0, 100 - f - a);
+  return '<div class="split" role="img" aria-label="For ' + f + '%, undecided ' + u + '%, against ' + a + '%">' +
+    '<div class="s-for" style="flex-basis:' + f + '%">' + (f >= 12 ? f + '%' : '') + '</div>' +
+    '<div class="s-und" style="flex-basis:' + u + '%">' + (u >= 12 ? u + '%' : '') + '</div>' +
+    '<div class="s-against" style="flex-basis:' + a + '%">' + (a >= 12 ? a + '%' : '') + '</div></div>';
+}
+
+let toastT;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 2400);
+}
+
+/* =========================================================
+   VIEWS
+   ========================================================= */
+let homeFilter = 'All', homeSort = 'hot';
+
+function viewHome(list){
+  const shown = list.filter((d) => homeFilter === 'All' || d.cat === homeFilter);
+  shown.sort(homeSort === 'new' ? (a, b) => b.created - a.created : (a, b) => b.activity - a.activity || b.created - a.created);
+  const cats = ['All', ...CATS.filter((c) => list.some((d) => d.cat === c))];
+
+  const cards = shown.map((d) => {
+    const L = leader(d);
+    return '<a class="card" href="#/d/' + d.id + '">' +
+      '<div class="top"><div class="meta"><span class="tag cat">' + esc(d.cat) + '</span>' +
+        (d.sample ? '<span class="tag sample">Sample</span>' : '') + '</div>' +
+        '<h3>' + esc(d.motion) + '</h3></div>' +
+      splitBar(d.now) +
+      '<div class="foot"><span>' + plural(d.points, 'point') + ' · ' + d.facts + ' sourced</span>' +
+        '<span>' + (!total(d.now) ? 'Be the first to vote' : L ? sideName(L) + ' is winning minds ' + signed(swing(d, L)) : 'Dead even') + '</span></div>' +
+    '</a>';
+  }).join('');
+
+  return '<section class="hero"><div class="wrap">' +
+      '<div class="kicker" style="margin-bottom:18px">' + (isLive ? '<span class="livedot"></span>Live · the debating platform' : 'The debating platform') + '</div>' +
+      '<h1>Opinions are cheap.<br><span class="hl">Bring a fact.</span></h1>' +
+      '<p class="lede">FACT. is where arguments get settled with evidence. Every point is labeled. Every fact needs a source. And nobody wins by shouting — you win by changing minds.</p>' +
+      '<div class="rules">' +
+        '<div class="rule"><b>01</b><h3>Pick a side first</h3><p>Say where you stand before you read. We count where you end up.</p></div>' +
+        '<div class="rule"><b>02</b><h3>Facts need sources</h3><p>Call it a fact and you must link it. Anything else is labeled opinion. Readers check both.</p></div>' +
+        '<div class="rule"><b>03</b><h3>Win the swing</h3><p>The winner isn’t the bigger crowd. It’s the side that moved the most people.</p></div>' +
+      '</div>' +
+    '</div></section>' +
+    '<section class="wrap">' +
+      '<div class="listhead"><h2>' + (isLive ? 'Live debates' : 'Debates') + '</h2>' +
+        '<div class="chips" role="group" aria-label="Filter by topic">' +
+          cats.map((c) => '<button class="chip" type="button" data-action="filter" data-v="' + esc(c) + '" aria-pressed="' + (c === homeFilter) + '">' + esc(c) + '</button>').join('') +
+          '<button class="chip" type="button" data-action="sort" aria-pressed="false" title="Change sort order">Sort: ' + (homeSort === 'hot' ? 'Hot' : 'New') + '</button>' +
+        '</div></div>' +
+      '<div class="grid">' + (cards || '<div class="empty"><p style="font-weight:700;margin-bottom:14px">No debates here yet.</p><a class="btn y" href="#/new">Start one</a></div>') + '</div>' +
+    '</section>';
+}
+
+function viewDebate(d){
+  const mine = d.mine, L = leader(d);
+  let ask;
+  if (!mine){
+    ask = '<h2>Where do you stand?</h2><p>Vote before you read the arguments. You can change your mind afterwards. That’s the point.</p>' +
+      '<div class="row">' +
+        '<button class="btn f" type="button" data-action="stance" data-side="for">For</button>' +
+        '<button class="btn" type="button" data-action="stance" data-side="undecided">Undecided</button>' +
+        '<button class="btn a" type="button" data-action="stance" data-side="against">Against</button>' +
+      '</div>';
+  } else {
+    const moved = mine.before !== mine.now;
+    ask = '<h2>' + (moved ? 'You changed your mind.' : 'Read. Then decide again.') + '</h2>' +
+      '<p class="mine">You started <span class="' + mine.before + '">' + sideName(mine.before) + '</span>' +
+        (moved ? ' and now you’re <span class="' + mine.now + '">' + sideName(mine.now) + '</span>.' : '. Still there?') + '</p>' +
+      '<div class="row">' + ['for', 'undecided', 'against'].map((s) =>
+        '<button class="btn sm ' + (s === 'for' ? 'f' : s === 'against' ? 'a' : '') + '" type="button" data-action="stance" data-side="' + s + '"' +
+          (mine.now === s ? ' disabled aria-current="true"' : '') + '>' + (mine.now === s ? '● ' : '') + sideName(s) + '</button>').join('') +
+      '</div>';
+  }
+  const res = '<div class="resrow"><span class="lbl">Before</span>' + splitBar(d.before) + '</div>' +
+    '<div class="resrow"><span class="lbl">Now</span>' + splitBar(d.now) + '</div>' +
+    '<div class="verdict">' + (!total(d.now) ? 'No votes yet. Yours is first.' : L
+      ? '<span class="' + L + '">' + sideName(L) + '</span> is winning the swing · FOR ' + signed(swing(d, 'for')) + ' / AGAINST ' + signed(swing(d, 'against'))
+      : 'Dead even on the swing') + '</div>' +
+    '<div class="kicker" style="color:var(--mute)">' + (isLive ? '<span class="livedot"></span>' : '') + plural(total(d.now), 'vote') + '</div>';
+
+  return '<section class="dhead"><div class="wrap">' +
+      '<a class="back" href="#/">← All debates</a>' +
+      '<div class="kicker"><span class="tag cat">' + esc(d.cat) + '</span>' + (d.sample ? '<span class="tag sample">Sample debate</span>' : '') +
+        '<span>Opened by ' + esc(d.author) + ' · ' + ago(d.created) + '</span></div>' +
+      '<h1 class="motion">' + esc(d.motion) + '</h1>' +
+      (d.context ? '<p class="context">' + esc(d.context) + '</p>' : '') +
+      (d.canDelete ? '<div class="dtools"><button class="btn sm" type="button" data-action="delDebate">Delete debate</button></div>' : '') +
+    '</div></section>' +
+    '<section class="wrap">' +
+      '<div class="stance"><div class="ask">' + ask + '</div><div class="res">' + res + '</div></div>' +
+      '<div class="arena">' + column(d, 'for') + column(d, 'against') + '</div>' +
+    '</section>';
+}
+
+function column(d, side){
+  const pts = d.points.filter((p) => p.side === side).sort((a, b) => score(b) - score(a));
+  const ev = evidence(d, side);
+  return '<div class="col ' + side + '">' +
+    '<div class="colhead"><h2>' + sideName(side) + '</h2><div class="ev">' + plural(ev.facts, 'fact') + '<br>' + plural(ev.opinions, 'opinion') + '</div></div>' +
+    '<div class="points">' + (pts.length ? pts.map((p) => pointHtml(d, p)).join('') : '<div class="noside">No arguments yet. Be the first.</div>') + '</div>' +
+    composer(d, side) +
+  '</div>';
+}
+
+function pointHtml(d, p){
+  const v = p.myVote, st = status(p), url = safeUrl(p.src), mine = d.mine;
+  const canConvince = mine && mine.now !== p.side;
+  const convincedMe = mine && mine.by === p.id;
+  return '<article class="point' + (st === 'disputed' ? ' is-disputed' : '') + '" id="p-' + p.id + '">' +
+    '<div class="ph"><span class="tag ' + p.kind + '">' + (p.kind === 'fact' ? 'Fact' : 'Opinion') + '</span>' +
+      (st === 'checked' ? '<span class="tag checked">✓ Checked</span>' : '') +
+      (st === 'disputed' ? '<span class="tag disputed">✗ Disputed</span>' : '') +
+      '<span class="who">' + esc(p.author) + ' · ' + ago(p.created) + '</span></div>' +
+    '<p class="ptext">' + esc(p.text) + '</p>' +
+    (url ? '<a class="src" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer nofollow ugc"><b aria-hidden="true">↗</b><span>Source: ' + esc(host(url)) + '</span></a>' : '') +
+    '<div class="acts">' +
+      '<button class="act" type="button" data-action="vote" data-kind="strong" data-p="' + p.id + '" aria-pressed="' + v.strong + '" title="Strong argument">▲ Strong <b>' + p.strong + '</b></button>' +
+      (p.kind === 'fact'
+        ? '<button class="act" type="button" data-action="vote" data-kind="verify" data-p="' + p.id + '" aria-pressed="' + v.verify + '" title="I checked the source and it holds up">✓ Holds up <b>' + p.verified + '</b></button>' +
+          '<button class="act" type="button" data-action="vote" data-kind="dispute" data-p="' + p.id + '" aria-pressed="' + v.dispute + '" title="The source does not support this">✗ Dispute <b>' + p.disputed + '</b></button>'
+        : '') +
+      '<button class="act" type="button" data-action="rebut" data-p="' + p.id + '" aria-expanded="false">↩ Rebut' + (p.replies.length ? ' <b>' + p.replies.length + '</b>' : '') + '</button>' +
+      (canConvince ? '<button class="act convince" type="button" data-action="convince" data-p="' + p.id + '" title="Switch your vote to ' + sideName(p.side) + ' because of this point">This changed my mind</button>' : '') +
+      (p.canDelete ? '<button class="act del" type="button" data-action="delPoint" data-p="' + p.id + '">Delete</button>' : '') +
+    '</div>' +
+    (p.changed ? '<div class="convinced">' + (convincedMe ? (p.changed === 1 ? 'You changed your mind because of this' : 'You + ' + plural(p.changed - 1, 'other') + ' changed your minds because of this') : plural(p.changed, 'mind') + ' changed by this') + '</div>' : '') +
+    (p.replies.length ? '<div class="replies">' + p.replies.map((r) =>
+        '<div class="reply r-' + r.side + '">' +
+          (r.canDelete ? '<button class="x" type="button" data-action="delReply" data-p="' + p.id + '" data-r="' + r.id + '" aria-label="Delete rebuttal" title="Delete">×</button>' : '') +
+          '<span class="who">' + esc(r.author) + ' · ' + sideName(r.side) + ' · ' + ago(r.created) + '</span>' + esc(r.text) + '</div>').join('') + '</div>' : '') +
+    '<form class="rform" data-form="reply" data-p="' + p.id + '" hidden>' +
+      '<label style="position:absolute;left:-9999px" for="r-' + p.id + '">Your rebuttal</label>' +
+      '<input class="input" id="r-' + p.id + '" name="text" maxlength="280" placeholder="Rebut in one sentence…" required>' +
+      '<button class="btn sm k" type="submit">Post</button>' +
+    '</form>' +
+  '</article>';
+}
+
+function composer(d, side){
+  return '<form class="compose" data-form="point" data-side="' + side + '" novalidate>' +
+    '<h3>Argue ' + sideName(side) + '</h3>' +
+    '<div class="kind" role="radiogroup" aria-label="Type of point">' +
+      '<label><input type="radio" name="kind" value="fact" checked> Fact + source</label>' +
+      '<label><input type="radio" name="kind" value="opinion"> Opinion</label>' +
+    '</div>' +
+    '<label class="field"><span>Your point</span><textarea class="textarea" name="text" maxlength="400" placeholder="Make one clear point."></textarea></label>' +
+    '<label class="field" data-src><span>Source link (required for facts)</span><input class="input" name="src" type="url" inputmode="url" placeholder="https://"></label>' +
+    (getName() ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
+    '<p class="err" aria-live="polite"></p>' +
+    '<button class="btn ' + (side === 'for' ? 'f' : 'a') + '" type="submit">Post to ' + sideName(side) + '</button>' +
+  '</form>';
+}
+
+function viewNew(){
+  return '<section class="wrap newpage">' +
+    '<a class="back" href="#/">← All debates</a>' +
+    '<h1>Start a debate.</h1>' +
+    '<p class="lede">Write a motion: one clear statement someone can be for or against. “Is coffee good?” is a question. “Coffee does more good than harm” is a motion.</p>' +
+    '<form class="panel" data-form="debate" novalidate>' +
+      '<label class="field"><span>The motion</span><input class="input" name="motion" maxlength="140" placeholder="This house believes…" autocomplete="off"></label>' +
+      '<label class="field"><span>Context (optional)</span><textarea class="textarea" name="context" maxlength="400" placeholder="Why does this matter? What should people know before they vote?"></textarea></label>' +
+      '<label class="field"><span>Topic</span><select class="select" name="cat">' + CATS.map((c) => '<option>' + c + '</option>').join('') + '</select></label>' +
+      (getName() ? '' : '<label class="field"><span>Your handle</span><input class="input" name="name" maxlength="24" placeholder="anonymous" autocomplete="nickname"></label>') +
+      '<p class="err" aria-live="polite"></p>' +
+      '<button class="btn y" type="submit">Open the floor →</button>' +
+      '<div class="preview" aria-hidden="true"><div class="kicker" style="margin-bottom:8px">Preview</div><div class="motion" data-preview>Your motion appears here.</div></div>' +
+    '</form>' +
+  '</section>';
+}
+
+function viewMod(){
+  const body = !isLive
+    ? '<p class="lede">Moderation works on the live site, where debates are shared.</p>'
+    : isMod
+      ? '<p class="lede"><span class="modbadge">Moderator</span>&nbsp; You can delete any debate, point or rebuttal from this browser.</p><button class="btn" type="button" data-action="modOff">Turn off moderator mode</button>'
+      : '<p class="lede">Enter the moderator key to delete posts that break the rules.</p>' +
+        '<form class="panel" data-form="mod" novalidate>' +
+          '<label class="field"><span>Moderator key</span><input class="input" name="key" type="password" autocomplete="off"></label>' +
+          '<p class="err" aria-live="polite"></p><button class="btn k" type="submit">Turn on</button></form>';
+  return '<section class="wrap newpage"><a class="back" href="#/">← All debates</a><h1>Moderators.</h1>' + body + '</section>';
+}
+
+const viewMissing = () => '<section class="wrap newpage"><h1>No such debate.</h1><p class="lede">It may have been deleted.</p><a class="btn y" href="#/">See all debates</a></section>';
+const viewError = (msg) => '<section class="wrap newpage"><h1>Hold on.</h1><p class="lede">' + esc(msg) + '</p><button class="btn y" type="button" data-action="retry">Try again</button></section>';
+
+/* =========================================================
+   ROUTER + RENDER
+   ========================================================= */
+const app = document.getElementById('app');
+let cur = null;          // the debate on screen (view object)
+let busy = false;
+
+function paint(html, keepScroll){
+  const y = window.scrollY;
+  app.innerHTML = html;
+  window.scrollTo(0, keepScroll ? y : 0);
+}
+function paintDebate(d, keepScroll){
+  cur = d;
+  paint(viewDebate(d), keepScroll);
+  document.title = d.motion + ' — FACT.';
+}
+function footer(){
+  document.getElementById('modeline').innerHTML = isLive
+    ? '<span class="livedot"></span>Live — everyone sees the same debates.' + (isMod ? ' &nbsp;<span class="modbadge">Moderator</span>' : '')
+    : '<span class="livedot offdot"></span>Offline demo — debates are saved in this browser only.';
+  document.getElementById('foottools').innerHTML = isLive
+    ? '<a href="#/mod" style="color:#cfcabf">Moderators</a>'
+    : '<button type="button" data-action="reset">Reset demo</button>';
+}
+
+let routeSeq = 0;
+async function route(keepScroll = false){
+  const seq = ++routeSeq;
+  const h = location.hash.replace(/^#/, '') || '/';
+  let m;
+  cur = null;
+  if (h === '/new'){ paint(viewNew()); document.title = 'Start a debate — FACT.'; return; }
+  if (h === '/mod'){ paint(viewMod()); document.title = 'Moderators — FACT.'; return; }
+
+  const slow = setTimeout(() => { if (seq === routeSeq && !keepScroll) paint('<div class="loading">Loading<span>…</span></div>'); }, 180);
+  try {
+    if ((m = h.match(/^\/d\/([\w-]+)$/))){
+      const d = await api.get(m[1]);
+      if (seq !== routeSeq) return;
+      paintDebate(d, keepScroll);
+    } else {
+      const list = prefetched || await api.list();
+      prefetched = null;
+      if (seq !== routeSeq) return;
+      paint(viewHome(list), keepScroll);
+      document.title = 'FACT. — Argue with evidence';
+    }
+  } catch (e) {
+    if (seq !== routeSeq) return;
+    if (e instanceof RuleError && e.status === 404) paint(viewMissing());
+    else paint(viewError(e instanceof Offline ? 'Can’t reach FACT. right now. Check your connection.' : e.message));
+  } finally { clearTimeout(slow); }
+}
+window.addEventListener('hashchange', () => route(false));
+
+// Keep an open debate fresh while people are arguing in it.
+setInterval(async () => {
+  if (!isLive || !cur || busy || document.hidden) return;
+  const a = document.activeElement;
+  if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA')) return;
+  if (app.querySelector('form[data-form="reply"]:not([hidden])')) return;
+  try {
+    const id = cur.id, d = await api.get(id);
+    if (cur && cur.id === id && !busy && JSON.stringify(d) !== JSON.stringify(cur)) paintDebate(d, true);
+  } catch {}
+}, 15000);
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+async function act(action, okMsg){
+  if (!cur || busy) return null;
+  busy = true;
+  try {
+    const d = await api.act(cur.id, action);
+    paintDebate(d, true);
+    if (okMsg) toast(okMsg);
+    return d;
+  } catch (e) {
+    toast(e instanceof Offline ? 'Can’t reach FACT. — try again' : e.message);
+    return null;
+  } finally { busy = false; }
+}
+
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-action]'); if (!b) return;
+  const a = b.getAttribute('data-action');
+  const pid = b.getAttribute('data-p');
+
+  if (a === 'filter'){ homeFilter = b.getAttribute('data-v'); route(true); return; }
+  if (a === 'sort'){ homeSort = homeSort === 'hot' ? 'new' : 'hot'; route(true); return; }
+  if (a === 'retry'){ route(false); return; }
+  if (a === 'reset'){
+    if (confirm('Reset FACT. in this browser? Debates and votes saved here will be replaced with the sample debates.')){
+      local.reset(); location.hash = '#/'; route(false); toast('Reset to sample debates');
+    }
+    return;
+  }
+  if (a === 'modOff'){ modKey = ''; isMod = false; ls.del('fact.mod'); footer(); route(false); toast('Moderator mode off'); return; }
+
+  if (a === 'stance'){
+    const first = !cur?.mine;
+    await act({ type: 'stance', side: b.getAttribute('data-side') }, first ? 'Locked in. Now read both sides.' : 'Vote updated');
+    return;
+  }
+  if (a === 'vote'){ await act({ type: 'vote', pid, kind: b.getAttribute('data-kind') }); return; }
+  if (a === 'convince'){
+    const p = cur?.points.find((x) => x.id === pid);
+    const d = await act({ type: 'convince', pid }, p ? 'Mind changed → ' + sideName(p.side) + '. Respect.' : '');
+    if (d) document.getElementById('p-' + pid)?.scrollIntoView({ block: 'nearest' });
+    return;
+  }
+  if (a === 'rebut'){
+    const f = b.closest('.point').querySelector('form[data-form="reply"]');
+    f.hidden = !f.hidden; b.setAttribute('aria-expanded', String(!f.hidden));
+    if (!f.hidden) f.querySelector('input').focus();
+    return;
+  }
+  if (a === 'delPoint'){ if (confirm('Delete this point and its rebuttals?')) await act({ type: 'deletePoint', pid }, 'Point deleted'); return; }
+  if (a === 'delReply'){ if (confirm('Delete this rebuttal?')) await act({ type: 'deleteReply', pid, rid: b.getAttribute('data-r') }, 'Rebuttal deleted'); return; }
+  if (a === 'delDebate'){
+    if (!cur || busy || !confirm('Delete this whole debate? This can’t be undone.')) return;
+    busy = true;
+    try { await api.remove(cur.id); location.hash = '#/'; toast('Debate deleted'); }
+    catch (err) { toast(err.message); }
+    finally { busy = false; }
+  }
+});
+
+document.addEventListener('change', (e) => {
+  const f = e.target.closest('form[data-form="point"]');
+  if (f && e.target.name === 'kind'){
+    const fact = e.target.value === 'fact';
+    f.querySelector('[data-src]').style.display = fact ? '' : 'none';
+    f.querySelector('[name="text"]').placeholder = fact ? 'Make one clear point.' : 'Make one clear point. It will be labeled as opinion.';
+  }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.name === 'motion'){
+    const pv = document.querySelector('[data-preview]');
+    if (pv) pv.textContent = e.target.value.trim() || 'Your motion appears here.';
+  }
+});
+
+function takeName(f){
+  const n = f.querySelector('[name="name"]');
+  if (n && n.value.trim()) setName(n.value.trim().replace(/\s+/g, '_').slice(0, 24));
+  return getName() || 'anonymous';
+}
+
+document.addEventListener('submit', async (e) => {
+  const f = e.target, type = f.getAttribute('data-form'); if (!type) return;
+  e.preventDefault();
+  const err = f.querySelector('.err');
+  const fail = (msg, field) => { if (err) err.textContent = msg; if (field) field.focus(); };
+  const btn = f.querySelector('button[type="submit"]');
+
+  if (type === 'mod'){
+    const key = f.key.value.trim();
+    if (!key) return fail('Enter the key.', f.key);
+    try {
+      if (await live.isMod(key)){ modKey = key; isMod = true; ls.set('fact.mod', key); footer(); paint(viewMod()); toast('Moderator mode on'); }
+      else fail('That key isn’t right.', f.key);
+    } catch { fail('Can’t reach FACT. right now.'); }
+    return;
+  }
+
+  if (type === 'debate'){
+    const motion = f.motion.value;
+    if (motion.trim().endsWith('?')) return fail('That’s a question. Make it a statement people can be for or against.', f.motion);
+    if (busy) return; busy = true; btn.disabled = true;
+    try {
+      const d = await api.create({ motion, context: f.context.value, cat: f.cat.value, author: takeName(f) });
+      busy = false;
+      location.hash = '#/d/' + d.id; toast('The floor is open');
+    } catch (ex) { fail(ex instanceof Offline ? 'Can’t reach FACT. — try again.' : ex.message, f.motion); }
+    finally { busy = false; btn.disabled = false; }
+    return;
+  }
+
+  if (!cur) return;
+
+  if (type === 'point'){
+    const side = f.getAttribute('data-side');
+    const kind = f.querySelector('[name="kind"]:checked').value;
+    if (kind === 'fact' && !f.src.value.trim()) return fail('Facts need a source. Add a link, or post it as an opinion.', f.src);
+    btn.disabled = true;
+    const before = new Set(cur.points.map((p) => p.id));
+    const d = await act({ type: 'point', side, kind, text: f.text.value, src: f.src.value, author: takeName(f) });
+    if (!d){ btn.disabled = false; return; }
+    const np = d.points.find((p) => !before.has(p.id));
+    toast('Posted to ' + sideName(side));
+    if (np) document.getElementById('p-' + np.id)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return;
+  }
+
+  if (type === 'reply'){
+    const t = f.text.value.trim();
+    if (t.length < 3) { f.text.focus(); return; }
+    await act({ type: 'reply', pid: f.getAttribute('data-p'), text: t, author: takeName(f) }, 'Rebuttal posted');
+  }
+});
+
+/* =========================================================
+   START — use the live API if it answers, else this browser
+   ========================================================= */
+(async () => {
+  try {
+    prefetched = await live.list();
+    if (modKey) { try { isMod = await live.isMod(modKey); } catch {} if (!isMod) { modKey = ''; ls.del('fact.mod'); } }
+  } catch (e) {
+    if (e instanceof Offline) { api = local; isLive = false; }
+  }
+  footer();
+  route(false);
+})();
+</script>
+</body>
+</html>

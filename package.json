@@ -1,0 +1,8 @@
+{
+  "name": "treeoflife-site",
+  "private": true,
+  "description": "Static site; dependencies here are only for Netlify Functions (FACT. uses Netlify Blobs).",
+  "dependencies": {
+    "@netlify/blobs": "^10.7.13"
+  }
+}
